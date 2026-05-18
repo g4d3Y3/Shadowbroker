@@ -1,17 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const shortcuts = [
-  { key: 'L', desc: 'Toggle left panel (LAYERS)' },
-  { key: 'R', desc: 'Toggle right panel (INTEL)' },
-  { key: 'M', desc: 'Toggle markets ticker' },
-  { key: 'S', desc: 'Open settings' },
-  { key: 'K', desc: 'Open map legend (KEY)' },
-  { key: 'F', desc: 'Focus search bar' },
-  { key: 'Esc', desc: 'Deselect / close modals' },
-  { key: 'Space', desc: 'Toggle this overlay' },
-];
 
 export default function KeyboardShortcutsOverlay({
   isOpen,
@@ -20,6 +10,19 @@ export default function KeyboardShortcutsOverlay({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations('common');
+
+  const shortcuts = [
+    { key: 'L', desc: t('toggle_left_panel') },
+    { key: 'R', desc: t('toggle_right_panel') },
+    { key: 'M', desc: t('toggle_markets_ticker') },
+    { key: 'S', desc: t('open_settings') },
+    { key: 'K', desc: t('open_map_legend') },
+    { key: 'F', desc: t('focus_search_bar') },
+    { key: 'Esc', desc: t('deselect_close_modals') },
+    { key: 'Space', desc: t('toggle_overlay') },
+  ];
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -47,7 +50,7 @@ export default function KeyboardShortcutsOverlay({
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="text-[18px] text-[var(--text-heading)] font-mono font-bold tracking-widest">
-                  KEYBOARD SHORTCUTS
+                  {t('keyboard_shortcuts')}
                 </div>
               </div>
               <button
@@ -81,7 +84,7 @@ export default function KeyboardShortcutsOverlay({
             {/* Footer */}
             <div className="mt-6 pt-3 border-t border-[var(--border-primary)]">
               <div className="text-[9px] font-mono tracking-[0.25em] text-[var(--text-muted)] text-center uppercase">
-                Shortcuts are disabled when typing in inputs
+                {t('shortcuts_disabled')}
               </div>
             </div>
           </motion.div>

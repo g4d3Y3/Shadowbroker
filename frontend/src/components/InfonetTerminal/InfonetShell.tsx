@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Terminal, Radio, Globe, Key, Activity, Vote, User, ArrowRightLeft, Briefcase, Mail, Brain, GitBranch, Cpu, KeyRound } from 'lucide-react';
 import { getNodeIdentity, getWormholeIdentityDescriptor } from '@/mesh/meshIdentity';
 import {
@@ -148,6 +149,7 @@ export default function InfonetShell({
   onOpenLiveGate,
   onOpenDeadDrop,
 }: InfonetShellProps) {
+  const t = useTranslations('infonet');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<CommandHistory[]>([]);
   const [isBooting, setIsBooting] = useState(true);
@@ -207,14 +209,14 @@ export default function InfonetShell({
     setBootText([]);
 
     const bootLines = [
-      'INITIALIZING KERNEL...',
-      'LOADING MODULES: [OK]',
-      'MOUNTING VFS: [OK]',
-      'STARTING NETWORK INTERFACES...',
-      'CONNECTING TO INFONET MESH...',
-      'ESTABLISHING SECURE TUNNEL...',
-      'HANDSHAKE COMPLETE.',
-      'WELCOME SOVEREIGN.'
+      t('shell_boot_kernel'),
+      t('shell_boot_modules'),
+      t('shell_boot_vfs'),
+      t('shell_boot_network'),
+      t('shell_boot_connecting'),
+      t('shell_boot_tunnel'),
+      t('shell_boot_handshake'),
+      t('shell_boot_welcome')
     ];
 
     let currentLine = 0;
@@ -280,11 +282,7 @@ export default function InfonetShell({
           command: `join ${gate}`,
           output: (
             <span className="text-cyan-400">
-              Type a gate face label to open the encrypted room, or type
-              {' '}
-              <span className="font-bold text-white">anon</span>
-              {' '}
-              for a rotating obfuscated session that opens the room under a fresh gate-scoped key.
+              {t('shell_prompt_join')}
               {' '}
               <span className="text-red-400">&apos;shadowbroker&apos; is reserved.</span>
             </span>
@@ -375,7 +373,7 @@ export default function InfonetShell({
       if (trimmedCmd === 'anon') {
         output = (
           <span className="text-amber-300">
-            Rotating anonymous gate key for g/{gateTarget}...
+            {t('shell_anon_gen_key', { gate: gateTarget })}
           </span>
         );
         setHistory(prev => [...prev, { command: cmd, output }]);
@@ -443,7 +441,7 @@ export default function InfonetShell({
     if (trimmedCmd === 'help') {
       output = (
         <div className="text-gray-400">
-          <p>AVAILABLE COMMANDS:</p>
+          <p>{t('shell_help_title')}</p>
           <ul className="list-disc list-inside ml-2 mt-1">
             <li><span className="text-gray-300 font-bold">help</span> - Display this message</li>
             <li><span className="text-gray-300 font-bold">clear</span> - Clear terminal output</li>
@@ -451,8 +449,8 @@ export default function InfonetShell({
             <li><span className="text-gray-300 font-bold">radio</span> - Open SIGINT / radio surfaces</li>
             <li><span className="text-gray-300 font-bold">messages</span> - Open Secure Comms</li>
             <li><span className="text-gray-300 font-bold">profile</span> - View sovereign identity & ledger</li>
-            <li><span className="text-gray-300 font-bold">ballot / petitions / governance</span> - File / sign / vote on petitions (DSL executor)</li>
-            <li><span className="text-gray-300 font-bold">upgrades</span> - Upgrade-hash governance + Heavy-Node readiness</li>
+            <li><span className="text-gray-300 font-bold">ballot / petitions / governance</span> - {t('shell_governance')}</li>
+            <li><span className="text-gray-300 font-bold">upgrades</span> - {t('shell_upgrade_desc')}</li>
             <li><span className="text-gray-300 font-bold">resolution [market_id]</span> - Evidence + dispute view</li>
             <li><span className="text-gray-300 font-bold">shutdown [gate_id]</span> - Gate suspend / shutdown / appeal lifecycle</li>
             <li><span className="text-gray-300 font-bold">bootstrap</span> - Bootstrap-mode resolution + ramp milestones</li>
@@ -490,7 +488,7 @@ export default function InfonetShell({
         handleNavigate('gate', target);
         return;
       } else {
-        output = <span className="text-red-400">ERR: Gate &apos;{target}&apos; not found or access denied.</span>;
+        output = <span className="text-red-400">{t('shell_gate_not_found', { gate: target })}</span>;
       }
     } else if (trimmedCmd === 'ai' || trimmedCmd === 'copilot' || trimmedCmd === 'openclaw') {
       handleNavigate('ai');
@@ -524,7 +522,7 @@ export default function InfonetShell({
         setCurrentView('resolution');
         return;
       }
-      output = <span className="text-red-400">Usage: resolution &lt;market_id&gt;</span>;
+      output = <span className="text-red-400">{t('shell_usage_resolution')}</span>;
     } else if (trimmedCmd.startsWith('shutdown ')) {
       const gid = trimmedCmd.slice('shutdown '.length).trim();
       if (gid) {
@@ -532,7 +530,7 @@ export default function InfonetShell({
         setCurrentView('gate-shutdown');
         return;
       }
-      output = <span className="text-red-400">Usage: shutdown &lt;gate_id&gt;</span>;
+      output = <span className="text-red-400">{t('shell_usage_shutdown')}</span>;
     } else if (trimmedCmd === 'work' || trimmedCmd === 'gigs') {
       setComingSoonModule('GIGS');
       return;
@@ -542,17 +540,17 @@ export default function InfonetShell({
     } else if (trimmedCmd === 'mesh') {
       output = (
         <div className="text-gray-400">
-          <p>SYNCING PUBLIC MESH LEDGER...</p>
+          <p>{t('shell_syncing_ledger')}</p>
           <p className="text-gray-500 mt-1">Block: #894921 | Hash: 0x9f8a...2b1c</p>
           <p className="text-gray-500">Block: #894920 | Hash: 0x3e1d...9a4f</p>
           <p className="text-gray-500">Block: #894919 | Hash: 0x7c2b...1e8d</p>
-          <p className="text-green-400 mt-2">Ledger synchronized.</p>
+          <p className="text-green-400 mt-2">{t('shell_ledger_synced')}</p>
         </div>
       );
     } else if (trimmedCmd === 'radio') {
       output = (
         <div className="text-gray-400">
-          <p className="flex items-center"><Radio size={14} className="mr-2 animate-pulse text-red-400" /> SCANNING FREQUENCIES...</p>
+          <p className="flex items-center"><Radio size={14} className="mr-2 animate-pulse text-red-400" /> {t('shell_scanning_freq')}</p>
           <p className="text-gray-500 mt-1">144.390 MHz - APRS traffic detected</p>
           <p className="text-gray-500">462.562 MHz - Encrypted burst</p>
           <p className="text-gray-500">8.992 MHz - EAM broadcast intercepted</p>
@@ -561,10 +559,10 @@ export default function InfonetShell({
     } else if (trimmedCmd === 'wormhole') {
       output = (
         <div className="text-gray-400">
-          <p>OBFUSCATED LANE STATUS:</p>
-          <p className="text-gray-500 mt-1">Status: <span className="text-green-400">ONLINE</span></p>
-          <p className="text-gray-500">Active Tunnels: 3</p>
-          <p className="text-gray-500 mt-2">Use <span className="text-gray-300 font-bold">join [gate]</span> to open an obfuscated gate room.</p>
+          <p>{t('shell_wormhole_status')}</p>
+          <p className="text-gray-500 mt-1">Status: <span className="text-green-400">{t('shell_wormhole_online')}</span></p>
+          <p className="text-gray-500">{t('shell_wormhole_tunnels')} 3</p>
+          <p className="text-gray-500 mt-2">{t('shell_wormhole_hint')}</p>
         </div>
       );
     } else if (trimmedCmd === 'whoami') {
@@ -579,7 +577,7 @@ export default function InfonetShell({
       onClose();
       return;
     } else {
-      output = <span className="text-red-400">Command not recognized: {trimmedCmd}. Type &apos;help&apos; for available commands.</span>;
+      output = <span className="text-red-400">{t('shell_cmd_not_found', { cmd: trimmedCmd })}</span>;
     }
 
     setHistory(prev => [...prev, { command: cmd, output }]);
@@ -657,8 +655,8 @@ export default function InfonetShell({
                   {ASCII_HEADER}
                 </pre>
                 <div className="text-gray-400/80 text-center mt-4">
-                  <p>Welcome to Infonet. Type <span className="text-green-400 font-bold">&apos;help&apos;</span> to see available commands.</p>
-                  <p>Type <span className="text-green-400 font-bold">&apos;gates&apos;</span> or <span className="text-green-400 font-bold">g/</span> to view available chatrooms.</p>
+                  <p>{t('shell_welcome_text')}</p>
+                  <p>{t('shell_welcome_gates')}</p>
                 </div>
                 <NetworkStats />
               </div>
@@ -698,7 +696,7 @@ export default function InfonetShell({
                 className={`text-gray-500 mr-2 ${inputMode === 'persona' ? 'whitespace-nowrap' : 'inline-block max-w-[45%] truncate'}`}
                 title={inputMode === 'persona' ? 'Enter Persona:' : shellPrompt}
               >
-                {inputMode === 'persona' ? 'Enter Persona: ' : shellPrompt}
+                {inputMode === 'persona' ? t('shell_prompt_persona') : shellPrompt}
               </span>
               <div className="relative flex-1 flex items-center">
                 <input
@@ -802,7 +800,7 @@ export default function InfonetShell({
             <div className="flex items-center justify-between px-4 py-2 border-b border-cyan-900/40 bg-cyan-950/20">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_6px_rgba(245,158,11,0.6)]" />
-                <span className="text-[13px] tracking-[0.3em] text-amber-400/80 uppercase">System Notice</span>
+                <span className="text-[13px] tracking-[0.3em] text-amber-400/80 uppercase">{t('shell_system_notice')}</span>
               </div>
               <button
                 onClick={() => setComingSoonModule(null)}
@@ -839,7 +837,7 @@ export default function InfonetShell({
                   onClick={() => setComingSoonModule(null)}
                   className="px-4 py-1.5 border border-cyan-900/50 bg-cyan-950/20 text-cyan-400 text-sm tracking-[0.2em] uppercase hover:bg-cyan-900/30 hover:border-cyan-500/40 transition-all"
                 >
-                  Acknowledged
+                  {t('shell_acknowledged')}
                 </button>
               </div>
             </div>

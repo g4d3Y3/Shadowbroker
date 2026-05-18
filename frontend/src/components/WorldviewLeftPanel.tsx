@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Layers,
@@ -682,8 +683,74 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
     onMinimizedChange?.(newVal);
   };
   const { theme, toggleTheme, hudColor, cycleHudColor } = useTheme();
+  const t = useTranslations('left_panel');
+  const tLayers = useTranslations('layers');
   const [gibsPlaying, setGibsPlaying] = useState(false);
   const [potusEnabled, setPotusEnabled] = useState(true);
+
+  const LAYER_NAME_KEYS: Record<string, string> = {
+    flights: 'flights',
+    private: 'private_aircraft',
+    jets: 'private_jets',
+    military: 'military_flights',
+    tracked: 'tracked_flights',
+    gps_jamming: 'gps_jamming',
+    ships_military: 'ships_military',
+    ships_cargo: 'ships_cargo',
+    ships_civilian: 'ships_civilian',
+    ships_passenger: 'ships_passenger',
+    ships_tracked_yachts: 'ships_yachts',
+    fishing_activity: 'fishing_activity',
+    satellites: 'satellites',
+    gibs_imagery: 'gibs_imagery',
+    highres_satellite: 'highres_satellite',
+    sentinel_hub: 'sentinel_hub',
+    viirs_nightlights: 'viirs_nightlights',
+    earthquakes: 'earthquakes',
+    firms: 'fires',
+    ukraine_alerts: 'ukraine_alerts',
+    weather_alerts: 'weather_alerts',
+    volcanoes: 'volcanoes',
+    air_quality: 'air_quality',
+    sar: 'sar',
+    uap_sightings: 'uap_sightings',
+    wastewater: 'wastewater',
+    cctv: 'cctv',
+    datacenters: 'datacenters',
+    internet_outages: 'internet_outages',
+    power_plants: 'power_plants',
+    military_bases: 'military_bases',
+    trains: 'trains',
+    shodan_overlay: 'shodan_overlay',
+    kiwisdr: 'kiwisdr',
+    psk_reporter: 'psk_reporter',
+    satnogs: 'satnogs',
+    tinygs: 'tinygs',
+    scanners: 'scanners',
+    sigint_meshtastic: 'meshtastic',
+    sigint_aprs: 'aprs',
+    ukraine_frontline: 'ukraine_frontline',
+    global_incidents: 'global_incidents',
+    crowdthreat: 'crowdthreat',
+    correlations: 'correlations',
+    contradictions: 'correlations',
+    day_night: 'day_night',
+    ai_intel: 'ai_intel',
+  };
+
+  const SECTION_NAME_KEYS: Record<string, string> = {
+    AIRCRAFT: 'section_aircraft',
+    MARITIME: 'section_maritime',
+    SPACE: 'section_space',
+    HAZARDS: 'section_hazards',
+    'UAP SIGHTINGS': 'section_uap',
+    BIOSURVEILLANCE: 'section_biosurveillance',
+    INFRASTRUCTURE: 'section_infrastructure',
+    SHODAN: 'section_shodan',
+    SIGINT: 'section_sigint',
+    OVERLAYS: 'section_overlays',
+  };
+
   const gibsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // SAR mode chooser — prompts the first time the user enables the SAR
@@ -1353,7 +1420,7 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
               title="Map Legend / Icon Key"
             >
               <BookOpen size={12} />
-              <span className="text-[10px] font-mono tracking-widest font-bold">KEY</span>
+              <span className="text-[10px] font-mono tracking-widest font-bold">{t('key_label')}</span>
             </button>
           )}
           <span
@@ -1374,7 +1441,7 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
           <div className="flex items-center gap-2">
             <Layers size={16} className="text-cyan-400" />
             <span className="text-[12px] text-cyan-400 font-mono tracking-widest font-bold">
-              DATA LAYERS
+              {t('data_layers')}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -1458,10 +1525,10 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                       <div className="flex items-center gap-2">
                         <Shield size={14} className="text-[#ff1493]" />
                         <span className="text-[12px] text-[#ff1493] font-mono tracking-widest font-bold">
-                          POTUS FLEET
+                          {t('potus_fleet')}
                         </span>
                         <span className="text-[11px] font-mono px-1.5 py-0.5 rounded-full bg-[#ff1493]/20 border border-[#ff1493]/40 text-[#ff1493] animate-pulse">
-                          {potusFlights.length} ACTIVE
+                          {potusFlights.length} {t('active')}
                         </span>
                       </div>
                       <button
@@ -1470,9 +1537,9 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                           setPotusEnabled(false);
                         }}
                         className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[#ff1493] border border-[var(--border-primary)] hover:border-[#ff1493]/40 px-1.5 py-0.5 transition-colors"
-                        title="Hide POTUS Fleet tracker"
+                        title={t('hide')}
                       >
-                        HIDE
+                        {t('hide')}
                       </button>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -1566,7 +1633,7 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                               section.label === 'SHODAN' ? 'text-green-400' : 'text-[var(--text-muted)]'
                             }`}
                           >
-                            {section.label}
+                            {SECTION_NAME_KEYS[section.label] ? t(SECTION_NAME_KEYS[section.label]) : section.label}
                           </span>
                           {anyOn && totalCount > 0 && (
                             <span
@@ -1681,7 +1748,7 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                                               : 'text-[var(--text-secondary)]'
                                         } tracking-wide`}
                                       >
-                                        {layer.name}
+                                        {LAYER_NAME_KEYS[layer.id] ? tLayers(LAYER_NAME_KEYS[layer.id]) : layer.name}
                                       </span>
                                       <span className="text-[11px] text-[var(--text-muted)] font-mono tracking-wider mt-0.5">
                                         {layer.id === 'shodan_overlay'
@@ -1811,7 +1878,7 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                                       className="flex items-center gap-1.5 text-[9px] font-mono tracking-wide text-cyan-400 hover:text-cyan-200 border border-cyan-500/30 hover:border-cyan-500/50 bg-cyan-500/5 hover:bg-cyan-500/10 px-2.5 py-1 rounded transition"
                                     >
                                       <MapPin size={10} />
-                                      EDIT AOIs
+                                      {t('edit_aois')}
                                     </button>
                                   </div>
                                 )}
@@ -1909,7 +1976,7 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                       <div className="flex items-center gap-2">
                         <Shield size={14} className="text-[var(--text-muted)]" />
                         <span className="text-[10px] text-[var(--text-muted)] font-mono tracking-widest">
-                          POTUS FLEET
+                          {t('potus_fleet')}
                         </span>
                       </div>
                       {!potusEnabled ? (
@@ -1920,11 +1987,11 @@ const WorldviewLeftPanel = React.memo(function WorldviewLeftPanel({
                           }}
                           className="text-[11px] font-mono text-[var(--text-muted)] hover:text-[#ff1493] border border-[var(--border-primary)] hover:border-[#ff1493]/40 px-1.5 py-0.5 transition-colors"
                         >
-                          SHOW
+                          {t('show')}
                         </button>
                       ) : (
                         <span className="text-[11px] font-mono text-[var(--text-muted)]">
-                          NO ACTIVE AIRCRAFT
+                          {t('no_active_aircraft')}
                         </span>
                       )}
                     </div>

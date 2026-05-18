@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import DesktopBridgeBootstrap from '@/components/DesktopBridgeBootstrap';
 import { ThemeProvider } from '@/lib/ThemeContext';
+import { LocaleProvider } from '@/lib/LocaleContext';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -28,8 +29,10 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-[var(--bg-primary)]" suppressHydrationWarning>
         <ThemeProvider>
-          <DesktopBridgeBootstrap />
-          {children}
+          <LocaleProvider>
+            <DesktopBridgeBootstrap />
+            {children}
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>

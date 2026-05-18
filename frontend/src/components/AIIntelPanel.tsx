@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslations } from 'next-intl';
 import { getBackendEndpoint } from '@/lib/backendEndpoint';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -1039,6 +1040,8 @@ export default function AIIntelPanel({
   pinPlacementMode,
   onPinPlacementModeChange,
 }: AIIntelPanelProps) {
+  const t = useTranslations('ai_intel');
+  const tc = useTranslations('common');
   const [internalMinimized, setInternalMinimized] = useState(true);
   const isMinimized = isMinimizedProp !== undefined ? isMinimizedProp : internalMinimized;
   const setIsMinimized = (val: boolean | ((prev: boolean) => boolean)) => {
@@ -1293,7 +1296,7 @@ export default function AIIntelPanel({
         <div className="flex items-center gap-2">
           <Brain size={16} className="text-violet-400" />
           <span className="text-[12px] text-violet-400 font-mono tracking-widest font-bold">
-            AI INTEL
+            {t('title')}
           </span>
           {totalPins > 0 && (
             <span className="text-[11px] font-mono px-1.5 py-0.5 bg-violet-500/20 border border-violet-500/40 text-violet-300">
@@ -1302,7 +1305,7 @@ export default function AIIntelPanel({
           )}
           {error && (
             <span className="text-[11px] font-mono px-1.5 py-0.5 bg-red-500/20 text-red-400">
-              OFFLINE
+              {tc('offline')}
             </span>
           )}
         </div>
@@ -1333,7 +1336,7 @@ export default function AIIntelPanel({
                 title="Connect your OpenClaw AI agent"
               >
                 <Link2 size={14} />
-                CONNECT OPENCLAW
+                {t('connect_openclaw')}
               </button>
 
               {/* ── Pin Placement Button ─────────────────────────── */}
@@ -1347,7 +1350,7 @@ export default function AIIntelPanel({
                 }`}
               >
                 <Crosshair size={14} />
-                {pinPlacementMode ? 'CLICK MAP TO PLACE PIN...' : 'PLACE PIN ON MAP'}
+                {pinPlacementMode ? t('click_map_to_place') : t('place_pin')}
               </button>
 
               {/* ── Pin Layers ──────────────────────────────────── */}
@@ -1356,7 +1359,7 @@ export default function AIIntelPanel({
                   <div className="flex items-center gap-1.5">
                     <MapPin size={12} className="text-violet-400" />
                     <span className="text-[11px] font-mono text-violet-400 tracking-widest">
-                      PIN LAYERS
+                      {t('pin_layers')}
                     </span>
                     <span className="text-[10px] font-mono text-[var(--text-muted)]">
                       ({layers.length})
@@ -1367,7 +1370,7 @@ export default function AIIntelPanel({
                     onClick={() => setShowNewLayer(!showNewLayer)}
                     className="text-[10px] font-mono text-violet-400/70 hover:text-violet-300 transition-colors flex items-center gap-1"
                   >
-                    <Plus size={10} /> NEW
+                    <Plus size={10} /> {t('new')}
                   </button>
                 </div>
 
@@ -1380,7 +1383,7 @@ export default function AIIntelPanel({
                         value={newLayerName}
                         onChange={(e) => setNewLayerName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreateLayer()}
-                        placeholder="Layer name..."
+                        placeholder={t('layer_name')}
                         autoFocus
                         className="flex-1 px-2 py-1.5 text-[12px] font-mono bg-[var(--bg-primary)] border border-violet-500/30 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-violet-500/50 outline-none"
                       />
@@ -1390,7 +1393,7 @@ export default function AIIntelPanel({
                         disabled={busy || !newLayerName.trim()}
                         className="px-3 py-1.5 text-[11px] font-mono bg-violet-600/30 border border-violet-500/50 text-violet-300 hover:bg-violet-600/50 transition-colors disabled:opacity-40"
                       >
-                        ADD
+                        {t('add')}
                       </button>
                     </div>
                     <div className="flex items-center gap-1">
@@ -1400,7 +1403,7 @@ export default function AIIntelPanel({
                         value={newLayerFeedUrl}
                         onChange={(e) => setNewLayerFeedUrl(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleCreateLayer()}
-                        placeholder="Feed URL (optional GeoJSON/JSON)..."
+                        placeholder={t('feed_url')}
                         className="flex-1 px-2 py-1 text-[11px] font-mono bg-[var(--bg-primary)] border border-emerald-500/20 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-emerald-500/40 outline-none"
                       />
                     </div>
@@ -1410,7 +1413,7 @@ export default function AIIntelPanel({
                 {/* Layer list */}
                 {layers.length === 0 && !showNewLayer && (
                   <div className="text-[11px] font-mono text-[var(--text-muted)] px-2 py-3 text-center border border-dashed border-[var(--border-primary)]">
-                    No layers yet. Create one or let OpenClaw add them.
+                    {t('no_layers_yet')}
                   </div>
                 )}
 
@@ -1472,7 +1475,7 @@ export default function AIIntelPanel({
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); handleRefreshFeed(layer.id); }}
                                 className="text-emerald-400/40 hover:text-emerald-400 transition-colors"
-                                title="Refresh feed now"
+                                title={t('refresh_feed')}
                               >
                                 <RefreshCw size={10} />
                               </button>
@@ -1484,7 +1487,7 @@ export default function AIIntelPanel({
                             type="button"
                             onClick={() => handleToggleLayerVisibility(layer.id, layer.visible)}
                             className="text-[var(--text-muted)] hover:text-violet-400 transition-colors"
-                            title={layer.visible ? 'Hide layer' : 'Show layer'}
+                            title={layer.visible ? t('hide_layer') : t('show_layer')}
                           >
                             {layer.visible ? <Eye size={12} /> : <EyeOff size={12} />}
                           </button>
@@ -1494,7 +1497,7 @@ export default function AIIntelPanel({
                             type="button"
                             onClick={() => handleDeleteLayer(layer.id)}
                             className="text-red-400/40 hover:text-red-400 transition-colors"
-                            title="Delete layer and all its pins"
+                            title={t('delete_layer')}
                           >
                             <Trash2 size={10} />
                           </button>
@@ -1519,11 +1522,11 @@ export default function AIIntelPanel({
                                   </span>
                                   {pin.entity_attachment && (
                                     <span className="text-[11px] font-mono text-cyan-400/60 px-1 border border-cyan-500/20 rounded-sm">
-                                      TRACKING
+                                      {t('tracking')}
                                     </span>
                                   )}
                                   {pin.source === 'openclaw' && (
-                                    <span className="text-[11px] font-mono text-violet-400/50">AI</span>
+                                    <span className="text-[11px] font-mono text-violet-400/50">{t('ai')}</span>
                                   )}
                                 </div>
                                 <button
@@ -1533,7 +1536,7 @@ export default function AIIntelPanel({
                                     deletePin(pin.id);
                                   }}
                                   className="opacity-0 group-hover:opacity-100 text-red-400/50 hover:text-red-400 transition-all"
-                                  title="Delete pin"
+                                  title={t('delete_pin')}
                                 >
                                   <X size={10} />
                                 </button>
@@ -1541,7 +1544,7 @@ export default function AIIntelPanel({
                             ))}
                             {layerPins.length > 30 && (
                               <div className="text-[9px] font-mono text-[var(--text-muted)] text-center py-1 border-t border-[var(--border-primary)]">
-                                + {layerPins.length - 30} more
+                                {t('more', { count: layerPins.length - 30 })}
                               </div>
                             )}
                           </div>
@@ -1549,7 +1552,7 @@ export default function AIIntelPanel({
                         {isExpanded && layerPins.length === 0 && (
                           <div className="border-t border-[var(--border-primary)] bg-black/20 px-3 py-2">
                             <span className="text-[10px] font-mono text-[var(--text-muted)]">
-                              No pins in this layer
+                              {t('no_pins_in_layer')}
                             </span>
                           </div>
                         )}
@@ -1562,7 +1565,7 @@ export default function AIIntelPanel({
                 {pins.filter(p => !p.layer_id).length > 0 && (
                   <div className="border border-[var(--border-primary)] mt-1">
                     <div className="px-2 py-1.5 text-[10px] font-mono text-[var(--text-muted)] tracking-widest">
-                      UNGROUPED ({pins.filter(p => !p.layer_id).length})
+                      {t('ungrouped')} ({pins.filter(p => !p.layer_id).length})
                     </div>
                     <div className="border-t border-[var(--border-primary)] bg-black/20">
                       {pins.filter(p => !p.layer_id).slice(0, 20).map((pin) => (
@@ -1599,7 +1602,7 @@ export default function AIIntelPanel({
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1.5">
                   <Navigation size={12} className="text-emerald-400" />
-                  <span className="text-[11px] font-mono text-emerald-400 tracking-widest">NEAR ME</span>
+                  <span className="text-[11px] font-mono text-emerald-400 tracking-widest">{t('near_me')}</span>
                 </div>
                 <div className="flex gap-1">
                   {[50, 100, 500, 1000].map((r) => (
@@ -1624,7 +1627,7 @@ export default function AIIntelPanel({
                   className="w-full py-2 text-[11px] font-mono tracking-wider bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/40 transition-colors disabled:opacity-40 flex items-center justify-center gap-1.5"
                 >
                   <Navigation size={12} />
-                  SCAN NEARBY ({nearMeRadius}mi)
+                  {t('scan_nearby', { radius: nearMeRadius })}
                 </button>
                 {nearMeResults && (
                   <div className="space-y-0.5 max-h-32 overflow-y-auto">
@@ -1640,7 +1643,7 @@ export default function AIIntelPanel({
                     ))}
                     {!nearMeResults.gdelt?.length && !nearMeResults.news?.length && (
                       <div className="text-[10px] font-mono text-emerald-400/50 px-2">
-                        All clear -- nothing notable within {nearMeRadius}mi
+                        {t('all_clear', { radius: nearMeRadius })}
                       </div>
                     )}
                   </div>
@@ -1651,7 +1654,7 @@ export default function AIIntelPanel({
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1.5">
                   <Globe size={12} className="text-sky-400" />
-                  <span className="text-[11px] font-mono text-sky-400 tracking-widest">SATELLITE IMAGERY</span>
+                  <span className="text-[11px] font-mono text-sky-400 tracking-widest">{t('satellite_imagery')}</span>
                 </div>
                 {/* Location lookup (place name) */}
                 <div className="flex gap-1">
@@ -1660,7 +1663,7 @@ export default function AIIntelPanel({
                     value={satLocationQuery}
                     onChange={(e) => setSatLocationQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleLocationLookup()}
-                    placeholder="Search location (e.g. Tehran, Kyiv)..."
+                    placeholder={t('search_location')}
                     className="flex-1 px-2 py-1.5 text-[11px] font-mono bg-[var(--bg-primary)] border border-sky-500/20 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-sky-500/50 outline-none"
                   />
                   <button
@@ -1670,18 +1673,18 @@ export default function AIIntelPanel({
                     className="px-2 py-1.5 text-[11px] font-mono bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/40 transition-colors disabled:opacity-40"
                     title="Look up location and search imagery"
                   >
-                    {satGeocoding ? '...' : 'GO'}
+                    {satGeocoding ? '...' : t('go')}
                   </button>
                 </div>
                 <div className="text-[9px] font-mono text-[var(--text-muted)] text-center">
-                  — or enter coordinates —
+                  {t('or_enter_coordinates')}
                 </div>
                 <div className="flex gap-1">
                   <input
                     type="text"
                     value={satLat}
                     onChange={(e) => setSatLat(e.target.value)}
-                    placeholder="Lat"
+                    placeholder={t('lat')}
                     className="flex-1 px-2 py-1.5 text-[11px] font-mono bg-[var(--bg-primary)] border border-sky-500/20 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-sky-500/50 outline-none"
                   />
                   <input
@@ -1689,7 +1692,7 @@ export default function AIIntelPanel({
                     value={satLng}
                     onChange={(e) => setSatLng(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSatSearch()}
-                    placeholder="Lng"
+                    placeholder={t('lng')}
                     className="flex-1 px-2 py-1.5 text-[11px] font-mono bg-[var(--bg-primary)] border border-sky-500/20 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-sky-500/50 outline-none"
                   />
                 </div>
@@ -1700,7 +1703,7 @@ export default function AIIntelPanel({
                   className="w-full py-2 text-[11px] font-mono tracking-wider bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/40 transition-colors disabled:opacity-40 flex items-center justify-center gap-1.5"
                 >
                   <Globe size={12} />
-                  {satSearching ? 'SEARCHING...' : 'SEARCH SENTINEL-2'}
+                  {satSearching ? t('searching') : t('search_sentinel2')}
                 </button>
 
                 {/* Error message (inline) */}
@@ -1750,7 +1753,7 @@ export default function AIIntelPanel({
                                 }}
                                 className="px-2 py-0.5 text-[9px] font-mono bg-sky-600/30 border border-sky-500/40 text-sky-300 hover:bg-sky-600/50 transition-colors"
                               >
-                                SHOW ON MAP
+                                {t('show_on_map')}
                               </button>
                             )}
                             {scene.fullres_url && (
@@ -1760,7 +1763,7 @@ export default function AIIntelPanel({
                                 rel="noopener noreferrer"
                                 className="px-2 py-0.5 text-[9px] font-mono bg-violet-600/20 border border-violet-500/30 text-violet-300 hover:bg-violet-600/40 transition-colors"
                               >
-                                FULL RES
+                                {t('full_res')}
                               </a>
                             )}
                           </div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Database, Clock, X } from 'lucide-react';
 
 const CURRENT_VERSION = '0.9.79';
@@ -12,6 +13,7 @@ interface StartupWarmupModalProps {
 }
 
 export default function StartupWarmupModal({ onClose }: StartupWarmupModalProps) {
+  const t = useTranslations('startup');
   const handleDismiss = () => {
     localStorage.setItem(STORAGE_KEY, 'true');
     onClose();
@@ -46,10 +48,10 @@ export default function StartupWarmupModal({ onClose }: StartupWarmupModalProps)
               </div>
               <div>
                 <h2 className="text-sm font-bold tracking-[0.2em] text-[var(--text-primary)] font-mono">
-                  STARTUP CACHE
+                  {t('title')}
                 </h2>
                 <span className="text-[13px] text-[var(--text-muted)] font-mono tracking-widest">
-                  FIRST RUN WARMUP
+                  {t('subtitle')}
                 </span>
               </div>
             </div>
@@ -67,12 +69,10 @@ export default function StartupWarmupModal({ onClose }: StartupWarmupModalProps)
                 <Clock size={15} className="text-cyan-400 mt-0.5 flex-shrink-0" />
                 <div className="space-y-2">
                   <p className="text-[11px] text-cyan-300 font-mono font-bold tracking-widest">
-                    MASS DATA SYNTHESIS
+                    {t('section_title')}
                   </p>
                   <p className="text-sm text-[var(--text-secondary)] font-mono leading-relaxed">
-                    The first launch builds local caches for flights, ships, satellites, CCTV, fires,
-                    and threat intelligence. Cached launches paint the map much faster; a brand-new
-                    install can take a few minutes while upstream feeds are synthesized.
+                    {t('desc')}
                   </p>
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default function StartupWarmupModal({ onClose }: StartupWarmupModalProps)
               onClick={handleDismiss}
               className="w-full py-3 border border-cyan-500/40 text-cyan-300 hover:text-cyan-100 hover:border-cyan-400/70 hover:bg-cyan-950/30 transition-all font-mono text-[12px] tracking-[0.18em] font-bold"
             >
-              CONTINUE
+              {t('continue')}
             </button>
           </div>
         </div>

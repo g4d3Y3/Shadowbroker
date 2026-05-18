@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Clock, Minus, Plus, ExternalLink, Brain, Loader2 } from 'lucide-react';
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import WikiImage from '@/components/WikiImage';
 import type { SelectedEntity, RegionDossier, FimiData } from "@/types/dashboard";
 import { useDataKeys } from '@/hooks/useDataStore';
@@ -293,6 +294,8 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
     const [aiSummary, setAiSummary] = useState<any>(null);
     const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const tn = useTranslations('news');
+    const tc = useTranslations('common');
 
     // Intentionally omitting map click triggers for expanding
     // as we now show a contextual pop-up on the map directly.
@@ -438,14 +441,14 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                 className="w-full bg-black/60 backdrop-blur-sm border border-emerald-800 flex flex-col z-10 font-mono shadow-[0_4px_30px_rgba(0,255,128,0.2)] pointer-events-auto overflow-hidden flex-shrink-0"
             >
                 <div className="p-3 border-b border-emerald-500/30 bg-emerald-950/40 flex justify-between items-center">
-                    <h2 className="text-sm tracking-widest font-bold text-emerald-400">REGION DOSSIER</h2>
+                    <h2 className="text-sm tracking-widest font-bold text-emerald-400">{tn('region_dossier')}</h2>
                     <span className="text-[10px] text-[var(--text-muted)]">
                         {selectedEntity.extra ? `${selectedEntity.extra.lat.toFixed(3)}, ${selectedEntity.extra.lng.toFixed(3)}` : ''}
                     </span>
                 </div>
                 {regionDossierLoading ? (
                     <div className="p-6 flex items-center justify-center">
-                        <span className="text-emerald-400 text-[12px] font-mono tracking-widest">COMPILING INTELLIGENCE...</span>
+                        <span className="text-emerald-400 text-[12px] font-mono tracking-widest">{tn('compiling_intel')}</span>
                     </div>
                 ) : d && !d.error ? (
                     <div className="p-3 flex flex-col gap-2 max-h-[500px] overflow-y-auto styled-scrollbar text-[12px]">
@@ -455,7 +458,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                             </div>
                         )}
                         {/* COUNTRY */}
-                        <div className="text-[11px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1">COUNTRY LEVEL {d.country?.flag_emoji || ''}</div>
+                        <div className="text-[11px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1">{tn('country_level')} {d.country?.flag_emoji || ''}</div>
                         <div className="flex justify-between"><span className="text-[var(--text-muted)]">COUNTRY</span><span className="text-[var(--text-primary)] font-bold">{d.country?.name}</span></div>
                         {d.country?.official_name && d.country.official_name !== d.country.name && (
                             <div className="flex justify-between"><span className="text-[var(--text-muted)]">OFFICIAL</span><span className="text-[var(--text-secondary)] text-right max-w-[180px]">{d.country.official_name}</span></div>
@@ -476,7 +479,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                         {/* LOCAL */}
                         {(d.local?.name || d.local?.state) && (
                             <>
-                                <div className="text-[11px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1 mt-2">LOCAL LEVEL</div>
+                                <div className="text-[11px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1 mt-2">{tn('local_level')}</div>
                                 {d.local.name && <div className="flex justify-between"><span className="text-[var(--text-muted)]">LOCALITY</span><span className="text-[var(--text-primary)] font-bold">{d.local.name}</span></div>}
                                 {d.local.state && <div className="flex justify-between"><span className="text-[var(--text-muted)]">STATE/PROVINCE</span><span className="text-[var(--text-primary)] font-bold">{d.local.state}</span></div>}
                                 {d.local.description && <div className="flex justify-between"><span className="text-[var(--text-muted)]">TYPE</span><span className="text-[var(--text-secondary)]">{d.local.description}</span></div>}
@@ -494,7 +497,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                 ) : d?.error ? (
                     <div className="p-4 text-[var(--text-secondary)] text-[12px]">{d.error}</div>
                 ) : (
-                    <div className="p-4 text-red-400 text-[12px]">INTEL UNAVAILABLE</div>
+                    <div className="p-4 text-red-400 text-[12px]">{tn('intel_unavailable')}</div>
                 )}
             </motion.div>
         );
@@ -1405,7 +1408,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                     <div className="flex items-center gap-2">
                         <AlertTriangle size={16} className="text-cyan-400" />
                         <span className="text-[12px] text-cyan-400 font-mono tracking-widest font-bold">
-                            GLOBAL THREAT INTERCEPT
+                            {tn('global_threat')}
                         </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1427,7 +1430,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                     ? 'text-purple-400 bg-purple-900/30 border border-purple-700/40'
                                     : 'text-gray-600 hover:text-purple-400 border border-transparent hover:border-purple-700/30'
                             }`}
-                            title="AI Intelligence Brief"
+                            title={tn('ai_intel_brief')}
                         >
                             <Brain size={14} />
                         </button>
@@ -1447,8 +1450,8 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                             exit={{ height: 0, opacity: 0 }}
                             className="text-[10px] text-cyan-500/80 mt-1 flex items-center justify-between font-bold relative z-10"
                         >
-                            <span className="px-1 border border-cyan-500/30">SYS.STATUS: MONITORING</span>
-                            <span className="flex items-center gap-1"><Clock size={10} /> {data?.last_updated ? formatTime(data.last_updated) : "SCANNING"}</span>
+                            <span className="px-1 border border-cyan-500/30">{tn('sys_status_monitoring')}</span>
+                            <span className="flex items-center gap-1"><Clock size={10} /> {data?.last_updated ? formatTime(data.last_updated) : tn('scanning')}</span>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -1476,7 +1479,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                 data.threat_level.level === 'SEVERE' || data.threat_level.level === 'HIGH' ? 'animate-pulse' : ''
                             }`} style={{ backgroundColor: data.threat_level.color }} />
                             <span className="text-[12px] font-bold tracking-wider" style={{ color: data.threat_level.color }}>
-                                THREAT: {data.threat_level.level}
+                                {tn('threat', { level: data.threat_level.level })}
                             </span>
                             <span className="text-[12px] text-[var(--text-muted)] ml-auto">
                                 {data.threat_level.score}/100
@@ -1499,13 +1502,13 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                         <div className="border border-purple-500/30 bg-purple-950/10 rounded-sm">
                             <div className="flex items-center gap-2 px-2 py-1.5 border-b border-purple-500/20">
                                 <Brain size={12} className="text-purple-400" />
-                                <span className="text-[11px] font-bold tracking-wider text-purple-400">AI INTELLIGENCE BRIEF</span>
+                                <span className="text-[11px] font-bold tracking-wider text-purple-400">{tn('ai_intel_brief')}</span>
                                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse ml-auto" />
                             </div>
                             {aiSummaryLoading ? (
                                 <div className="p-3 flex items-center gap-2 text-[10px] text-purple-300">
                                     <Loader2 size={12} className="animate-spin" />
-                                    COMPILING INTELLIGENCE BRIEF...
+                                    {tn('compiling_brief')}
                                 </div>
                             ) : aiSummary ? (
                                 <div className="p-2 flex flex-col gap-2 text-[10px]">
@@ -1514,7 +1517,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                     </div>
                                     {aiSummary.top_stories?.length > 0 && (
                                         <div>
-                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">TOP STORIES</div>
+                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">{tn('top_stories')}</div>
                                             <div className="flex flex-col gap-1">
                                                 {aiSummary.top_stories.slice(0, 5).map((s: any, i: number) => (
                                                     <a key={i} href={s.link} target="_blank" rel="noreferrer" className="text-[11px] text-purple-200/80 hover:text-white transition-colors truncate">
@@ -1531,7 +1534,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                     )}
                                     {aiSummary.keywords?.length > 0 && (
                                         <div>
-                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">TRENDING KEYWORDS</div>
+                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">{tn('trending_keywords')}</div>
                                             <div className="flex flex-wrap gap-1">
                                                 {aiSummary.keywords.slice(0, 10).map((kw: any, i: number) => (
                                                     <span key={i} className="text-[10px] px-1 py-0.5 bg-purple-950/50 border border-purple-500/20 text-purple-300 rounded-sm">
@@ -1543,7 +1546,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                     )}
                                     {aiSummary.threat_distribution && (
                                         <div>
-                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">THREAT BREAKDOWN</div>
+                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">{tn('threat_breakdown')}</div>
                                             <div className="flex gap-1">
                                                 {Object.entries(aiSummary.threat_distribution).map(([level, count]) => (
                                                     <span key={level} className={`text-[10px] px-1.5 py-0.5 border rounded-sm font-bold ${
@@ -1570,11 +1573,11 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                         }}
                                         className="text-[11px] text-purple-500 hover:text-purple-300 transition-colors self-end"
                                     >
-                                        ↻ REFRESH BRIEF
+                                        {tn('refresh_brief')}
                                     </button>
                                 </div>
                             ) : (
-                                <div className="p-3 text-[10px] text-purple-300/50">No data available.</div>
+                                <div className="p-3 text-[10px] text-purple-300/50">{tc('no_data')}</div>
                             )}
                         </div>
                     </motion.div>
@@ -1606,8 +1609,8 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                 fimi.major_wave ? 'text-amber-400' : 'text-purple-400'
                             }`}>
                                 {fimi.major_wave
-                                    ? `⚠ MAJOR DISINFORMATION ALERT${fimi.major_wave_target ? ` — ${fimi.major_wave_target.toUpperCase()}` : ''}`
-                                    : '⚠ DISINFORMATION INDEX'
+                                    ? `${tn('major_disinfo_alert')}${fimi.major_wave_target ? ` — ${fimi.major_wave_target.toUpperCase()}` : ''}`
+                                    : tn('disinfo_index')
                                 }
                             </span>
                             <span className="text-[11px] text-[var(--text-muted)] ml-auto flex items-center gap-1">
@@ -1633,7 +1636,7 @@ function NewsFeedInner({ selectedEntity, regionDossier, regionDossierLoading, on
                                     {/* Threat Actor Bar */}
                                     {Object.keys(fimi.threat_actors).length > 0 && (
                                         <div className="px-2 py-1.5 border-b border-purple-500/10">
-                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">THREAT ACTORS</div>
+                                            <div className="text-[11px] text-purple-400 tracking-widest font-bold mb-1">{tn('threat_actors')}</div>
                                             <div className="flex gap-1 h-2 rounded-sm overflow-hidden">
                                                 {(() => {
                                                     const total = Object.values(fimi.threat_actors).reduce((a, b) => a + b, 0);

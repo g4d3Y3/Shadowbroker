@@ -58,6 +58,7 @@ import {
   companionOpenBrowser,
   type CompanionStatus,
 } from '@/lib/desktopCompanion';
+import { useTranslations } from 'next-intl';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -240,6 +241,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
   onClose: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('api-keys');
+  const t = useTranslations('settings');
 
   // Native desktop bypass: when the native IPC bridge is present, protected
   // settings are authenticated through Rust-side admin-key ownership. The
@@ -1127,10 +1129,10 @@ const SettingsPanel = React.memo(function SettingsPanel({
                 </div>
                 <div>
                   <h2 className="text-sm font-bold tracking-[0.2em] text-[var(--text-primary)] font-mono">
-                    SYSTEM CONFIG
+                    {t('system_config')}
                   </h2>
                   <span className="text-[13px] text-[var(--text-muted)] font-mono tracking-widest">
-                    SETTINGS &amp; DATA SOURCES
+                    {t('settings_and_data_sources')}
                   </span>
                 </div>
               </div>
@@ -1169,7 +1171,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
                     className={adminSessionReady ? 'text-green-400' : 'text-yellow-500'}
                   />
                   <span className="text-[13px] font-mono tracking-widest text-[var(--text-muted)] whitespace-nowrap">
-                    OPERATOR TOOLS
+                    {t('operator_tools')}
                   </span>
                   <input
                     type="password"
@@ -1183,10 +1185,10 @@ const SettingsPanel = React.memo(function SettingsPanel({
                     disabled={nativeProtected}
                     placeholder={
                       nativeProtected
-                        ? 'Protected via native desktop bridge'
+                        ? t('admin_key_placeholder_native')
                         : adminSessionReady
-                          ? 'Operator tools unlocked. Enter key only to reseed or recover...'
-                          : 'Enter operator key for protected settings tabs...'
+                          ? t('admin_key_placeholder_unlocked')
+                          : t('admin_key_placeholder_locked')
                     }
                     className="flex-1 bg-[var(--bg-primary)]/60 border border-[var(--border-primary)] px-2 py-1 text-sm font-mono text-[var(--text-secondary)] outline-none focus:border-cyan-700 placeholder:text-[var(--text-muted)]/50"
                   />
@@ -1196,7 +1198,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
                       disabled={adminSessionBusy}
                       className="px-2 py-1 border border-red-500/30 text-[12px] font-mono text-red-300/80 tracking-widest hover:text-red-200 hover:border-red-400/40 disabled:opacity-50"
                     >
-                      LOCK
+                      {t('lock')}
                     </button>
                   ) : (
                     <button
@@ -1204,7 +1206,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
                       disabled={adminSessionBusy || !adminKey.trim()}
                       className="px-2 py-1 border border-cyan-500/30 text-[12px] font-mono text-cyan-300/80 tracking-widest hover:text-cyan-200 hover:border-cyan-400/40 disabled:opacity-50"
                     >
-                      UNLOCK
+                      {t('unlock')}
                     </button>
                   )}
                   {activeTab === 'protocol' && (
@@ -1212,7 +1214,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
                       onClick={() => setShowOperatorTools(false)}
                       className="px-2 py-1 border border-[var(--border-primary)] text-[12px] font-mono text-[var(--text-muted)] tracking-widest hover:text-cyan-300 hover:border-cyan-500/40"
                     >
-                      HIDE
+                      {t('hide')}
                     </button>
                   )}
                   <span
@@ -1220,7 +1222,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
                       adminSessionReady ? 'text-green-400/70' : 'text-yellow-400/70'
                     }`}
                   >
-                    {nativeProtected ? 'NATIVE' : adminSessionReady ? 'ACTIVE' : 'LOCKED'}
+                    {nativeProtected ? t('native') : adminSessionReady ? t('active') : t('locked')}
                   </span>
                 </div>
                 {adminSessionMsg && (
@@ -1273,14 +1275,14 @@ const SettingsPanel = React.memo(function SettingsPanel({
                 className={`flex-1 px-4 py-2.5 text-sm font-mono tracking-widest font-bold transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'api-keys' ? 'text-cyan-400 border-b-2 border-cyan-500 bg-cyan-950/10' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
               >
                 <Key size={10} />
-                API KEYS
+                {t('api_keys_tab')}
               </button>
               <button
                 onClick={() => setActiveTab('news-feeds')}
                 className={`flex-1 px-4 py-2.5 text-sm font-mono tracking-widest font-bold transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'news-feeds' ? 'text-orange-400 border-b-2 border-orange-500 bg-orange-950/10' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
               >
                 <Rss size={10} />
-                NEWS FEEDS
+                {t('news_feeds_tab')}
                 {feedsDirty && (
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
                 )}
@@ -1290,21 +1292,21 @@ const SettingsPanel = React.memo(function SettingsPanel({
                 className={`flex-1 px-4 py-2.5 text-sm font-mono tracking-widest font-bold transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'sentinel' ? 'text-purple-400 border-b-2 border-purple-500 bg-purple-950/10' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
               >
                 <Satellite size={10} />
-                SENTINEL
+                {t('sentinel_tab')}
               </button>
               <button
                 onClick={() => setActiveTab('sar')}
                 className={`flex-1 px-4 py-2.5 text-sm font-mono tracking-widest font-bold transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'sar' ? 'text-amber-400 border-b-2 border-amber-500 bg-amber-950/10' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
               >
                 <Radar size={10} />
-                SAR
+                {t('sar_tab')}
               </button>
               <button
                 onClick={() => setActiveTab('protocol')}
                 className={`flex-1 px-4 py-2.5 text-sm font-mono tracking-widest font-bold transition-colors flex items-center justify-center gap-1.5 ${activeTab === 'protocol' ? 'text-green-400 border-b-2 border-green-500 bg-green-950/10' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
               >
                 <Shield size={10} />
-                MESH
+                {t('mesh_tab')}
               </button>
             </div>
 
@@ -1316,7 +1318,7 @@ const SettingsPanel = React.memo(function SettingsPanel({
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-sm text-cyan-300 font-mono tracking-[0.18em]">
-                        WORMHOLE KEY SETUP
+                        {t('wormhole_key_setup')}
                       </div>
                       <div className="mt-2 text-sm text-[var(--text-secondary)] font-mono leading-relaxed">
                         One click enters Wormhole on the recommended path for gates and the obfuscated
@@ -1325,14 +1327,14 @@ const SettingsPanel = React.memo(function SettingsPanel({
                     </div>
                     <div className="text-right">
                       <div className="text-[12px] text-[var(--text-muted)] font-mono tracking-[0.2em]">
-                        STATUS
+                        {t('status_label')}
                       </div>
                       <div className="mt-1 text-[11px] font-mono text-cyan-200">
                         {wormholeStatus?.ready
-                          ? 'ACTIVE'
+                          ? t('active')
                           : wormholeEnabled
-                            ? 'TURN ON CONNECT'
-                            : 'OFF'}
+                            ? t('turn_on_connect')
+                            : t('off')}
                       </div>
                     </div>
                   </div>

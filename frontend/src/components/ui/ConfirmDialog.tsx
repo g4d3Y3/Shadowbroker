@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   open: boolean;
@@ -23,13 +24,16 @@ const ConfirmDialog: React.FC<Props> = ({
   open,
   title,
   message,
-  confirmLabel = 'CONFIRM',
-  cancelLabel = 'CANCEL',
+  confirmLabel,
+  cancelLabel,
   danger = true,
   onConfirm,
   onCancel,
 }) => {
+  const t = useTranslations('common');
   const confirmBtnRef = useRef<HTMLButtonElement>(null);
+  const resolvedConfirm = confirmLabel ?? t('confirm');
+  const resolvedCancel = cancelLabel ?? t('cancel');
 
   // Auto-focus the confirm button when the dialog opens
   useEffect(() => {
@@ -99,14 +103,14 @@ const ConfirmDialog: React.FC<Props> = ({
               e.currentTarget.style.background = `${accentColor}30`;
             }}
           >
-            {confirmLabel}
+            {resolvedConfirm}
           </button>
           <button
             type="button"
             onClick={onCancel}
             className="px-4 py-2 text-[11px] font-mono tracking-wider border border-gray-600/40 text-gray-400 hover:text-white hover:border-gray-500/60 transition-colors"
           >
-            {cancelLabel}
+            {resolvedCancel}
           </button>
         </div>
       </div>

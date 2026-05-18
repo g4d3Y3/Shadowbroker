@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Popup } from 'react-map-gl/maplibre';
+import { useTranslations } from 'next-intl';
 import type { WastewaterPlant } from '@/types/dashboard';
 
 export interface WastewaterPopupProps {
@@ -20,6 +21,7 @@ const ACTIVITY_COLORS: Record<string, string> = {
 };
 
 export function WastewaterPopup({ plant, onClose }: WastewaterPopupProps) {
+  const t = useTranslations('popups');
   const hasAlerts = plant.alert_count > 0;
   const borderColor = hasAlerts ? 'border-red-500/50' : 'border-cyan-500/40';
 
@@ -38,39 +40,41 @@ export function WastewaterPopup({ plant, onClose }: WastewaterPopupProps) {
         {/* Header */}
         <div className="flex justify-between items-start mb-2">
           <div className={`map-popup-title ${hasAlerts ? 'text-red-400' : 'text-cyan-400'}`}>
-            {hasAlerts ? '!! PATHOGEN ALERT !!' : 'WASTEWATER MONITOR'}
+            {hasAlerts ? t('pathogen_alert') : t('wastewater_monitor')}
           </div>
           {plant.alert_count > 0 && (
             <span className="text-[11px] font-mono tracking-widest px-1.5 py-0.5 rounded border bg-red-900/50 border-red-500/40 text-red-300">
-              {plant.alert_count} ALERT{plant.alert_count > 1 ? 'S' : ''}
+              {plant.alert_count > 1
+                ? t('alerts_count', { count: plant.alert_count })
+                : t('alert_count', { count: plant.alert_count })}
             </span>
           )}
         </div>
 
         {/* Site info */}
         <div className="map-popup-row text-[#8899aa] mb-1">
-          SITE: <span className="text-white">{plant.name || plant.site_name}</span>
+          {t('site')} <span className="text-white">{plant.name || plant.site_name}</span>
         </div>
         {plant.city && (
           <div className="map-popup-row text-[#8899aa] mb-1">
-            LOCATION: <span className="text-white">{plant.city}, {plant.state}</span>
+            {t('location')} <span className="text-white">{plant.city}, {plant.state}</span>
           </div>
         )}
         {plant.population && (
           <div className="map-popup-row text-[#8899aa] mb-1">
-            POP SERVED: <span className="text-white">{plant.population.toLocaleString()}</span>
+            {t('pop_served')} <span className="text-white">{plant.population.toLocaleString()}</span>
           </div>
         )}
         {plant.collection_date && (
           <div className="map-popup-row text-[#8899aa] mb-2">
-            SAMPLED: <span className="text-white">{plant.collection_date}</span>
+            {t('sampled')} <span className="text-white">{plant.collection_date}</span>
           </div>
         )}
 
         {/* Pathogen levels */}
         {plant.pathogens && plant.pathogens.length > 0 ? (
           <div className="mt-2 pt-2 border-t border-cyan-500/20">
-            <div className="text-[11px] font-mono tracking-widest text-cyan-400/60 mb-1.5">PATHOGEN DETECTIONS</div>
+            <div className="text-[11px] font-mono tracking-widest text-cyan-400/60 mb-1.5">{t('pathogen_detections')}</div>
             {plant.pathogens.map((p, i) => (
               <div
                 key={i}
@@ -89,14 +93,14 @@ export function WastewaterPopup({ plant, onClose }: WastewaterPopupProps) {
           </div>
         ) : (
           <div className="mt-2 pt-2 border-t border-gray-600/20">
-            <div className="text-[9px] text-gray-500 text-center">No recent pathogen data available</div>
+            <div className="text-[9px] text-gray-500 text-center">{t('no_pathogen_data')}</div>
           </div>
         )}
 
         {/* Source attribution */}
         <div className="mt-2 pt-1.5 border-t border-[var(--border-primary)]/10">
           <div className="text-[10px] text-[#667788] text-center leading-tight">
-            SOURCE: WastewaterSCAN (Stanford / Emory)
+            {t('source_wastewaterscan')}
           </div>
         </div>
       </div>

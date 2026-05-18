@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Radar, Check, Zap, Globe } from 'lucide-react';
@@ -64,6 +65,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
   onClose,
   onChoiceMade,
 }: SarModeChooserModalProps) {
+  const t = useTranslations('sar');
   const [view, setView] = useState<'chooser' | 'signup'>('chooser');
   const [earthdataToken, setEarthdataToken] = useState('');
   const [earthdataUser, setEarthdataUser] = useState('');
@@ -92,7 +94,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
 
   const submitModeB = async () => {
     if (earthdataToken.trim().length < 8) {
-      setError('Earthdata token looks too short. Paste the full token string.');
+      setError(t('token_too_short'));
       return;
     }
     setSubmitting(true);
@@ -143,7 +145,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
       setError(
         e instanceof Error
           ? e.message
-          : 'Failed to activate Mode B. Check the backend logs.',
+          : t('activate_failed'),
       );
     } finally {
       setSubmitting(false);
@@ -195,7 +197,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
             <div className="flex items-center gap-2">
               <Radar size={18} className="text-cyan-400" />
               <span className="text-sm font-semibold tracking-wide">
-                SAR GROUND-CHANGE LAYER
+                {t('modal_title')}
               </span>
             </div>
             <button
@@ -211,9 +213,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
           {view === 'chooser' && (
             <div className="p-5 space-y-5">
               <div className="text-sm text-cyan-200/90">
-                SAR (synthetic aperture radar) detects ground changes through cloud
-                cover, at night, anywhere on Earth. ShadowBroker offers two modes —
-                both free. Pick one.
+                {t('chooser_intro')}
               </div>
 
               {/* Mode A */}
@@ -221,13 +221,11 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                 <div className="flex items-center gap-2 mb-1">
                   <Globe size={14} className="text-cyan-300" />
                   <span className="text-sm font-semibold text-cyan-200">
-                    MODE A — Catalog only (default)
+                    {t('mode_a_title')}
                   </span>
                 </div>
                 <div className="text-xs text-cyan-200/70 mb-3">
-                  Free Sentinel-1 scene metadata from Alaska Satellite Facility. No
-                  account, no downloads, no credentials. Tells you when radar
-                  passes happened over your AOIs and when the next pass is coming.
+                  {t('mode_a_desc')}
                 </div>
                 <button
                   type="button"
@@ -235,7 +233,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                   className="w-full rounded border border-cyan-400/60 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-500/20 transition"
                 >
                   <Check size={12} className="inline mr-1" />
-                  Mode A is fine — don&apos;t ask again
+                  {t('mode_a_confirm')}
                 </button>
               </div>
 
@@ -244,13 +242,11 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                 <div className="flex items-center gap-2 mb-1">
                   <Zap size={14} className="text-amber-300" />
                   <span className="text-sm font-semibold text-amber-200">
-                    MODE B — Full ground-change alerts
+                    {t('mode_b_title')}
                   </span>
                 </div>
                 <div className="text-xs text-amber-200/80 mb-3">
-                  Adds pre-computed anomalies from NASA OPERA, Copernicus EGMS,
-                  GFM, EMS, and UNOSAT. Requires a free NASA Earthdata account
-                  (~1 minute).
+                  {t('mode_b_desc')}
                 </div>
                 <ul className="text-xs text-amber-100/80 space-y-1 mb-3">
                   {MODE_B_EXTRAS.map((x) => (
@@ -270,7 +266,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                   onClick={() => setView('signup')}
                   className="w-full rounded border border-amber-400/60 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-100 hover:bg-amber-500/20 transition"
                 >
-                  Set up Mode B (free, ~1 min) →
+                  {t('mode_b_setup')}
                 </button>
               </div>
             </div>
@@ -283,11 +279,11 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                 onClick={() => setView('chooser')}
                 className="text-xs text-cyan-400/80 hover:text-cyan-300"
               >
-                ← back
+                {t('back')}
               </button>
 
               <div className="text-sm font-semibold text-amber-200">
-                Activate Mode B
+                {t('activate_title')}
               </div>
 
               <ol className="space-y-3">
@@ -327,7 +323,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                   htmlFor="sar-earthdata-user"
                   className="block text-xs text-amber-200/80"
                 >
-                  Earthdata username (optional)
+                  {t('earthdata_username')}
                 </label>
                 <input
                   id="sar-earthdata-user"
@@ -350,7 +346,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                   htmlFor="sar-earthdata-token"
                   className="block text-xs text-amber-200/80 mt-2"
                 >
-                  Earthdata user token (required)
+                  {t('earthdata_token')}
                 </label>
                 <input
                   id="sar-earthdata-token"
@@ -369,8 +365,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                   className="w-full rounded border border-amber-400/30 bg-zinc-900 px-3 py-2 text-xs text-amber-100 placeholder:text-amber-100/30 focus:border-amber-400/70 focus:outline-none font-mono tracking-tight"
                 />
                 <div className="text-[10px] text-amber-100/50">
-                  Stored locally on this node only. Never shared. Revoke anytime
-                  in Settings → SAR.
+                  {t('stored_locally')}
                 </div>
               </div>
 
@@ -386,7 +381,7 @@ const SarModeChooserModal = React.memo(function SarModeChooserModal({
                 disabled={submitting || earthdataToken.trim().length < 8}
                 className="w-full rounded border border-amber-400/60 bg-amber-500/20 px-4 py-2 text-xs font-semibold text-amber-100 hover:bg-amber-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
               >
-                {submitting ? 'Activating…' : 'Activate Mode B'}
+                {submitting ? t('activating') : t('activate_btn')}
               </button>
             </div>
           )}

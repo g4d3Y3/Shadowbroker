@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ArrowDownRight, TrendingUp, AlertTriangle, ChevronUp } from 'lucide-react';
 import { useDataKeys } from '@/hooks/useDataStore';
 
 export default function GlobalTicker() {
+  const t = useTranslations('left_panel');
   const { stocks, financial_source } = useDataKeys(['stocks', 'financial_source'] as const);
   const entries = Object.entries(stocks || {});
   const fallback = financial_source === 'yfinance';

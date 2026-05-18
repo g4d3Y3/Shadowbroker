@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import ExternalImage from '@/components/ExternalImage';
+import { useTranslations } from 'next-intl';
 
 export interface Sentinel2Data {
   found: boolean;
@@ -55,6 +56,8 @@ const ACTION_BTN: React.CSSProperties = {
 };
 
 export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionDossierPanelProps) {
+  const t = useTranslations('popups');
+  const tc = useTranslations('common');
   const scenes = s2.scenes?.length ? s2.scenes : [s2];
   const [idx, setIdx] = useState(0);
   const scene = scenes[idx] || s2;
@@ -131,7 +134,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                 fontWeight: 'bold',
               }}
             >
-              SENTINEL-2 IMAGERY
+              {t('sentinel2_title')}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -158,7 +161,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                 letterSpacing: '0.1em',
               }}
             >
-              ✕ CLOSE
+              ✕ {tc('close').toUpperCase()}
             </button>
           </div>
         </div>
@@ -186,17 +189,17 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                     disabled={idx === 0}
                     style={idx === 0 ? NAV_BTN_DISABLED : NAV_BTN}
                   >
-                    ← PREV
+                    {t('prev')}
                   </button>
                   <span style={{ color: '#4ade80', fontWeight: 'bold', minWidth: 120, textAlign: 'center' }}>
-                    {scene.datetime?.slice(0, 10) || 'UNKNOWN DATE'}
+                    {scene.datetime?.slice(0, 10) || t('unknown_date')}
                   </span>
                   <button
                     onClick={() => idx < scenes.length - 1 && setIdx(idx + 1)}
                     disabled={idx === scenes.length - 1}
                     style={idx === scenes.length - 1 ? NAV_BTN_DISABLED : NAV_BTN}
                   >
-                    NEXT →
+                    {t('next')}
                   </button>
                   <span style={{ color: 'rgba(134,239,172,0.5)', fontSize: 10 }}>
                     {idx + 1}/{scenes.length}
@@ -205,7 +208,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
               ) : (
                 <span style={{ color: '#4ade80', fontWeight: 'bold' }}>
                   {scene.datetime?.slice(0, 10) ||
-                    (scene.fallback ? 'DATE UNAVAILABLE' : 'UNKNOWN DATE')}
+                    (scene.fallback ? t('date_unavailable') : t('unknown_date'))}
                 </span>
               )}
 
@@ -213,8 +216,8 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                 {scene.cloud_cover != null
                   ? `${scene.cloud_cover?.toFixed(0)}% cloud`
                   : scene.fallback
-                    ? 'fallback imagery'
-                    : 'cloud unknown'}
+                    ? t('fallback_imagery')
+                    : t('cloud_unknown')}
               </span>
             </div>
 
@@ -253,7 +256,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                   textAlign: 'center',
                 }}
               >
-                Scene found — no preview available
+                {t('scene_no_preview')}
               </div>
             )}
 
@@ -277,7 +280,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                   rel="noopener noreferrer"
                   style={ACTION_BTN}
                 >
-                  ⬇ DOWNLOAD
+                  {t('download')}
                 </a>
                 <button
                   onClick={async () => {
@@ -293,7 +296,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                   }}
                   style={{ ...ACTION_BTN, background: 'rgba(34,197,94,0.15)', borderColor: 'rgba(34,197,94,0.4)' }}
                 >
-                  📋 COPY
+                  {t('copy')}
                 </button>
                 <a
                   href={imgUrl}
@@ -301,7 +304,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
                   rel="noopener noreferrer"
                   style={{ ...ACTION_BTN, color: '#10b981', background: 'rgba(16,185,129,0.15)', borderColor: 'rgba(16,185,129,0.4)' }}
                 >
-                  ↗ OPEN FULL RES
+                  {t('open_full_res')}
                 </a>
               </div>
             )}
@@ -316,7 +319,7 @@ export function RegionDossierPanel({ sentinel2: s2, lat, lng, onClose }: RegionD
               textAlign: 'center',
             }}
           >
-            No clear imagery in last 30 days
+            {t('no_clear_imagery')}
           </div>
         )}
       </div>

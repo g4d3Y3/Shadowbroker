@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Search, Crosshair, Plane, Shield, Star, Ship, X, Database } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { trackedOperators } from '../lib/trackedData';
@@ -24,6 +25,7 @@ interface SearchResult {
 }
 
 const FindLocateBar = React.memo(function FindLocateBar({ onLocate, onFilter }: FindLocateBarProps) {
+  const t = useTranslations('locate_bar');
   const data = useDataKeys(['commercial_flights', 'private_flights', 'private_jets', 'military_flights', 'tracked_flights', 'ships'] as const);
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -184,7 +186,7 @@ const FindLocateBar = React.memo(function FindLocateBar({ onLocate, onFilter }: 
           name="sb-locate-search"
           autoComplete="off"
           data-search-input
-          placeholder="Search aircraft, person or vessel..."
+          placeholder={t('search_placeholder')}
           className="flex-1 bg-transparent text-[12px] text-[var(--text-secondary)] font-mono tracking-wider outline-none placeholder:text-slate-500"
           onChange={(e) => {
             setQuery(e.target.value);
@@ -241,7 +243,9 @@ const FindLocateBar = React.memo(function FindLocateBar({ onLocate, onFilter }: 
               ))}
             </div>
             <div className="px-3 py-1.5 border-t border-[var(--border-primary)] bg-[var(--bg-primary)]/50 text-[11px] text-[var(--text-muted)] font-mono tracking-widest">
-              {filtered.length} RESULT{filtered.length !== 1 ? 'S' : ''} — CLICK TO LOCATE
+              {filtered.length === 1
+                ? t('results_count', { count: filtered.length })
+                : t('results_count_plural', { count: filtered.length })}
             </div>
           </motion.div>
         )}
@@ -253,7 +257,7 @@ const FindLocateBar = React.memo(function FindLocateBar({ onLocate, onFilter }: 
             className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-secondary)]/90 backdrop-blur-sm border border-[var(--border-primary)] z-50 p-4 text-center"
           >
             <div className="text-[9px] text-[var(--text-muted)] font-mono tracking-widest">
-              NO MATCHING ASSETS
+              {t('no_matching')}
             </div>
           </motion.div>
         )}

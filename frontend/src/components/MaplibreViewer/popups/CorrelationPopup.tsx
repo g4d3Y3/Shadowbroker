@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Popup } from 'react-map-gl/maplibre';
 import { Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { API_BASE } from '@/lib/api';
 import type { CorrelationAlert } from '@/types/dashboard';
 
@@ -41,6 +42,7 @@ const SEVERITY_BADGES: Record<string, { bg: string; text: string }> = {
 };
 
 export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
+  const t = useTranslations('popups');
   const meta = TYPE_LABELS[alert.type] || TYPE_LABELS.contradiction;
   const sevBadge = SEVERITY_BADGES[alert.severity] || SEVERITY_BADGES.low;
   const isContradiction = alert.type === 'contradiction';
@@ -79,7 +81,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
             {isAnalysisZone ? (
               <>
                 <div className={`map-popup-title ${meta.color}`}>
-                  {alert.title || 'OPENCLAW ANALYSIS'}
+                  {alert.title || t('openclaw_analysis')}
                 </div>
                 {alert.category && (
                   <div className="text-[11px] font-mono tracking-widest mt-0.5">
@@ -97,7 +99,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
           </div>
           <div className="flex items-center gap-1.5">
             <span className={`text-[11px] font-mono tracking-widest px-1.5 py-0.5 rounded border ${sevBadge.bg} ${sevBadge.text}`}>
-              {isAnalysisZone ? alert.severity?.toUpperCase() : `ALERT LVL ${alert.score}`}
+              {isAnalysisZone ? alert.severity?.toUpperCase() : t('alert_lvl', { score: alert.score })}
             </span>
             {isAnalysisZone && alert.id && (
               <button
@@ -105,7 +107,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
                 onClick={handleDelete}
                 disabled={deleting}
                 className="p-1 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 rounded transition disabled:opacity-50"
-                title="Delete this analysis zone"
+                title={t('delete_zone_title')}
               >
                 <Trash2 size={12} />
               </button>
@@ -116,7 +118,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* ── Analysis Zone: Agent report body ── */}
         {isAnalysisZone && alert.body && (
           <div className="mt-2 pt-2 border-t border-cyan-500/20">
-            <div className="text-[11px] font-mono tracking-widest text-cyan-500/60 mb-1.5">AGENT ASSESSMENT</div>
+            <div className="text-[11px] font-mono tracking-widest text-cyan-500/60 mb-1.5">{t('agent_assessment')}</div>
             <div className="text-[10px] text-cyan-100/90 leading-relaxed whitespace-pre-wrap">
               {alert.body}
             </div>
@@ -126,7 +128,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Analysis Zone: Evidence/drivers */}
         {isAnalysisZone && alert.drivers && alert.drivers.length > 0 && (
           <div className="mt-2 pt-2 border-t border-cyan-500/15">
-            <div className="text-[11px] font-mono tracking-widest text-cyan-500/50 mb-1.5">KEY INDICATORS</div>
+            <div className="text-[11px] font-mono tracking-widest text-cyan-500/50 mb-1.5">{t('key_indicators')}</div>
             {alert.drivers.map((driver, i) => (
               <div key={i} className="text-[10px] text-cyan-200/70 mb-0.5 flex items-start gap-1">
                 <span className="text-cyan-500">{i + 1}.</span> {driver}
@@ -139,7 +141,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {isAnalysisZone && (
           <div className="mt-2 pt-1.5 border-t border-cyan-500/10">
             <div className="text-[10px] text-cyan-500/40 text-center">
-              Placed by OpenClaw agent — click trash icon to remove
+              {t('placed_by_agent')}
             </div>
           </div>
         )}
@@ -149,21 +151,21 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Context rating for contradictions */}
         {isContradiction && alert.context && (
           <div className="map-popup-row mb-1">
-            <span className="text-[#8899aa]">CONFIDENCE: </span>
+            <span className="text-[#8899aa]">{t('confidence')} </span>
             <span className={`font-bold ${CONTEXT_COLORS[alert.context] || 'text-white'}`}>{alert.context}</span>
           </div>
         )}
 
         {!isAnalysisZone && alert.location_name && (
           <div className="map-popup-row text-[#8899aa] mb-2">
-            REGION: <span className="text-white">{alert.location_name}</span>
+            {t('region')} <span className="text-white">{alert.location_name}</span>
           </div>
         )}
 
         {/* Section 1: The Statement/Claim */}
         {isContradiction && alert.headlines && alert.headlines.length > 0 && (
           <div className="mt-2 pt-2 border-t border-amber-500/20">
-            <div className="text-[11px] font-mono tracking-widest text-amber-500/60 mb-1.5">OFFICIAL STATEMENT</div>
+            <div className="text-[11px] font-mono tracking-widest text-amber-500/60 mb-1.5">{t('official_statement')}</div>
             {alert.headlines.map((headline, i) => (
               <div key={i} className="text-[10px] text-amber-200/90 leading-relaxed mb-1">
                 &ldquo;{headline}&rdquo;
@@ -175,14 +177,14 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Section 2: Contradicting Telemetry */}
         {isContradiction && alert.nearby_outages && alert.nearby_outages.length > 0 && (
           <div className="mt-2 pt-2 border-t border-red-500/20">
-            <div className="text-[11px] font-mono tracking-widest text-red-400/60 mb-1.5">CONTRADICTING TELEMETRY</div>
+            <div className="text-[11px] font-mono tracking-widest text-red-400/60 mb-1.5">{t('contradicting_telemetry')}</div>
             {alert.nearby_outages.map((outage, i) => (
               <div key={i} className="flex justify-between items-center text-[10px] mb-1 p-1 rounded bg-red-950/30 border border-red-500/20">
                 <div>
-                  <span className="text-red-300 font-semibold">{outage.region || 'Unknown Region'}</span>
-                  <span className="text-[#8899aa] ml-1">({outage.distance_km}km away)</span>
+                  <span className="text-red-300 font-semibold">{outage.region || t('unknown_region')}</span>
+                  <span className="text-[#8899aa] ml-1">{t('km_away', { dist: outage.distance_km })}</span>
                 </div>
-                <span className="text-red-400 font-bold">{outage.severity}% outage</span>
+                <span className="text-red-400 font-bold">{t('percent_outage', { pct: outage.severity })}</span>
               </div>
             ))}
           </div>
@@ -191,11 +193,11 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Section 3: Market Signals */}
         {isContradiction && alert.related_markets && alert.related_markets.length > 0 && (
           <div className="mt-2 pt-2 border-t border-purple-500/20">
-            <div className="text-[11px] font-mono tracking-widest text-purple-400/60 mb-1.5">PREDICTION MARKET SIGNALS</div>
+            <div className="text-[11px] font-mono tracking-widest text-purple-400/60 mb-1.5">{t('prediction_market_signals')}</div>
             {alert.related_markets.map((market, i) => (
               <div key={i} className="text-[10px] mb-1 p-1 rounded bg-purple-950/30 border border-purple-500/20">
                 <div className="text-purple-300">{market.title}</div>
-                <div className="text-purple-400 font-bold mt-0.5">{(market.probability * 100).toFixed(0)}% probability</div>
+                <div className="text-purple-400 font-bold mt-0.5">{t('percent_probability', { pct: (market.probability * 100).toFixed(0) })}</div>
               </div>
             ))}
           </div>
@@ -204,7 +206,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Section 4: All Drivers (non-contradiction, non-analysis types) */}
         {!isContradiction && !isAnalysisZone && alert.drivers && alert.drivers.length > 0 && (
           <div className="mt-2 pt-2 border-t border-[var(--border-primary)]/30">
-            <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1.5">CORRELATED INDICATORS</div>
+            <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1.5">{t('correlated_indicators')}</div>
             {alert.drivers.map((driver, i) => (
               <div key={i} className="text-[10px] text-[var(--text-primary)] mb-0.5 flex items-start gap-1">
                 <span className={meta.color}>+</span> {driver}
@@ -216,7 +218,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Drivers summary for contradictions */}
         {isContradiction && alert.drivers && alert.drivers.length > 0 && (
           <div className="mt-2 pt-2 border-t border-[var(--border-primary)]/30">
-            <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1.5">EVIDENCE CHAIN</div>
+            <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1.5">{t('evidence_chain')}</div>
             {alert.drivers.map((driver, i) => (
               <div key={i} className="text-[10px] text-[var(--text-primary)]/80 mb-0.5 flex items-start gap-1">
                 <span className="text-amber-500">{i + 1}.</span> {driver}
@@ -228,7 +230,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {/* Section 5: Alternative Explanations */}
         {isContradiction && alert.alternatives && alert.alternatives.length > 0 && (
           <div className="mt-2 pt-2 border-t border-[var(--border-primary)]/20">
-            <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1.5">ALTERNATIVE EXPLANATIONS</div>
+            <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1.5">{t('alternative_explanations')}</div>
             {alert.alternatives.map((alt, i) => (
               <div key={i} className="text-[9px] text-[#8899aa] mb-0.5 flex items-start gap-1">
                 <span className="text-gray-500">-</span> {alt}
@@ -241,7 +243,7 @@ export function CorrelationPopup({ alert, onClose }: CorrelationPopupProps) {
         {isContradiction && (
           <div className="mt-2 pt-1.5 border-t border-[var(--border-primary)]/10">
             <div className="text-[10px] text-[#667788] text-center leading-tight">
-              HYPOTHESIS GENERATOR — NOT A VERDICT. This is a signal for further investigation.
+              {t('hypothesis_generator')}
             </div>
           </div>
         )}

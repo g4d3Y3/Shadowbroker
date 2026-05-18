@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { AlertTriangle, Play, Pause } from 'lucide-react';
 import HlsVideo, { type HlsVideoHandle } from '@/components/HlsVideo';
 
@@ -25,6 +26,7 @@ export function CctvFullscreenModal({
   cameraId,
   onClose,
 }: CctvFullscreenModalProps) {
+  const t = useTranslations('popups');
   const [paused, setPaused] = useState(false);
   const [mediaError, setMediaError] = useState(false);
   const [mediaLoaded, setMediaLoaded] = useState(false);
@@ -155,7 +157,7 @@ export function CctvFullscreenModal({
                 fontWeight: 'bold',
               }}
             >
-              OPTIC INTERCEPT
+              {t('optic_intercept')}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -166,7 +168,7 @@ export function CctvFullscreenModal({
                 fontFamily: 'monospace',
               }}
             >
-              ID: {cameraId}
+              ID: {t('cctv_id', { id: cameraId })}
             </span>
             <button
               onClick={onClose}
@@ -182,7 +184,7 @@ export function CctvFullscreenModal({
                 letterSpacing: '0.1em',
               }}
             >
-              ✕ CLOSE
+              ✕ {t('close')}
             </button>
           </div>
         </div>
@@ -201,7 +203,7 @@ export function CctvFullscreenModal({
         >
           <span style={{ color: '#22d3ee', letterSpacing: '0.15em' }}>{sourceAgency}</span>
           <span style={{ color: '#ef4444', letterSpacing: '0.1em', fontWeight: 'bold' }}>
-            REC // {new Date().toLocaleTimeString('en-GB', { hour12: false })}
+            {t('rec_time', { time: new Date().toLocaleTimeString('en-GB', { hour12: false }) })}
           </span>
           <span
             style={{
@@ -267,7 +269,7 @@ export function CctvFullscreenModal({
                 <img
                   key={activeUrl}
                   src={activeUrl}
-                  alt="MJPEG Feed"
+                  alt={t('mjpeg_feed')}
                   style={{
                     maxWidth: '100%',
                     maxHeight: 'calc(100vh - 260px)',
@@ -282,7 +284,7 @@ export function CctvFullscreenModal({
                 <img
                   key={activeUrl}
                   src={activeUrl}
-                  alt="CCTV Feed"
+                  alt={t('cctv_feed')}
                   style={{
                     maxWidth: '100%',
                     maxHeight: 'calc(100vh - 260px)',
@@ -297,8 +299,8 @@ export function CctvFullscreenModal({
               {/* Media error fallback */}
               {mediaError && (
                 <div style={{ fontSize: 11, color: 'rgba(239,68,68,0.7)', fontFamily: 'monospace', letterSpacing: '0.15em', textAlign: 'center', padding: 40 }}>
-                  FEED UNAVAILABLE<br />
-                  <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.5)' }}>proxy and direct source both failed</span>
+                  {t('feed_unavailable')}<br />
+                  <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.5)' }}>{t('proxy_and_direct_failed')}</span>
                 </div>
               )}
 
@@ -317,7 +319,7 @@ export function CctvFullscreenModal({
                   borderRadius: 2,
                 }}
               >
-                REC // 00:00:00:00
+                {t('rec_label')}
               </div>
 
               {/* Play/Pause overlay for video streams */}
@@ -360,7 +362,7 @@ export function CctvFullscreenModal({
                 letterSpacing: '0.2em',
               }}
             >
-              NO SIGNAL
+              {t('no_signal')}
             </div>
           )}
         </div>
@@ -408,7 +410,7 @@ export function CctvFullscreenModal({
                     fontWeight: 'bold',
                   }}
                 >
-                  OPEN SOURCE ↗
+                  {t('open_source')}
                 </a>
                 <button
                   onClick={async () => {
@@ -429,7 +431,7 @@ export function CctvFullscreenModal({
                     fontWeight: 'bold',
                   }}
                 >
-                  COPY URL
+                  {t('copy_url')}
                 </button>
               </>
             )}

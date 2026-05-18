@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useDataKey } from '@/hooks/useDataStore';
 import { API_BASE } from '@/lib/api';
 import { controlPlaneFetch } from '@/lib/controlPlane';
@@ -44,6 +45,7 @@ interface HourBin {
 }
 
 export default function TimelineScrubber() {
+  const t = useTranslations('timeline');
   const news = useDataKey('news') as NewsArticle[] | undefined;
   const tm = useTimeMachine();
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
@@ -268,13 +270,13 @@ export default function TimelineScrubber() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
             </span>
             <span className="text-xs font-mono tracking-[0.3em] text-amber-500 uppercase">
-              SNAPSHOT · {snapshotLabel}
+              {t('snapshot')} · {snapshotLabel}
             </span>
           </div>
         ) : (
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-mono tracking-[0.3em] text-cyan-600 uppercase">
-              24H EVENT TIMELINE
+              {t('event_timeline')}
             </span>
             <button
               type="button"
@@ -282,9 +284,9 @@ export default function TimelineScrubber() {
               className={`text-[11px] font-mono tracking-[0.2em] uppercase cursor-pointer hover:brightness-125 transition-colors ${
                 tmEnabled ? 'text-amber-400/80' : 'text-amber-600/60'
               }`}
-              title={tmTooltipDismissed ? undefined : (tmEnabled ? 'Click to disable snapshots (~68 MB/day)' : 'Click to enable snapshots (~68 MB/day)')}
+              title={tmTooltipDismissed ? undefined : (tmEnabled ? t('click_disable') : t('click_enable'))}
             >
-              {tmEnabled ? 'SNAPSHOTS ON' : 'SNAPSHOTS OFF'}
+              {tmEnabled ? t('snapshots_on') : t('snapshots_off_scrub')}
             </button>
           </div>
         )}
@@ -295,16 +297,16 @@ export default function TimelineScrubber() {
             className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[rgba(5,5,5,0.95)] border border-[var(--border-primary)] rounded-sm px-2 py-0.5 text-[11px] font-mono text-cyan-400 tracking-wider whitespace-nowrap"
             style={{ boxShadow: '0 0 8px rgba(6,182,212,0.1)' }}
           >
-            {bins[hoverIdx].label} · {bins[hoverIdx].count} events
-            {bins[hoverIdx].maxRisk > 0 && ` · MAX LVL ${bins[hoverIdx].maxRisk}`}
-            {tmEnabled && bins[hoverIdx].hasSnapshot && ' · ◆ SNAPSHOT'}
+            {bins[hoverIdx].label} · {t('events_count', { count: bins[hoverIdx].count })}
+            {bins[hoverIdx].maxRisk > 0 && ` · ${t('max_level', { level: bins[hoverIdx].maxRisk })}`}
+            {tmEnabled && bins[hoverIdx].hasSnapshot && ` · ${t('snapshot_available')}`}
           </div>
         )}
 
         <div className="flex items-center gap-2 w-full">
           {/* Label */}
           <span className="text-[11px] font-mono tracking-[0.2em] text-[var(--text-muted)] uppercase">
-            24H
+            {t('24h')}
           </span>
 
           <canvas
@@ -317,7 +319,7 @@ export default function TimelineScrubber() {
 
           {/* Now marker label */}
           <span className="text-[11px] font-mono tracking-[0.2em] text-cyan-600 uppercase">
-            NOW
+            {t('now')}
           </span>
         </div>
 
@@ -332,7 +334,7 @@ export default function TimelineScrubber() {
               type="button"
               onClick={stepBackward}
               className="px-2 py-0.5 text-[11px] font-mono tracking-wider text-amber-400 hover:text-amber-300 bg-[rgba(245,158,11,0.08)] hover:bg-[rgba(245,158,11,0.15)] border border-amber-900/30 rounded-sm transition-colors"
-              title="Previous snapshot"
+              title={t('prev_snapshot')}
             >
               ◄◄
             </button>
@@ -346,9 +348,9 @@ export default function TimelineScrubber() {
                   ? 'text-amber-300 bg-[rgba(245,158,11,0.2)] border-amber-700/50'
                   : 'text-amber-400 hover:text-amber-300 bg-[rgba(245,158,11,0.08)] hover:bg-[rgba(245,158,11,0.15)] border-amber-900/30'
               }`}
-              title={tm.playing ? 'Pause playback' : 'Auto-play snapshots'}
+              title={tm.playing ? t('pause_playback') : t('auto_play_snapshots')}
             >
-              {tm.playing ? '❚❚ PAUSE' : '► PLAY'}
+              {tm.playing ? `❚❚ ${t('pause')}` : `► ${t('play')}`}
             </button>
 
             {/* Step forward */}
@@ -356,7 +358,7 @@ export default function TimelineScrubber() {
               type="button"
               onClick={stepForward}
               className="px-2 py-0.5 text-[11px] font-mono tracking-wider text-amber-400 hover:text-amber-300 bg-[rgba(245,158,11,0.08)] hover:bg-[rgba(245,158,11,0.15)] border border-amber-900/30 rounded-sm transition-colors"
-              title="Next snapshot"
+              title={t('next_snapshot')}
             >
               ►►
             </button>
@@ -369,9 +371,9 @@ export default function TimelineScrubber() {
               type="button"
               onClick={exitSnapshotMode}
               className="px-3 py-0.5 text-[11px] font-mono tracking-[0.15em] text-cyan-400 hover:text-cyan-300 bg-[rgba(6,182,212,0.08)] hover:bg-[rgba(6,182,212,0.15)] border border-cyan-900/30 rounded-sm transition-colors"
-              title="Return to live feed"
+              title={t('return_live')}
             >
-              ● LIVE
+              ● {t('live')}
             </button>
           </div>
         )}
@@ -379,7 +381,7 @@ export default function TimelineScrubber() {
         {/* Loading indicator */}
         {tm.loading && (
           <div className="text-[11px] font-mono text-amber-500/70 tracking-wider mt-1 animate-pulse">
-            LOADING SNAPSHOT...
+            {t('loading_snapshot')}
           </div>
         )}
       </div>

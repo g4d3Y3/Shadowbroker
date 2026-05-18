@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import type { ToastItem } from '@/hooks/useAlertToasts';
 
 function getRiskColor(score: number): string {
@@ -10,10 +11,10 @@ function getRiskColor(score: number): string {
   return '#22d3ee';
 }
 
-function getRiskLabel(score: number): string {
-  if (score >= 9) return 'CRITICAL';
-  if (score >= 7) return 'HIGH';
-  return 'ELEVATED';
+function getRiskLabel(score: number, t: (key: string) => string): string {
+  if (score >= 9) return t('critical');
+  if (score >= 7) return t('high');
+  return t('elevated');
 }
 
 export default function AlertToast({
@@ -25,12 +26,13 @@ export default function AlertToast({
   onDismiss: (id: string) => void;
   onFlyTo?: (lat: number, lng: number) => void;
 }) {
+  const t = useTranslations('alerts');
   return (
     <div className="fixed top-16 right-[440px] z-[9500] flex flex-col gap-2 pointer-events-none max-w-[380px]">
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => {
           const color = getRiskColor(toast.risk_score);
-          const label = getRiskLabel(toast.risk_score);
+          const label = getRiskLabel(toast.risk_score, t);
           return (
             <motion.div
               key={toast.id}
@@ -77,7 +79,7 @@ export default function AlertToast({
                       ⚠ {label}
                     </span>
                     <span className="text-[9px] text-[var(--text-muted)] tracking-wider uppercase">
-                      LVL {toast.risk_score}/10
+                      {t('level', { score: toast.risk_score })}
                     </span>
                   </div>
 

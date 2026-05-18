@@ -15,6 +15,7 @@ import {
   Server,
   Upload,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { API_BASE } from '@/lib/api';
 import type { SelectedEntity } from '@/types/dashboard';
 import type {
@@ -206,6 +207,7 @@ export default function ShodanPanel({
   const prevSettingsOpen = useRef(settingsOpen);
   const presetImportRef = useRef<HTMLInputElement | null>(null);
   const resultImportRef = useRef<HTMLInputElement | null>(null);
+  const t = useTranslations('shodan');
 
   const refreshStatus = useCallback(async () => {
     try {
@@ -506,11 +508,11 @@ export default function ShodanPanel({
         <div className="flex items-center gap-2">
           <Radar size={16} className="text-green-400" />
           <span className="text-[12px] font-mono font-bold tracking-widest text-green-400">
-            SHODAN
+            {t('title')}
           </span>
           {currentResults.length > 0 && (
             <span className="text-[11px] font-mono px-1.5 py-0.5 bg-green-900/30 border border-green-700/30 text-green-300">
-              {currentResults.length.toLocaleString()} MAPPED
+              {currentResults.length.toLocaleString()} {t('mapped')}
             </span>
           )}
         </div>
@@ -537,7 +539,7 @@ export default function ShodanPanel({
                   : 'border-green-900/40 text-green-600 hover:border-green-700/60 hover:text-green-400'
               }`}
             >
-              {item.toUpperCase()}
+              {t(`${item}_tab`)}
             </button>
           ))}
           <button
@@ -553,14 +555,14 @@ export default function ShodanPanel({
           <div className="mb-2 border border-green-700/30 bg-green-950/10 px-2.5 py-2">
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-green-300 mb-1.5">
               <KeyRound size={10} />
-              <span className="tracking-wider">SHODAN API KEY</span>
+              <span className="tracking-wider">{t('api_key_required', {})}</span>
               <a
                 href="https://account.shodan.io/billing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-auto text-[9px] text-green-500/60 hover:text-green-400 transition-colors"
               >
-                GET KEY →
+                {t('get_key')}
               </a>
             </div>
             <div className="flex items-center gap-1">
@@ -580,7 +582,7 @@ export default function ShodanPanel({
                       .finally(() => setKeySaving(false));
                   }
                 }}
-                placeholder="Paste your Shodan API key"
+                placeholder={t('paste_key')}
                 className="flex-1 border border-green-900/50 bg-black/70 px-2 py-1 text-[11px] font-mono text-green-300 outline-none transition-colors focus:border-green-500/60 placeholder:text-green-800"
               />
               <button
@@ -604,7 +606,7 @@ export default function ShodanPanel({
                 }}
                 className="border border-green-600/40 px-1.5 py-0.5 text-[10px] font-mono text-green-400 transition-colors hover:border-green-500/70 disabled:opacity-40"
               >
-                {keySaving ? '...' : 'SAVE'}
+                {keySaving ? '...' : t('save')}
               </button>
             </div>
           </div>
@@ -663,7 +665,7 @@ export default function ShodanPanel({
             disabled={busy || !status?.configured}
             className="flex-1 border border-green-600/40 py-1.5 text-center text-green-400 transition-colors hover:border-green-500/70 hover:bg-green-950/20 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {busy ? '...' : mode === 'host' ? 'LOOKUP' : mode === 'count' ? 'COUNT' : 'SEARCH'}
+            {busy ? '...' : mode === 'host' ? t('lookup') : mode === 'count' ? t('count') : t('search_tab')}
           </button>
           <button
             onClick={handleClear}

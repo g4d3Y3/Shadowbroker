@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Key, Shield, Radar, Globe, Satellite, Ship, Radio, Bot, Copy, Check, Network } from 'lucide-react';
 
@@ -60,6 +61,8 @@ const OnboardingModal = React.memo(function OnboardingModal({
   onClose,
   onOpenSettings,
 }: OnboardingModalProps) {
+  const t = useTranslations('onboarding');
+  const tc = useTranslations('common');
   const [step, setStep] = useState(0);
   const [setupKeys, setSetupKeys] = useState({
     OPENSKY_CLIENT_ID: '',
@@ -260,10 +263,10 @@ const OnboardingModal = React.memo(function OnboardingModal({
                 </div>
                 <div>
                   <h2 className="text-sm font-bold tracking-[0.2em] text-[var(--text-primary)] font-mono">
-                    MISSION BRIEFING
+                    {t('mission_briefing')}
                   </h2>
                   <span className="text-[13px] text-[var(--text-muted)] font-mono tracking-widest">
-                    FIRST-TIME SETUP
+                    {t('first_time_setup')}
                   </span>
                 </div>
               </div>
@@ -278,7 +281,12 @@ const OnboardingModal = React.memo(function OnboardingModal({
 
           {/* Step Indicators */}
           <div className="flex gap-2 px-6 pt-4">
-            {['API Keys', 'AI Agent', 'Trust Modes', 'Free Sources'].map((label, i) => (
+            {[
+              t('step_api_keys'),
+              t('step_ai_agent'),
+              t('step_trust_modes'),
+              t('step_free_sources'),
+            ].map((label, i) => (
               <button
                 key={label}
                 onClick={() => setStep(i)}
@@ -288,7 +296,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                     : 'border-[var(--border-primary)] text-[var(--text-muted)] hover:border-[var(--border-secondary)] hover:text-[var(--text-secondary)]'
                 }`}
               >
-                {label.toUpperCase()}
+                {label}
               </button>
             ))}
           </div>
@@ -362,7 +370,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
               <div className="space-y-5">
                 <div>
                   <p className="text-[11px] text-violet-300 font-mono font-bold tracking-widest mb-2">
-                    STEP 1 - WHERE IS YOUR AGENT?
+                    {t('step1_where_agent')}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     <button
@@ -374,10 +382,10 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       }`}
                     >
                       <p className={`text-sm font-mono font-bold ${agentMode === 'local' ? 'text-cyan-300' : 'text-[var(--text-secondary)]'}`}>
-                        Local
+                        {t('local')}
                       </p>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1">
-                        Same machine as ShadowBroker
+                        {t('local_desc')}
                       </p>
                     </button>
                     <button
@@ -389,10 +397,10 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       }`}
                     >
                       <p className={`text-sm font-mono font-bold ${agentMode === 'remote' ? 'text-violet-300' : 'text-[var(--text-secondary)]'}`}>
-                        Remote
+                        {t('remote')}
                       </p>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1">
-                        Different machine over Tor
+                        {t('remote_desc')}
                       </p>
                     </button>
                   </div>
@@ -400,7 +408,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
 
                 <div>
                   <p className="text-[11px] text-violet-300 font-mono font-bold tracking-widest mb-2">
-                    STEP 2 - WHAT CAN IT DO?
+                    {t('step2_what_can_it_do')}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     <button
@@ -412,10 +420,10 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       }`}
                     >
                       <p className="text-sm text-green-300 font-mono font-bold flex items-center gap-2">
-                        <Shield size={14} /> Read Only
+                        <Shield size={14} /> {t('read_only')}
                       </p>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono mt-2">
-                        Can see live telemetry but cannot change anything
+                        {t('read_only_desc')}
                       </p>
                     </button>
                     <button
@@ -427,10 +435,10 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       }`}
                     >
                       <p className="text-sm text-amber-300 font-mono font-bold flex items-center gap-2">
-                        <Network size={14} /> Full Access
+                        <Network size={14} /> {t('full_access')}
                       </p>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono mt-2">
-                        Can place pins, create layers, and trigger display actions
+                        {t('full_access_desc')}
                       </p>
                     </button>
                   </div>
@@ -440,7 +448,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                   <div className="flex items-center justify-between gap-3 mb-2">
                     <div>
                       <p className="text-[11px] text-violet-300 font-mono font-bold tracking-widest">
-                        STEP 3 - COPY THIS INTO YOUR AGENT
+                        {t('step3_copy_agent')}
                       </p>
                       <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1">
                         Generate a local key, then copy these variables into OpenClaw, Hermes, or another HMAC agent.
@@ -451,7 +459,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       disabled={agentLoading}
                       className="px-3 py-2 border border-violet-500/40 text-violet-300 hover:bg-violet-500/10 disabled:opacity-50 text-[11px] font-mono tracking-widest"
                     >
-                      {agentLoading ? 'GENERATING...' : 'GENERATE'}
+                      {agentLoading ? t('generating') : t('generate')}
                     </button>
                   </div>
 
@@ -460,7 +468,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-[11px] text-violet-200 font-mono font-bold tracking-widest">
-                            TOR REQUIRED FOR REMOTE AGENTS
+                            {t('tor_required')}
                           </p>
                           <p className="text-[10px] text-[var(--text-muted)] font-mono mt-1 leading-relaxed">
                             ShadowBroker will install or use Tor locally, then create a private .onion link for this backend.
@@ -472,7 +480,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                           className="shrink-0 px-3 py-2 border border-violet-500/40 text-violet-200 hover:bg-violet-500/10 disabled:opacity-50 text-[10px] font-mono tracking-widest flex items-center gap-2"
                         >
                           <Network size={13} />
-                          {torStarting ? 'INSTALLING...' : 'INSTALL TOR'}
+                          {torStarting ? t('installing_tor') : t('install_tor')}
                         </button>
                       </div>
                     </div>
@@ -488,7 +496,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                       className="absolute top-3 right-3 px-3 py-2 border border-violet-500/50 bg-violet-950/50 text-violet-200 hover:bg-violet-800/30 disabled:opacity-45 disabled:hover:bg-violet-950/50 text-[11px] font-mono tracking-widest flex items-center gap-2"
                     >
                       {agentCopied ? <Check size={13} /> : <Copy size={13} />}
-                      {agentCopied ? 'COPIED' : 'COPY'}
+                      {agentCopied ? t('copied') : t('copy_btn')}
                     </button>
                   </div>
 
@@ -516,7 +524,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                     <Key size={14} className="text-yellow-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-[11px] text-yellow-400 font-mono font-bold mb-1">
-                        START HERE
+                        {t('start_here')}
                       </p>
                       <p className="text-sm text-[var(--text-secondary)] font-mono leading-relaxed">
                         OpenSky Network and AIS Stream are the free keys that make ShadowBroker
@@ -530,7 +538,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                 <div className="border border-cyan-900/40 bg-cyan-950/10 p-4 space-y-3">
                   <div>
                     <p className="text-[11px] text-cyan-300 font-mono font-bold tracking-widest">
-                      QUICK LOCAL SETUP
+                      {t('quick_local_setup')}
                     </p>
                     <p className="text-sm text-[var(--text-secondary)] font-mono leading-relaxed mt-1">
                       Paste keys here once. ShadowBroker stores them server-side only and never
@@ -568,7 +576,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                     disabled={setupSaving}
                     className="w-full py-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[11px] font-mono tracking-widest"
                   >
-                    {setupSaving ? 'SAVING...' : 'SAVE KEYS LOCALLY'}
+                    {setupSaving ? t('saving') : t('save_keys_locally')}
                   </button>
                 </div>
 
@@ -582,7 +590,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                         {api.icon}
                         <span className="text-xs font-mono text-white font-bold">{api.name}</span>
                         <span className="text-[12px] font-mono px-1.5 py-0.5 border border-yellow-500/30 text-yellow-400 bg-yellow-950/20">
-                          REQUIRED
+                          {t('required')}
                         </span>
                       </div>
                       <a
@@ -591,7 +599,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                         rel="noopener noreferrer"
                         className={`text-sm font-mono text-${api.color}-400 hover:text-${api.color}-300 flex items-center gap-1 transition-colors`}
                       >
-                        GET KEY <ExternalLink size={10} />
+                        {t('get_key')} <ExternalLink size={10} />
                       </a>
                     </div>
                     <p className="text-sm text-[var(--text-secondary)] font-mono mb-3">
@@ -617,7 +625,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
                   className="w-full py-3 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-colors text-[11px] font-mono tracking-widest flex items-center justify-center gap-2"
                 >
                   <Key size={14} />
-                  OPEN SETTINGS TO ENTER KEYS
+                  {t('open_settings_keys')}
                 </button>
               </div>
             )}
@@ -660,7 +668,7 @@ const OnboardingModal = React.memo(function OnboardingModal({
               }`}
               disabled={step === 0}
             >
-              PREV
+              {t('prev')}
             </button>
 
             <div className="flex gap-1.5">
@@ -677,14 +685,14 @@ const OnboardingModal = React.memo(function OnboardingModal({
                 onClick={() => setStep(step + 1)}
                 className="px-4 py-2 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/10 text-sm font-mono tracking-widest transition-all"
               >
-                NEXT
+                {t('next')}
               </button>
             ) : (
               <button
                 onClick={handleDismiss}
                 className="px-4 py-2 bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30 text-sm font-mono tracking-widest transition-all"
               >
-                LAUNCH
+                {t('launch')}
               </button>
             )}
           </div>

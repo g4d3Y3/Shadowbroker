@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Minus,
@@ -36,6 +37,7 @@ type ModalConfig = {
 };
 
 const FilterPanel = React.memo(function FilterPanel({ activeFilters, setActiveFilters }: FilterPanelProps) {
+  const t = useTranslations('filter');
   const data = useDataKeys(['commercial_flights', 'private_flights', 'private_jets', 'military_flights', 'tracked_flights', 'ships'] as const);
   const [isMinimized, setIsMinimized] = useState(true);
   const [openModal, setOpenModal] = useState<string | null>(null);
@@ -156,63 +158,63 @@ const FilterPanel = React.memo(function FilterPanel({ activeFilters, setActiveFi
 
   const modalConfigs: Record<string, ModalConfig> = {
     commercial: {
-      title: 'COMMERCIAL FLIGHTS',
+      title: t('commercial'),
       icon: <Plane size={13} className="text-cyan-400" />,
       accentColor: '#00bcd4',
       accentColorName: 'cyan',
       fields: [
-        { key: 'commercial_departure', label: 'DEPARTURE', options: uniqueOrigins },
-        { key: 'commercial_arrival', label: 'ARRIVAL', options: uniqueDestinations },
+        { key: 'commercial_departure', label: t('departure'), options: uniqueOrigins },
+        { key: 'commercial_arrival', label: t('arrival'), options: uniqueDestinations },
         {
           key: 'commercial_airline',
-          label: 'AIRLINE',
+          label: t('airline'),
           options: uniqueAirlines,
           optionLabels: airlineLabels,
         },
       ],
     },
     private: {
-      title: 'PRIVATE / JETS',
+      title: t('private_jets'),
       icon: <Plane size={13} className="text-orange-400" />,
       accentColor: '#FF8C00',
       accentColorName: 'orange',
       fields: [
-        { key: 'private_callsign', label: 'CALLSIGN / REG', options: uniquePrivateCallsigns },
+        { key: 'private_callsign', label: t('callsign_reg'), options: uniquePrivateCallsigns },
         {
           key: 'private_aircraft_type',
-          label: 'AIRCRAFT TYPE',
+          label: t('aircraft_type'),
           options: uniquePrivateAircraftTypes,
         },
       ],
     },
     military: {
-      title: 'MILITARY',
+      title: t('military'),
       icon: <Shield size={13} className="text-yellow-400" />,
       accentColor: '#EAB308',
       accentColorName: 'yellow',
       fields: [
-        { key: 'military_country', label: 'COUNTRY / REG', options: uniqueMilCountries },
-        { key: 'military_aircraft_type', label: 'AIRCRAFT TYPE', options: uniqueMilAircraftTypes },
+        { key: 'military_country', label: t('country_reg'), options: uniqueMilCountries },
+        { key: 'military_aircraft_type', label: t('aircraft_type'), options: uniqueMilAircraftTypes },
       ],
     },
     tracked: {
-      title: 'TRACKED AIRCRAFT',
+      title: t('tracked_aircraft'),
       icon: <Star size={13} className="text-pink-400" />,
       accentColor: '#EC4899',
       accentColorName: 'pink',
       fields: [
-        { key: 'tracked_category', label: 'CATEGORY', options: uniqueTrackedCategories },
-        { key: 'tracked_owner', label: 'OPERATOR / ENTITY', options: uniqueTrackedOperators },
+        { key: 'tracked_category', label: t('category'), options: uniqueTrackedCategories },
+        { key: 'tracked_owner', label: t('operator_entity'), options: uniqueTrackedOperators },
       ],
     },
     ships: {
-      title: 'MARITIME VESSELS',
+      title: t('maritime_vessels'),
       icon: <Ship size={13} className="text-blue-400" />,
       accentColor: '#3B82F6',
       accentColorName: 'blue',
       fields: [
-        { key: 'ship_name', label: 'VESSEL NAME', options: uniqueShipNames },
-        { key: 'ship_type', label: 'VESSEL TYPE', options: uniqueVesselTypes },
+        { key: 'ship_name', label: t('vessel_name'), options: uniqueShipNames },
+        { key: 'ship_type', label: t('vessel_type'), options: uniqueVesselTypes },
       ],
     },
   };
@@ -242,31 +244,31 @@ const FilterPanel = React.memo(function FilterPanel({ activeFilters, setActiveFi
   const sections = [
     {
       key: 'commercial',
-      title: 'COMMERCIAL FLIGHTS',
+      title: t('commercial'),
       icon: <Plane size={11} className="text-cyan-400" />,
       color: 'cyan',
     },
     {
       key: 'private',
-      title: 'PRIVATE / JETS',
+      title: t('private_jets'),
       icon: <Plane size={11} className="text-orange-400" />,
       color: 'orange',
     },
     {
       key: 'military',
-      title: 'MILITARY',
+      title: t('military'),
       icon: <Shield size={11} className="text-yellow-400" />,
       color: 'yellow',
     },
     {
       key: 'tracked',
-      title: 'TRACKED AIRCRAFT',
+      title: t('tracked_aircraft'),
       icon: <Star size={11} className="text-pink-400" />,
       color: 'pink',
     },
     {
       key: 'ships',
-      title: 'MARITIME VESSELS',
+      title: t('maritime_vessels'),
       icon: <Ship size={11} className="text-blue-400" />,
       color: 'blue',
     },
@@ -310,11 +312,11 @@ const FilterPanel = React.memo(function FilterPanel({ activeFilters, setActiveFi
           <div className="flex items-center gap-2">
             <Filter size={16} className="text-cyan-400" />
             <span className="text-[12px] text-cyan-400 font-mono tracking-widest font-bold">
-              DATA FILTERS
+              {t('data_filters')}
             </span>
             {activeCount > 0 && (
               <span className="text-[11px] bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 font-mono">
-                {activeCount} ACTIVE
+                {t('active_count', { count: activeCount })}
               </span>
             )}
           </div>
@@ -338,7 +340,7 @@ const FilterPanel = React.memo(function FilterPanel({ activeFilters, setActiveFi
                   onClick={clearAll}
                   className="text-[10px] text-red-400 hover:text-red-300 font-mono tracking-widest self-end mb-1"
                 >
-                  CLEAR ALL FILTERS
+                  {t('clear_all')}
                 </button>
               )}
 

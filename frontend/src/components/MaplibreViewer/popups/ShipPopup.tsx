@@ -3,6 +3,7 @@
 import React from 'react';
 import { Popup } from 'react-map-gl/maplibre';
 import type { Ship } from '@/types/dashboard';
+import { useTranslations } from 'next-intl';
 
 export interface ShipPopupProps {
   ship: Ship;
@@ -12,6 +13,7 @@ export interface ShipPopupProps {
 }
 
 export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps) {
+  const t = useTranslations('popups');
   return (
     <Popup
       longitude={longitude}
@@ -45,7 +47,7 @@ export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps
                   : '#3b82f6',
             }}
           >
-            {ship.name || 'UNKNOWN VESSEL'}
+            {ship.name || t('unknown_vessel')}
           </div>
           <button
             onClick={onClose}
@@ -56,55 +58,55 @@ export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps
         </div>
         {ship.estimated && (
           <div className="map-popup-subtitle text-[#ff6644] border-b border-[#ff664450] pb-1">
-            ESTIMATED POSITION — {ship.source || 'OSINT DERIVED'}
+            {t('estimated_position', { source: ship.source || 'OSINT DERIVED' })}
           </div>
         )}
         {ship.type && (
           <div className="map-popup-row">
-            Type:{' '}
+            {t('type')}{' '}
             <span className="text-white capitalize">{ship.type.replace('_', ' ')}</span>
           </div>
         )}
         {ship.mmsi && (
           <div className="map-popup-row">
-            MMSI: <span className="text-[#888]">{ship.mmsi}</span>
+            {t('mmsi')} <span className="text-[#888]">{ship.mmsi}</span>
           </div>
         )}
         {ship.imo && (
           <div className="map-popup-row">
-            IMO: <span className="text-[#888]">{ship.imo}</span>
+            {t('imo')} <span className="text-[#888]">{ship.imo}</span>
           </div>
         )}
         {ship.callsign && (
           <div className="map-popup-row">
-            Callsign: <span className="text-[#00e5ff]">{ship.callsign}</span>
+            {t('callsign')} <span className="text-[#00e5ff]">{ship.callsign}</span>
           </div>
         )}
         {ship.country && (
           <div className="map-popup-row">
-            Flag: <span className="text-white">{ship.country}</span>
+            {t('flag')} <span className="text-white">{ship.country}</span>
           </div>
         )}
         {ship.destination && (
           <div className="map-popup-row">
-            Destination: <span className="text-[#44ff88]">{ship.destination}</span>
+            {t('destination')} <span className="text-[#44ff88]">{ship.destination}</span>
           </div>
         )}
         {typeof ship.sog === 'number' && ship.sog > 0 && (
           <div className="map-popup-row">
-            Speed: <span className="text-[#00e5ff]">{ship.sog.toFixed(1)} kn</span>
+            {t('speed')} <span className="text-[#00e5ff]">{ship.sog.toFixed(1)} kn</span>
           </div>
         )}
         <div className="map-popup-row">
-          Heading:{' '}
+          {t('heading')}{' '}
           <span style={{ color: ship.heading != null ? '#888' : '#ff6644' }}>
-            {ship.heading != null ? `${Math.round(ship.heading)}°` : 'UNKNOWN'}
+            {ship.heading != null ? `${Math.round(ship.heading)}°` : t('unknown')}
           </span>
         </div>
         {ship.type === 'carrier' && ship.source && (
           <div className="mt-1.5 p-[5px_7px] bg-[rgba(255,170,0,0.08)] border border-[rgba(255,170,0,0.3)] rounded text-[9px] tracking-wide">
             <div className="text-[#ffaa00] mb-0.5">
-              SOURCE:{' '}
+              {t('source')}{' '}
               {ship.source_url ? (
                 <a
                   href={ship.source_url}
@@ -120,7 +122,7 @@ export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps
             </div>
             {ship.last_osint_update && (
               <div className="text-[#888]">
-                LAST OSINT UPDATE:{' '}
+                {t('last_osint_update')}{' '}
                 {new Date(ship.last_osint_update).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
@@ -137,7 +139,7 @@ export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps
         )}
         {ship.type !== 'carrier' && ship.last_osint_update && (
           <div className="map-popup-row">
-            Last OSINT Update:{' '}
+            {t('last_osint_update_short')}{' '}
             <span className="text-[#888]">
               {new Date(ship.last_osint_update).toLocaleDateString()}
             </span>
@@ -145,28 +147,28 @@ export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps
         )}
         {ship.yacht_alert && (
           <div className="mt-1.5 p-[5px_7px] bg-[rgba(255,105,180,0.08)] border border-[rgba(255,105,180,0.3)] rounded text-[9px] tracking-wide">
-            <div className="text-[#FF69B4] font-bold mb-0.5">TRACKED YACHT</div>
+            <div className="text-[#FF69B4] font-bold mb-0.5">{t('tracked_yacht')}</div>
             <div>
-              Owner: <span className="text-white">{ship.yacht_owner}</span>
+              {t('owner')} <span className="text-white">{ship.yacht_owner}</span>
             </div>
             {ship.yacht_builder && (
               <div>
-                Builder: <span className="text-[#888]">{ship.yacht_builder}</span>
+                {t('builder')} <span className="text-[#888]">{ship.yacht_builder}</span>
               </div>
             )}
             {(ship.yacht_length ?? 0) > 0 && (
               <div>
-                Length: <span className="text-[#888]">{ship.yacht_length}m</span>
+                {t('length')} <span className="text-[#888]">{ship.yacht_length}m</span>
               </div>
             )}
             {(ship.yacht_year ?? 0) > 0 && (
               <div>
-                Year: <span className="text-[#888]">{ship.yacht_year}</span>
+                {t('year')} <span className="text-[#888]">{ship.yacht_year}</span>
               </div>
             )}
             {ship.yacht_category && (
               <div>
-                Category: <span className="text-[#FF69B4]">{ship.yacht_category}</span>
+                {t('category')} <span className="text-[#FF69B4]">{ship.yacht_category}</span>
               </div>
             )}
             {ship.yacht_link && (
@@ -176,7 +178,7 @@ export function ShipPopup({ ship, longitude, latitude, onClose }: ShipPopupProps
                 rel="noopener noreferrer"
                 className="text-[#00e5ff] underline"
               >
-                Wikipedia
+                {t('wikipedia')}
               </a>
             )}
           </div>

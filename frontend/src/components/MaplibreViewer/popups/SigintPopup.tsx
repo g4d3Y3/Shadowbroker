@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Popup } from 'react-map-gl/maplibre';
+import { useTranslations } from 'next-intl';
 import { AlertTriangle, Radio, Play } from 'lucide-react';
 import { SigintSendForm, MeshtasticChannelFeed } from '@/components/map/panels/SigintPanels';
 import type { KiwiSDR, SigintSignal } from '@/types/dashboard';
@@ -46,7 +47,7 @@ const SOURCE_LABELS: Record<string, string> = {
   js8call: 'JS8CALL',
 };
 
-function computePosAge(d: SigintData): string | null {
+function computePosAge(d: SigintData, t: (key: string, opts?: any) => string): string | null {
   const ts = d.position_updated_at || d.timestamp;
   if (!ts) return null;
   try {
@@ -54,12 +55,12 @@ function computePosAge(d: SigintData): string | null {
     const diffMs = Date.now() - then;
     if (diffMs < 0 || isNaN(diffMs)) return null;
     const mins = Math.floor(diffMs / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1) return t('just_now');
+    if (mins < 60) return t('m_ago', { m: mins });
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
+    if (hrs < 24) return t('h_ago', { h: hrs });
     const days = Math.floor(hrs / 24);
-    return `${days}d ago`;
+    return t('d_ago', { d: days });
   } catch {
     return null;
   }
@@ -89,13 +90,14 @@ function findNearestSdr(
 }
 
 export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClose }: SigintPopupProps) {
+  const t = useTranslations('popups');
   const src = d.source || 'unknown';
   const isEmergency = d.emergency === true;
   const color = isEmergency ? '#ef4444' : SOURCE_COLORS[src] || '#94a3b8';
   const stationType = d.station_type || 'Station';
   const status = d.status || d.comment || '';
   const isApiNode = d.from_api === true;
-  const posAge = computePosAge(d);
+  const posAge = computePosAge(d, t);
   const nearestSdr = findNearestSdr(src, lat, lng, kiwisdrs);
 
   return (
@@ -121,7 +123,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
                 style={{ color: '#ef4444' }}
               />
             )}
-            {(d.callsign || 'UNKNOWN').toUpperCase()}
+            {(d.callsign || t('unknown')).toUpperCase()}
           </div>
           <button
             onClick={onClose}
@@ -144,7 +146,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
           <span className="text-[var(--text-muted)]">{stationType}</span>
           {isEmergency && (
             <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-red-900/60 text-red-400 animate-pulse tracking-wider">
-              EMERGENCY
+              {t('emergency_badge')}
             </span>
           )}
           {src === 'meshtastic' && d.channel && (
@@ -159,7 +161,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
           )}
           {isApiNode && (
             <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-blue-900/40 text-blue-300 border border-blue-500/30">
-              MAP API
+              {t('map_api_badge')}
             </span>
           )}
         </div>
@@ -183,7 +185,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
         {posAge && (
           <div className="map-popup-row mt-0.5">
             <span className="text-[12px] text-[var(--text-muted)]">
-              Last heard: <span className="text-slate-300">{posAge}</span>
+              {t('last_heard')} <span className="text-slate-300">{posAge}</span>
             </span>
           </div>
         )}
@@ -203,12 +205,12 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
         <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-1">
           {d.frequency && (
             <div className="map-popup-row">
-              Freq: <span className="text-cyan-400">{d.frequency}</span>
+              {t('freq')} <span className="text-cyan-400">{d.frequency}</span>
             </div>
           )}
           {(d.altitude_ft ?? 0) > 0 && (
             <div className="map-popup-row">
-              Alt:{' '}
+              {t('alt')}{' '}
               <span className="text-white">
                 {Number(d.altitude_ft).toLocaleString()} ft
               </span>
@@ -216,7 +218,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
           )}
           {(d.speed_knots ?? 0) > 0 && (
             <div className="map-popup-row">
-              Speed:{' '}
+              {t('speed_course')}{' '}
               <span className="text-white">
                 {d.speed_knots} kts / {d.course || 0}°
               </span>
@@ -224,17 +226,17 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
           )}
           {(d.power_watts ?? 0) > 0 && (
             <div className="map-popup-row">
-              TX Power: <span className="text-amber-400">{d.power_watts}W</span>
+              {t('tx_power')} <span className="text-amber-400">{d.power_watts}W</span>
             </div>
           )}
           {(d.battery_v ?? 0) > 0 && (
             <div className="map-popup-row">
-              Battery: <span className="text-white">{d.battery_v}V</span>
+              {t('battery')} <span className="text-white">{d.battery_v}V</span>
             </div>
           )}
           {!d.battery_v && d.battery_level != null && d.battery_level <= 100 && (
             <div className="map-popup-row">
-              Battery: <span className="text-white">{d.battery_level}%</span>
+              {t('battery')} <span className="text-white">{d.battery_level}%</span>
             </div>
           )}
           {d.snr != null && (
@@ -266,9 +268,9 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
                 onClose();
               }}
               className="flex-1 text-center px-2 py-1.5 rounded bg-cyan-950/40 border border-cyan-500/30 hover:bg-cyan-900/60 hover:border-cyan-400 text-cyan-400 text-[12px] font-mono tracking-widest transition-colors flex justify-center items-center gap-1.5"
-              title={`Listen via ${nearestSdr.name}`}
+              title={t('listen_via', { name: nearestSdr.name })}
             >
-              <Play size={10} className="fill-cyan-400/20" /> TUNE IN
+              <Play size={10} className="fill-cyan-400/20" /> {t('tune_in')}
             </button>
           )}
           <span className="text-[#666] text-[12px]">
@@ -277,7 +279,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
         </div>
         {nearestSdr && (
           <div className="text-[11px] text-[#555] mt-0.5">
-            via {nearestSdr.name} ({nearestSdr.location || 'SDR'})
+            via {nearestSdr.name} ({nearestSdr.location || t('kiwisdr')})
           </div>
         )}
 
@@ -301,7 +303,7 @@ export function SigintPopup({ data: d, lat, lng, kiwisdrs, setTrackedSdr, onClos
         )}
         {src === 'aprs' && (
           <div className="mt-2 pt-1.5 border-t border-[var(--border-primary)]/30 text-[11px] text-[#555] italic">
-            APRS is receive-only — transmitting requires a ham radio license
+            {t('aprs_receive_only')}
           </div>
         )}
       </div>

@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { DashboardData, SelectedEntity, RadioFeed, SigintSignal } from '@/types/dashboard';
 
 export default function RadioInterceptPanel({
@@ -29,6 +30,7 @@ export default function RadioInterceptPanel({
   cameraCenter?: { lat: number; lng: number } | null;
   selectedEntity?: SelectedEntity | null;
 }) {
+  const t = useTranslations('radio');
   const [isMinimized, setIsMinimized] = useState(true);
   const [feeds, setFeeds] = useState<RadioFeed[]>([]);
   const [activeFeed, setActiveFeed] = useState<RadioFeed | null>(null);
@@ -299,7 +301,7 @@ export default function RadioInterceptPanel({
       >
         <div className="flex items-center gap-2 text-[var(--text-muted)]">
           <RadioReceiver size={14} className={isPlaying ? 'animate-pulse' : ''} />
-          <span className="text-[10px] font-mono tracking-widest">SIGINT INTERCEPT</span>
+          <span className="text-[10px] font-mono tracking-widest">{t('sigint_intercept')}</span>
           {isPlaying && <Activity size={12} className="text-red-500 animate-pulse ml-2" />}
         </div>
         <button className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
@@ -320,18 +322,18 @@ export default function RadioInterceptPanel({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex flex-col">
                   <span className="text-xs text-cyan-300 font-mono tracking-wide">
-                    {activeFeed ? activeFeed.name : 'NO SIGNAL'}
+                    {activeFeed ? activeFeed.name : t('no_signal')}
                   </span>
                   <span className="text-[9px] text-[var(--text-muted)] font-mono">
                     {activeFeed
-                      ? `LOCATION: ${activeFeed.location.toUpperCase()}`
-                      : 'AWAITING TUNING...'}
+                      ? t('location_prefix', { location: activeFeed.location.toUpperCase() })
+                      : t('awaiting_tuning')}
                   </span>
                 </div>
                 {activeFeed && (
                   <div className="flex items-center gap-1 bg-red-950/40 border border-red-900/50 px-2 py-0.5 text-[9px] text-red-400 font-mono">
                     <Activity size={10} className="animate-pulse" />
-                    LIVE
+                    {t('live')}
                   </div>
                 )}
               </div>
@@ -349,15 +351,15 @@ export default function RadioInterceptPanel({
                   className={`px-3 py-1.5 text-[10px] font-mono border tracking-wider flex items-center gap-2 ${isScanning ? 'bg-cyan-900/60 border-cyan-400 text-cyan-300' : 'border-cyan-800 text-cyan-600 hover:border-cyan-600'} transition-colors`}
                 >
                   <FastForward size={12} />
-                  {isScanning ? 'SCANNING...' : 'AUTO SCAN'}
+                  {isScanning ? t('scanning') : t('auto_scan')}
                 </button>
 
                 <button
                   onClick={() => setIsEavesdropping && setIsEavesdropping(!isEavesdropping)}
                   className={`px-3 py-1.5 text-[10px] font-mono border tracking-wider flex items-center gap-2 ${isEavesdropping ? 'bg-red-900/60 border-red-500 text-red-300 animate-pulse' : 'border-cyan-800 text-cyan-600 hover:border-cyan-600'} transition-colors`}
-                  title="Click on the globe to intercept local signals"
+                  title={t('eavesdrop')}
                 >
-                  EAVESDROP
+                  {t('eavesdrop')}
                 </button>
 
                 <input
@@ -368,7 +370,7 @@ export default function RadioInterceptPanel({
                   value={volume}
                   onChange={(e) => setVolume(parseFloat(e.target.value))}
                   className="w-20 accent-cyan-500"
-                  title="Volume"
+                  title={t('volume')}
                 />
               </div>
 
@@ -395,7 +397,7 @@ export default function RadioInterceptPanel({
             <div className="flex-col overflow-y-auto styled-scrollbar max-h-64 p-2">
               {feeds.length === 0 ? (
                 <div className="text-[10px] text-cyan-700 font-mono text-center p-4">
-                  SEARCHING FREQUENCIES...
+                  {t('searching_freqs')}
                 </div>
               ) : (
                 feeds.map((feed: RadioFeed) => (
@@ -420,7 +422,7 @@ export default function RadioInterceptPanel({
                         {feed.listeners.toLocaleString()}
                       </span>
                       <span className="text-[11px] text-[var(--text-muted)] font-mono mt-0.5">
-                        LSTN
+                        {t('listeners')}
                       </span>
                     </div>
                   </div>
@@ -433,7 +435,7 @@ export default function RadioInterceptPanel({
               <div className="border-t border-[var(--border-primary)]/40">
                 <div className="px-3 py-2 flex items-center justify-between">
                   <span className="text-[9px] font-mono tracking-widest text-emerald-400 font-bold">
-                    SIGINT GRID
+                    {t('sigint_grid')}
                   </span>
                   <div className="flex items-center gap-2 text-[11px] font-mono">
                     <span className="text-green-400">
@@ -485,7 +487,7 @@ export default function RadioInterceptPanel({
                           <div className="flex items-center gap-1.5 shrink-0">
                             {sig.emergency && (
                               <span className="text-[10px] font-mono text-red-400 bg-red-500/20 px-1 tracking-wider">
-                                SOS
+                                {t('sos')}
                               </span>
                             )}
                             <span

@@ -4,6 +4,7 @@ import React from 'react';
 import { Popup } from 'react-map-gl/maplibre';
 import WikiImage from '@/components/WikiImage';
 import type { MilitaryBase } from '@/types/dashboard';
+import { useTranslations } from 'next-intl';
 
 export interface OracleIntel {
   found: boolean;
@@ -51,6 +52,7 @@ const COLOR_MAP: Record<string, string> = {
 };
 
 export function MilitaryBasePopup({ base, oracleIntel, onClose }: MilitaryBasePopupProps) {
+  const t = useTranslations('popups');
   const accent = COLOR_MAP[base.country] || '#ec4899';
   const wikiSlug = encodeURIComponent(base.name.replace(/ /g, '_'));
   const wikiUrl = `https://en.wikipedia.org/wiki/${wikiSlug}`;
@@ -84,7 +86,7 @@ export function MilitaryBasePopup({ base, oracleIntel, onClose }: MilitaryBasePo
           </button>
         </div>
         <div className="map-popup-row">
-          Operator:{' '}
+          {t('operator')}{' '}
           <a
             href={`https://en.wikipedia.org/wiki/${encodeURIComponent(base.operator.replace(/ /g, '_'))}`}
             target="_blank"
@@ -95,7 +97,7 @@ export function MilitaryBasePopup({ base, oracleIntel, onClose }: MilitaryBasePo
           </a>
         </div>
         <div className="map-popup-row">
-          Country: <span className="text-white">{base.country}</span>
+          {t('country')} <span className="text-white">{base.country}</span>
         </div>
 
         {/* Wikipedia image + link — same style as tracked aircraft */}
@@ -109,13 +111,13 @@ export function MilitaryBasePopup({ base, oracleIntel, onClose }: MilitaryBasePo
         </div>
 
         <div className="mt-1.5 text-[12px] tracking-wider" style={{ color: `${accent}99` }}>
-          MILITARY BASE — {BRANCH_LABELS[base.branch] || base.branch.toUpperCase()}
+          {t('military_base', { branch: BRANCH_LABELS[base.branch] || base.branch.toUpperCase() })}
         </div>
 
         {oracleIntel?.found && (
           <div className="mt-2 pt-2 border-t border-cyan-500/20">
             <div className="text-[11px] font-mono text-cyan-400 tracking-wider mb-1">
-              ORACLE INTEL
+              {t('oracle_intel')}
             </div>
             <div className="text-[11px] font-mono text-cyan-300/80">
               <span

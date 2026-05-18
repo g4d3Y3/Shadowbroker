@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -245,6 +246,8 @@ interface ChangelogModalProps {
 }
 
 const ChangelogModal = React.memo(function ChangelogModal({ onClose }: ChangelogModalProps) {
+  const t = useTranslations('changelog');
+  const tc = useTranslations('common');
   const handleDismiss = () => {
     localStorage.setItem(STORAGE_KEY, 'true');
     onClose();
@@ -281,7 +284,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
                     v{CURRENT_VERSION}
                   </div>
                   <h2 className="text-base font-bold tracking-[0.15em] text-[var(--text-primary)] font-mono">
-                    WHAT&apos;S NEW
+                    {t('title')}
                   </h2>
                 </div>
                 <p className="text-[11px] text-cyan-500/70 font-mono tracking-widest mt-1">
@@ -344,7 +347,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
                       <span className="text-red-400 text-xs mt-0.5 flex-shrink-0 font-bold">!!</span>
                       <div className="space-y-1.5">
                         <span className="text-[11px] font-mono text-red-400/90 leading-relaxed block font-bold">
-                          EXPERIMENTAL TESTNET &mdash; NO PRIVACY GUARANTEE
+                          {t('experimental_warning')}
                         </span>
                         <span className="text-[11px] font-mono text-amber-400/80 leading-relaxed block">
                           InfoNet messages are obfuscated but NOT encrypted end-to-end. The Mesh
@@ -368,7 +371,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
               <Plane size={18} className="text-amber-400 mt-0.5 flex-shrink-0" />
               <div className="space-y-1">
                 <div className="text-xs font-mono text-amber-300 font-bold tracking-wide uppercase">
-                  Required: OpenSky API credentials for airplane telemetry
+                  {t('required_opensky')}
                 </div>
                 <div className="text-xs font-mono text-amber-200/80 leading-relaxed">
                   Airplane telemetry now requires an OpenSky Network OAuth2 client. Set{' '}
@@ -394,7 +397,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
             <div>
               <div className="text-xs font-mono tracking-[0.2em] text-cyan-400 font-bold mb-3 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                NEW CAPABILITIES
+                {t('new_capabilities')}
               </div>
               <div className="space-y-2">
                 {NEW_FEATURES.map((f) => (
@@ -420,7 +423,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
             <div>
               <div className="text-xs font-mono tracking-[0.2em] text-green-400 font-bold mb-3 flex items-center gap-2">
                 <Bug size={14} className="text-green-400" />
-                FIXES &amp; IMPROVEMENTS
+                {t('fixes_improvements')}
               </div>
               <div className="space-y-1.5">
                 {BUG_FIXES.map((fix, i) => (
@@ -438,7 +441,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
             <div>
               <div className="text-xs font-mono tracking-[0.2em] text-pink-400 font-bold mb-3 flex items-center gap-2">
                 <Heart size={14} className="text-pink-400" />
-                COMMUNITY CONTRIBUTORS
+                {t('community_contributors')}
               </div>
               <div className="space-y-1.5">
                 {CONTRIBUTORS.map((c, i) => (
@@ -476,7 +479,7 @@ const ChangelogModal = React.memo(function ChangelogModal({ onClose }: Changelog
               onClick={handleDismiss}
               className="px-8 py-2.5 bg-cyan-500/15 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/25 text-xs font-mono tracking-[0.2em] transition-all"
             >
-              ACKNOWLEDGED
+              {t('acknowledged')}
             </button>
           </div>
         </div>

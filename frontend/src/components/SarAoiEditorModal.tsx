@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Radar, Plus, Trash2, MapPin, Crosshair } from 'lucide-react';
@@ -46,6 +47,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
   onAoiListChanged,
   dropModeActive,
 }: SarAoiEditorModalProps) {
+  const t = useTranslations('sar');
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -177,13 +179,13 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
         style={{ direction: 'ltr' }}
       >
         <Crosshair size={16} className="text-cyan-400 animate-pulse" />
-        <span className="text-xs font-mono tracking-wide">CLICK THE MAP TO PLACE AOI CENTER</span>
+        <span className="text-xs font-mono tracking-wide">{t('click_map_place')}</span>
         <button
           type="button"
           onClick={onClose}
           className="ml-2 text-cyan-400 hover:text-cyan-200 text-xs underline"
         >
-          Cancel
+          {t('cancel_drop')}
         </button>
       </motion.div>,
       document.body,
@@ -228,7 +230,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
           <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-cyan-500/30 bg-zinc-950/95 px-5 py-3">
             <div className="flex items-center gap-2">
               <Radar size={18} className="text-cyan-400" />
-              <span className="text-sm font-semibold tracking-wide">SAR AREAS OF INTEREST</span>
+              <span className="text-sm font-semibold tracking-wide">{t('aoi_title')}</span>
             </div>
             <button type="button" onClick={onClose} aria-label="Close" className="rounded p-1 text-cyan-300 hover:bg-cyan-500/10">
               <X size={16} />
@@ -247,7 +249,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold tracking-wide text-cyan-300/80">
-                  {listLoading ? 'LOADING...' : `${aois.length} AOI${aois.length !== 1 ? 'S' : ''} DEFINED`}
+                  {listLoading ? t('loading') : t('aois_defined', { count: aois.length })}
                 </span>
                 {!showForm && (
                   <button
@@ -255,7 +257,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
                     onClick={() => setShowForm(true)}
                     className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-200 transition"
                   >
-                    <Plus size={12} /> Add AOI
+                    <Plus size={12} /> {t('add_aoi')}
                   </button>
                 )}
               </div>
@@ -272,7 +274,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
                           <MapPin size={12} className="text-cyan-400 flex-shrink-0" />
                           <span className="text-xs font-semibold truncate">{aoi.name}</span>
                           <span className="text-[10px] text-cyan-500/60 bg-cyan-500/10 px-1.5 rounded">
-                            {aoi.category}
+                            {t('categories.' + aoi.category, { fallback: aoi.category })}
                           </span>
                         </div>
                         <div className="text-[10px] text-cyan-300/50 mt-0.5 ml-5">
@@ -283,7 +285,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
                         type="button"
                         onClick={() => handleDelete(aoi.id)}
                         className="text-red-400/60 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-1"
-                        title="Delete AOI"
+                        title={t('delete_aoi')}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -294,7 +296,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
 
               {!listLoading && aois.length === 0 && !showForm && (
                 <div className="text-xs text-cyan-300/50 text-center py-4">
-                  No AOIs defined yet. Click &quot;Add AOI&quot; to create one.
+                  {t('no_aois_yet')}
                 </div>
               )}
             </div>
@@ -303,24 +305,24 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
             {showForm && (
               <div className="border border-cyan-500/30 rounded-lg p-4 space-y-3 bg-cyan-500/5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold tracking-wide text-cyan-200">NEW AOI</span>
+                  <span className="text-xs font-semibold tracking-wide text-cyan-200">{t('new_aoi')}</span>
                   <button
                     type="button"
                     onClick={() => { setShowForm(false); resetForm(); }}
                     className="text-xs text-cyan-400/60 hover:text-cyan-300"
                   >
-                    Cancel
+                    {t('cancel')}
                   </button>
                 </div>
 
                 {/* Name */}
                 <div>
-                  <label className="text-[10px] text-cyan-300/70 block mb-1">NAME</label>
+                  <label className="text-[10px] text-cyan-300/70 block mb-1">{t('name_label')}</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Crimea Bridge"
+                    placeholder={t('name_placeholder')}
                     className="w-full bg-zinc-900 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-100 placeholder:text-cyan-500/30 focus:outline-none focus:border-cyan-400/60"
                     autoComplete="off"
                   />
@@ -328,12 +330,12 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
 
                 {/* Description */}
                 <div>
-                  <label className="text-[10px] text-cyan-300/70 block mb-1">DESCRIPTION (optional)</label>
+                  <label className="text-[10px] text-cyan-300/70 block mb-1">{t('description_label')}</label>
                   <input
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Brief description"
+                    placeholder={t('description_placeholder')}
                     className="w-full bg-zinc-900 border border-cyan-500/30 rounded px-3 py-1.5 text-xs text-cyan-100 placeholder:text-cyan-500/30 focus:outline-none focus:border-cyan-400/60"
                     autoComplete="off"
                   />
@@ -342,7 +344,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
                 {/* Center coordinates + pick button */}
                 <div className="flex gap-2 items-end">
                   <div className="flex-1">
-                    <label className="text-[10px] text-cyan-300/70 block mb-1">LATITUDE</label>
+                    <label className="text-[10px] text-cyan-300/70 block mb-1">{t('latitude')}</label>
                     <input
                       type="text"
                       value={centerLat}
@@ -353,7 +355,7 @@ const SarAoiEditorModal = React.memo(function SarAoiEditorModal({
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="text-[10px] text-cyan-300/70 block mb-1">LONGITUDE</label>
+                    <label className="text-[10px] text-cyan-300/70 block mb-1">{t('longitude')}</label>
                     <input
                       type="text"
                       value={centerLon}

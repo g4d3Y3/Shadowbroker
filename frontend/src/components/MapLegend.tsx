@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import ExternalImage from '@/components/ExternalImage';
@@ -309,7 +310,29 @@ const MapLegend = React.memo(function MapLegend({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations('map_legend');
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+
+  const LEGEND_NAME_KEYS: Record<string, string> = {
+    'COMMERCIAL AVIATION': 'commercial_aviation',
+    'PRIVATE / UNKNOWN AVIATION': 'private_aviation',
+    'MILITARY AVIATION': 'military_aviation',
+    'TRACKED AIRCRAFT (ALERT)': 'tracked_aircraft',
+    'POTUS FLEET': 'potus_fleet',
+    'SATELLITES': 'satellites',
+    'MARITIME': 'maritime',
+    'GEOPHYSICAL': 'geophysical',
+    'WILDFIRES': 'wildfires',
+    'INCIDENTS & INTELLIGENCE': 'incidents_intel',
+    'NEWS & OSINT': 'news_osint',
+    'GPS JAMMING / INTERFERENCE': 'gps_jamming',
+    'INFRASTRUCTURE': 'infrastructure',
+    'SURVEILLANCE / CCTV': 'surveillance_cctv',
+    'SELECTION HUD': 'selection_hud',
+    'SIGINT GRID': 'sigint_grid',
+    'ORACLE SERVICE': 'oracle_service',
+    'OVERLAYS': 'overlays',
+  };
 
   const toggle = (name: string) => {
     setCollapsed((prev) => {
@@ -362,10 +385,10 @@ const MapLegend = React.memo(function MapLegend({
                 </div>
                 <div>
                   <h2 className="text-sm font-bold tracking-[0.2em] text-[var(--text-primary)] font-mono">
-                    MAP LEGEND
+                    {t('title')}
                   </h2>
                   <span className="text-[9px] text-[var(--text-muted)] font-mono tracking-widest">
-                    ICON REFERENCE KEY
+                    {t('subtitle')}
                   </span>
                 </div>
               </div>
@@ -394,7 +417,7 @@ const MapLegend = React.memo(function MapLegend({
                       <span
                         className={`text-[9px] font-mono tracking-widest font-bold px-2 py-0.5 border ${cat.color}`}
                       >
-                        {cat.name}
+                        {LEGEND_NAME_KEYS[cat.name] ? t(LEGEND_NAME_KEYS[cat.name]) : cat.name}
                       </span>
                       {isCollapsed ? (
                         <ChevronDown size={12} className="text-[var(--text-muted)]" />
@@ -437,8 +460,7 @@ const MapLegend = React.memo(function MapLegend({
             {/* Footer */}
             <div className="p-3 border-t border-[var(--border-primary)]/80 flex-shrink-0">
               <div className="text-[9px] text-[var(--text-muted)] font-mono text-center tracking-wider">
-                {LEGEND.reduce((sum, c) => sum + c.items.length, 0)} ICON DEFINITIONS ACROSS{' '}
-                {LEGEND.length} CATEGORIES
+                {t('footer', { count: LEGEND.reduce((sum, c) => sum + c.items.length, 0), total: LEGEND.length })}
               </div>
             </div>
           </motion.div>

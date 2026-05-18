@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { API_BASE } from '@/lib/api';
 import { NOMINATIM_DEBOUNCE_MS } from '@/lib/constants';
 
 /* ── LOCATE BAR ── coordinate / place-name search above bottom status bar ── */
 export function LocateBar({ onLocate, onOpenChange }: { onLocate: (lat: number, lng: number) => void; onOpenChange?: (open: boolean) => void }) {
+  const t = useTranslations('locate_bar');
   const [open, setOpen] = useState(false);
 
   useEffect(() => { onOpenChange?.(open); }, [open]);
@@ -151,7 +153,7 @@ export function LocateBar({ onLocate, onOpenChange }: { onLocate: (lat: number, 
           <circle cx="11" cy="11" r="8" />
           <path d="m21 21-4.3-4.3" />
         </svg>
-        LOCATE
+        {t('button')}
       </button>
     );
   }
@@ -186,7 +188,7 @@ export function LocateBar({ onLocate, onOpenChange }: { onLocate: (lat: number, 
             }
             if (e.key === 'Enter' && results.length > 0) handleSelect(results[0]);
           }}
-          placeholder="Enter coordinates (31.8, 34.8) or place name..."
+          placeholder={t('placeholder')}
           className="flex-1 bg-transparent text-[12px] text-[var(--text-primary)] font-mono tracking-wider outline-none placeholder:text-[var(--text-muted)]"
         />
         {loading && (

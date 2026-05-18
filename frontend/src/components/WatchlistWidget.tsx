@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import type { WatchlistEntry } from '@/hooks/useWatchlist';
 import { Eye, X, Trash2, ChevronUp, ChevronDown, Crosshair } from 'lucide-react';
 
@@ -36,6 +37,7 @@ export default function WatchlistWidget({
   onClear: () => void;
   onFlyTo?: (lat: number, lng: number) => void;
 }) {
+  const t = useTranslations('watchlist');
   const [expanded, setExpanded] = useState(false);
 
   if (items.length === 0) return null;
@@ -59,12 +61,12 @@ export default function WatchlistWidget({
             {/* Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--border-primary)]">
               <span className="text-[10px] font-mono tracking-[0.2em] text-[var(--text-heading)] font-bold">
-                WATCHLIST
+                {t('title')}
               </span>
               <button
                 onClick={onClear}
                 className="text-[var(--text-muted)] hover:text-red-400 transition-colors"
-                title="Clear all"
+                title={t('clear_all')}
               >
                 <Trash2 size={12} />
               </button>
@@ -104,7 +106,7 @@ export default function WatchlistWidget({
                       onFlyTo?.(item.lat, item.lng);
                     }}
                     className="text-[var(--text-muted)] hover:text-cyan-400 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
-                    title="Fly to"
+                    title={t('fly_to')}
                   >
                     <Crosshair size={12} />
                   </button>
@@ -116,7 +118,7 @@ export default function WatchlistWidget({
                       onRemove(item.id);
                     }}
                     className="text-[var(--text-muted)] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
-                    title="Remove"
+                    title={t('remove')}
                   >
                     <X size={12} />
                   </button>
@@ -135,7 +137,7 @@ export default function WatchlistWidget({
       >
         <Eye size={13} className="text-cyan-400" />
         <span className="text-[10px] font-mono tracking-[0.15em] text-[var(--text-heading)] font-bold">
-          {items.length} TRACKED
+          {t('tracked_count', { count: items.length })}
         </span>
         {expanded ? (
           <ChevronDown size={12} className="text-[var(--text-muted)]" />

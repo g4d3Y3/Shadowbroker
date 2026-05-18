@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Antenna,
@@ -89,6 +90,7 @@ function describeGateCompatReason(reason: string, gateId: string): string {
 // NO direct trust-mutating imports — all mutations go through the hook.
 
 const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
+  const t = useTranslations('meshchat');
   const ctrl = useMeshChatController(props);
   const {
     // UI state
@@ -323,7 +325,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
   const dmTrustPrimaryActionRequiresInviteImport =
     selectedContactTrustSummary?.recommendedAction === 'import_invite';
   const dmTrustPrimaryButtonLabel =
-    dmTrustPrimaryActionRequiresInviteImport || !showSas ? dmTrustPrimaryAction : 'HIDE SAS';
+    dmTrustPrimaryActionRequiresInviteImport || !showSas ? dmTrustPrimaryAction : t('hide_sas');
   const handleDmTrustPrimaryAction = () => {
     if (dmTrustPrimaryActionRequiresInviteImport) {
       openTerminal();
@@ -345,11 +347,11 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
   const meshActivationText =
     publicMeshBlockedByWormhole
       ? hasStoredPublicLaneIdentity
-        ? 'Wormhole is active. Turning MeshChat on will turn Wormhole off and use your saved public mesh key.'
-        : 'Wormhole is active. Turning MeshChat on will turn Wormhole off and mint a separate public mesh key.'
+        ? t('mesh_activation_text_saved')
+        : t('mesh_activation_text_new')
       : hasStoredPublicLaneIdentity
-        ? 'MeshChat is off. Turn it on to use your saved public mesh key.'
-        : 'Public mesh posting needs a mesh key. One tap gets you a fresh address.';
+        ? t('mesh_activation_text_off_saved')
+        : t('mesh_activation_text_off_new');
   const handleMeshActivationAction = () => {
     if (hasStoredPublicLaneIdentity) {
       void handleActivatePublicMeshSession();
@@ -368,7 +370,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
   const handleMeshDirectTargetSubmit = () => {
     const target = normalizeMeshDirectAddress(meshAddressDraft);
     if (!target) {
-      setSendError('enter node address like !1ee21986');
+      setSendError(t('enter_node_address'));
       window.setTimeout(() => setSendError(''), 4000);
       return;
     }
@@ -377,19 +379,19 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
     window.setTimeout(() => inputRef.current?.focus(), 0);
   };
   const meshActivationLabel = identityWizardBusy
-    ? 'GETTING MESH KEY'
+    ? t('getting_mesh_key')
     : hasStoredPublicLaneIdentity
-      ? 'TURN ON MESH'
+      ? t('turn_on_mesh')
       : publicMeshBlockedByWormhole
-        ? 'TURN OFF WORMHOLE FOR MESH'
-        : 'GET MESH KEY';
+        ? t('turn_off_wormhole')
+        : t('get_mesh_key');
   const meshActivationSideLabel = identityWizardBusy
-    ? 'WORKING...'
+    ? t('working')
     : hasStoredPublicLaneIdentity
-      ? 'USE SAVED KEY'
+      ? t('use_saved_key')
       : publicMeshBlockedByWormhole
-        ? 'AUTO DISABLE'
-        : 'ONE TAP';
+        ? t('auto_disable')
+        : t('one_tap');
 
   return (
     <div
@@ -409,7 +411,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
           <div className="flex items-center gap-2">
             <Antenna size={16} className="text-cyan-400" />
             <span className="text-[12px] text-cyan-400 font-mono tracking-widest font-bold">
-              MESH CHAT
+              {t('mesh_chat')}
             </span>
             {totalDmNotify > 0 && (
               <span className="text-[11px] font-mono px-1.5 py-0.5 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 flex items-center gap-1">
@@ -431,11 +433,11 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
             {/* TAB BAR */}
             <div className="flex border-b border-[var(--border-primary)]/50 shrink-0">
               {[
-                { key: 'infonet' as Tab, label: 'INFONET', icon: <Shield size={10} />, badge: 0 },
-                { key: 'meshtastic' as Tab, label: 'MESH', icon: <Radio size={10} />, badge: 0 },
+                { key: 'infonet' as Tab, label: t('tab_infonet'), icon: <Shield size={10} />, badge: 0 },
+                { key: 'meshtastic' as Tab, label: t('tab_mesh'), icon: <Radio size={10} />, badge: 0 },
                 {
                   key: 'dms' as Tab,
-                  label: 'DEAD DROP',
+                  label: t('tab_dead_drop'),
                   icon: <Lock size={10} />,
                   badge: totalDmNotify,
                 },
@@ -465,7 +467,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
                   setIdentityWizardOpen(true);
                 }}
                 className="px-3 flex items-center justify-center border-b border-cyan-900/20 text-[var(--text-muted)] hover:text-cyan-400 hover:bg-cyan-950/30 transition-colors"
-                title="Identity and OPSEC setup"
+                title={t('identity_setup')}
               >
                 <UserPlus size={11} />
               </button>
@@ -473,30 +475,25 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
 
             {privacyProfile === 'high' && !wormholeEnabled && (
               <div className="px-3 py-2 text-sm font-mono text-red-400/90 border-b border-red-900/30 bg-red-950/20 leading-[1.65] shrink-0">
-                High Privacy is ON but Wormhole is OFF. Private messaging is blocked until
-                Wormhole is enabled.
+                {t('high_privacy_warning')}
               </div>
             )}
 
             {activeTab !== 'meshtastic' && wormholeEnabled && !wormholeReadyState && (
               <div className="px-3 py-2 text-sm font-mono text-red-400/90 border-b border-red-900/30 bg-red-950/20 leading-[1.65] shrink-0">
-                Wormhole secure mode is enabled but the local agent is not ready. Dead Drop is
-                blocked until Wormhole is running.
+                {t('wormhole_not_ready')}
               </div>
             )}
 
             {activeTab !== 'meshtastic' && wormholeEnabled && wormholeReadyState && (
               <div className="px-3 py-2 text-sm font-mono text-yellow-400/80 border-b border-yellow-900/20 bg-yellow-950/10 leading-[1.65] shrink-0">
-                Wormhole secure mode is active. Experimental private-lane operations are routed
-                through the local agent and current secure transport paths.
+                {t('wormhole_active')}
               </div>
             )}
 
             {activeTab !== 'meshtastic' && wormholeEnabled && wormholeReadyState && !wormholeRnsReady && (
               <div className="px-3 py-2 text-sm font-mono text-amber-300/90 border-b border-amber-900/30 bg-amber-950/20 leading-[1.65] shrink-0">
-                TRANSITIONAL PRIVATE LANE. Wormhole is up and gate chat is available on the
-                transitional lane. Reticulum is still warming — Dead Drop / DM requires the
-                stronger PRIVATE / STRONG tier and is managed separately.
+                {t('transitional_lane')}
               </div>
             )}
 
@@ -570,7 +567,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
                           <Shield size={16} />
                         </div>
                         <div className="text-sm font-mono tracking-[0.24em] text-cyan-300 mb-2">
-                          PRIVATE INFONET LOCKED
+                          {t('private_infonet_locked')}
                         </div>
                         <div className="text-sm font-mono text-[var(--text-secondary)] leading-[1.7]">
                           Gate chat is available on the transitional private lane through Wormhole.
@@ -1959,7 +1956,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
                             <Lock size={16} />
                           </div>
                           <div className="text-sm font-mono tracking-[0.24em] text-cyan-300 mb-2">
-                            DEAD DROP LOCKED
+                            {t('dead_drop_locked')}
                           </div>
                           <div className="text-sm font-mono text-[var(--text-secondary)] leading-[1.7]">
                             Need Wormhole activated.
@@ -2367,7 +2364,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
                   >
                     <span className="inline-flex items-center gap-2 text-sm font-mono tracking-[0.2em]">
                       <Shield size={11} />
-                      UNLOCK INFONET
+                      {t('unlock_infonet')}
                     </span>
                     <span className="text-[12px] font-mono text-cyan-300/70">
                       OPEN PRIVATE LANE BRIEF
@@ -2380,7 +2377,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
                   >
                     <span className="inline-flex items-center gap-2 text-sm font-mono tracking-[0.2em]">
                       <Lock size={11} />
-                      UNLOCK DEAD DROP
+                      {t('unlock_dead_drop')}
                     </span>
                     <span className="text-[12px] font-mono text-cyan-300/70">
                       NEED WORMHOLE
@@ -2760,7 +2757,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-primary)]/40">
               <div>
                 <div className="text-sm font-mono tracking-[0.24em] text-cyan-400">
-                  PRIVATE INFONET LOCKED
+                  {t('private_infonet_locked')}
                 </div>
                 <div className="text-[13px] font-mono text-[var(--text-muted)] mt-1">
                   INFONET is the private Wormhole lane. Public perimeter traffic stays under MESH.
@@ -2837,7 +2834,7 @@ const MeshChat = React.memo(function MeshChat(props: MeshChatProps) {
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-primary)]/40">
               <div>
                 <div className="text-sm font-mono tracking-[0.24em] text-cyan-400">
-                  DEAD DROP LOCKED
+                  {t('dead_drop_locked')}
                 </div>
                 <div className="text-[13px] font-mono text-[var(--text-muted)] mt-1">
                   Dead Drop is the private inbox lane. Public mesh does not substitute for it.

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   open: boolean;
@@ -39,6 +40,7 @@ const KiwiSdrConsentDialog: React.FC<Props> = ({
 
   if (!open) return null;
 
+  const tc = useTranslations('common');
   const accent = '#ec4899';
   const isEdit = mode === 'edit';
 
@@ -61,41 +63,32 @@ const KiwiSdrConsentDialog: React.FC<Props> = ({
           className="px-4 py-2.5 border-b text-[11px] uppercase tracking-[0.2em] font-bold"
           style={{ borderColor: `${accent}44`, background: `${accent}15`, color: accent }}
         >
-          {isEdit ? 'Edit KiwiSDR Callsign' : 'KiwiSDR — First Use'}
+          {isEdit ? tc('edit_kiwisdr_callsign') : tc('kiwisdr_first_use')}
         </div>
 
         <div className="px-4 py-4 space-y-3">
           {!isEdit && (
             <div className="text-[12px] text-gray-300 leading-relaxed space-y-2">
-              <p>
-                KiwiSDR receivers are <span className="text-pink-300">volunteer-operated</span>{' '}
-                by amateur radio operators. Each receiver has a limited number of user slots
-                (usually 4–8) and shares the operator&apos;s home internet bandwidth.
-              </p>
-              <p>
-                Please be respectful: close the popup when you&apos;re done listening, and
-                identify yourself with a callsign or handle below so operators know who&apos;s
-                connecting.
-              </p>
+              <p>{tc('kiwisdr_consent_p1')}</p>
+              <p>{tc('kiwisdr_consent_p2')}</p>
             </div>
           )}
 
           <div className="space-y-1.5">
             <label className="block text-[11px] uppercase tracking-widest text-pink-400 font-bold">
-              Your Callsign or Handle
+              {tc('callsign_label')}
             </label>
             <input
               ref={inputRef}
               type="text"
               value={callsign}
               onChange={(e) => setCallsign(e.target.value)}
-              placeholder="e.g. KD9ABC or anon-1234 (optional)"
+              placeholder={tc('callsign_placeholder')}
               maxLength={32}
               className="w-full bg-black/40 border border-pink-500/40 focus:border-pink-400 focus:outline-none px-2.5 py-1.5 text-[13px] text-pink-200 font-mono tracking-wide"
             />
             <p className="text-[10px] text-gray-500 leading-snug">
-              Shown to the SDR operator in their user list. Leave blank to let KiwiSDR prompt
-              you on first connect.
+              {tc('callsign_hint')}
             </p>
           </div>
         </div>
@@ -117,14 +110,14 @@ const KiwiSdrConsentDialog: React.FC<Props> = ({
               e.currentTarget.style.background = `${accent}30`;
             }}
           >
-            {isEdit ? 'SAVE' : 'CONTINUE'}
+            {isEdit ? tc('save_btn') : tc('continue_btn')}
           </button>
           <button
             type="button"
             onClick={onCancel}
             className="px-4 py-2 text-[11px] font-mono tracking-wider border border-gray-600/40 text-gray-400 hover:text-white hover:border-gray-500/60 transition-colors"
           >
-            CANCEL
+            {tc('cancel')}
           </button>
         </div>
       </div>

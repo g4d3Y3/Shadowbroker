@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslations } from 'next-intl';
 import {
   Github,
   Download,
@@ -42,6 +43,7 @@ import {
   prepareWormholeInteractiveLane,
 } from '@/mesh/wormholeIdentityClient';
 import { fetchWormholeSettings } from '@/mesh/wormholeClient';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import packageJson from '../../package.json';
 
 type UpdateStatus =
@@ -83,6 +85,7 @@ export default function TopRightControls({
   dmCount,
   onMeshChatNavigate,
 }: TopRightControlsProps = {}) {
+  const t = useTranslations('common');
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>('idle');
   const [latestVersion, setLatestVersion] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -1100,7 +1103,7 @@ export default function TopRightControls({
         title={nodeTitle}
       >
         <Server size={11} className="text-cyan-400" />
-        <span className="tracking-wider">NODE</span>
+        <span className="tracking-wider">{t('node')}</span>
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${nodeIndicatorClass}`} />
       </button>
 
@@ -1112,7 +1115,7 @@ export default function TopRightControls({
         title="Open Mesh Terminal"
       >
         <Terminal size={11} className="text-cyan-400" />
-        <span className="tracking-wider">TERMINAL</span>
+        <span className="tracking-wider">{t('terminal')}</span>
         {(dmCount ?? 0) > 0 && (
           <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5 shadow-[0_0_6px_rgba(239,68,68,0.5)]">
             {(dmCount ?? 0) > 9 ? '9+' : dmCount}
@@ -1127,7 +1130,7 @@ export default function TopRightControls({
           className="flex items-center gap-1.5 px-2.5 py-1.5 bg-green-500/10 backdrop-blur-sm border border-green-500/50 hover:bg-green-500/20 transition-all text-[10px] text-green-400 font-mono cursor-pointer shadow-[0_0_15px_rgba(34,197,94,0.3)]"
         >
           <Download size={12} className="w-3 h-3" />
-          <span className="tracking-widest">v{latestVersion} UPDATE!</span>
+          <span className="tracking-widest">{t('update_available', { version: latestVersion })}</span>
         </button>
       )}
 
@@ -1136,7 +1139,7 @@ export default function TopRightControls({
         <>
           <button className="flex items-center gap-1.5 px-2.5 py-1.5 bg-green-500/10 backdrop-blur-sm border border-green-500/50 text-[10px] text-green-400 font-mono shadow-[0_0_15px_rgba(34,197,94,0.3)]">
             <Download size={12} className="w-3 h-3" />
-            <span className="tracking-widest">v{latestVersion} UPDATE!</span>
+            <span className="tracking-widest">{t('update_available', { version: latestVersion })}</span>
           </button>
           {renderConfirmDialog()}
         </>
@@ -1146,7 +1149,7 @@ export default function TopRightControls({
       {updateStatus === 'updating' && (
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-cyan-500/10 backdrop-blur-sm border border-cyan-500/50 text-[10px] text-cyan-400 font-mono">
           <RefreshCw size={12} className="w-3 h-3 animate-spin" />
-          <span className="tracking-widest">DOWNLOADING UPDATE...</span>
+          <span className="tracking-widest">{t('downloading')}</span>
         </div>
       )}
 
@@ -1154,7 +1157,7 @@ export default function TopRightControls({
       {updateStatus === 'restarting' && (
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-cyan-500/10 backdrop-blur-sm border border-cyan-500/50 text-[10px] text-cyan-400 font-mono shadow-[0_0_15px_rgba(0,255,255,0.2)]">
           <RefreshCw size={12} className="w-3 h-3 animate-spin" />
-          <span className="tracking-widest">RESTARTING...</span>
+          <span className="tracking-widest">{t('restarting')}</span>
         </div>
       )}
 
@@ -1166,7 +1169,7 @@ export default function TopRightControls({
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-red-500/10 backdrop-blur-sm border border-red-500/50 hover:bg-red-500/20 transition-all text-[10px] text-red-400 font-mono"
           >
             <AlertCircle size={12} className="w-3 h-3" />
-            <span className="tracking-widest">UPDATE FAILED</span>
+            <span className="tracking-widest">{t('update_failed')}</span>
           </button>
           {renderErrorDialog()}
         </>
@@ -1180,7 +1183,7 @@ export default function TopRightControls({
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-cyan-500/10 backdrop-blur-sm border border-cyan-500/50 text-[10px] text-cyan-400 font-mono shadow-[0_0_15px_rgba(0,255,255,0.2)]"
           >
             <Terminal size={12} className="w-3 h-3" />
-            <span className="tracking-widest">DOCKER UPDATE</span>
+            <span className="tracking-widest">{t('docker_update')}</span>
           </button>
           {renderDockerDialog()}
         </>
@@ -1204,15 +1207,17 @@ export default function TopRightControls({
 
           <span className="tracking-wider">
             {updateStatus === 'checking'
-              ? 'CHECKING...'
+              ? t('checking')
               : updateStatus === 'uptodate'
-                ? 'UP TO DATE'
+                ? t('up_to_date')
                 : updateStatus === 'error'
-                  ? 'CHECK FAILED'
-                  : 'UPDATES'}
+                  ? t('check_failed')
+                  : t('updates')}
           </span>
         </button>
       )}
+
+      <LanguageSwitcher slim />
     </div>
     </>
   );

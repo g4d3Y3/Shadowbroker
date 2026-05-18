@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 import type { MapEffects } from '@/types/dashboard';
@@ -14,6 +15,7 @@ const WorldviewRightPanel = React.memo(function WorldviewRightPanel({
   setEffects: (e: MapEffects) => void;
   setUiVisible: (v: boolean) => void;
 }) {
+  const t = useTranslations('common');
   const [isMinimized, setIsMinimized] = useState(true);
   const [currentTime, setCurrentTime] = useState({ date: 'XXXX-XX-XX', time: '00:00:00' });
 

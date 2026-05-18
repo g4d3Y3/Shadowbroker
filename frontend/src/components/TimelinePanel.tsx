@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Camera,
@@ -75,6 +76,7 @@ function pct(value: number, min: number, max: number): number {
 }
 
 export default function TimelinePanel() {
+  const t = useTranslations('timeline');
   const tm = useTimeMachine();
   const [isMinimized, setIsMinimized] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
@@ -234,7 +236,7 @@ export default function TimelinePanel() {
               isSnapshot ? 'text-amber-400' : 'text-cyan-400'
             }`}
           >
-            TIME MACHINE
+            {t('title')}
           </span>
           <span
             className={`text-[10px] font-mono tracking-wider px-1.5 py-0.5 border ${
@@ -243,7 +245,7 @@ export default function TimelinePanel() {
                 : 'text-emerald-300 border-emerald-600/40 bg-emerald-950/20'
             }`}
           >
-            {isSnapshot ? 'SNAPSHOT' : 'LIVE'}
+            {isSnapshot ? t('snapshot') : t('live')}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -258,7 +260,7 @@ export default function TimelinePanel() {
             <div className="flex items-center justify-between gap-3 px-3 py-2 bg-amber-950/35 border border-amber-500/45 rounded-sm">
               <div className="min-w-0">
                 <div className="text-[12px] font-mono tracking-wider font-bold text-amber-300">
-                  VIEWING RECORDED SNAPSHOT
+                  {t('viewing_snapshot')}
                 </div>
                 <div className="text-[11px] font-mono text-amber-200/70 truncate">
                   {formatFullTime(tm.currentUnixTs)}
@@ -270,7 +272,7 @@ export default function TimelinePanel() {
                 className="flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-[12px] font-mono tracking-wider font-bold text-emerald-300 bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-500/50 rounded-sm transition-colors"
               >
                 <RotateCcw size={13} />
-                LIVE
+                {t('live')}
               </button>
             </div>
           )}
@@ -279,7 +281,7 @@ export default function TimelinePanel() {
             <div className="flex items-center gap-2">
               <Radio size={12} className={tmEnabled ? 'text-emerald-400' : 'text-red-500/60'} />
               <span className={`text-[11px] font-mono tracking-wider ${tmEnabled ? 'text-emerald-400' : 'text-red-400/60'}`}>
-                {tmEnabled ? 'LIVE CAPTURE ON' : 'SNAPSHOTS OFF'}
+                {tmEnabled ? t('live_capture_on') : t('snapshots_off')}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -288,10 +290,10 @@ export default function TimelinePanel() {
                 onClick={takeSnapshot}
                 disabled={!tmEnabled || snapshotBusy}
                 className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono tracking-wider text-cyan-400 hover:text-cyan-300 bg-cyan-950/30 hover:bg-cyan-950/50 border border-cyan-900/30 rounded-sm transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Capture current map state"
+                title={t('capture_map_state')}
               >
                 <Camera size={10} />
-                {snapshotBusy ? 'SAVING...' : 'SNAP'}
+                {snapshotBusy ? t('saving') : t('snap')}
               </button>
               <button
                 type="button"
@@ -303,7 +305,7 @@ export default function TimelinePanel() {
                 }`}
               >
                 <Settings2 size={10} />
-                CONFIGURE
+                {t('configure')}
                 {configOpen ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
               </button>
             </div>
@@ -312,7 +314,7 @@ export default function TimelinePanel() {
           {configOpen && (
             <div className="border border-cyan-900/30 bg-[rgba(5,5,10,0.95)] p-3 flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono tracking-wider text-[var(--text-secondary)]">SNAPSHOTS</span>
+                <span className="text-[11px] font-mono tracking-wider text-[var(--text-secondary)]">{t('snapshots')}</span>
                 <button
                   type="button"
                   onClick={toggleTm}
@@ -323,13 +325,13 @@ export default function TimelinePanel() {
                       : 'text-red-400 border-red-800/40 bg-red-950/20 hover:bg-red-950/40'
                   } disabled:opacity-40`}
                 >
-                  {tmSaving ? '...' : tmEnabled ? 'ON' : 'OFF'}
+                  {tmSaving ? '...' : tmEnabled ? t('on') : t('off')}
                 </button>
               </div>
 
               <div>
                 <span className="text-[10px] font-mono tracking-wider text-[var(--text-muted)] block mb-2">
-                  CAPTURE FREQUENCY
+                  {t('capture_frequency')}
                 </span>
                 <div className="grid grid-cols-2 gap-1.5">
                   {Object.entries(PRESET_META).map(([key, meta]) => {
@@ -348,8 +350,8 @@ export default function TimelinePanel() {
                       >
                         <Icon size={12} className={active ? 'text-amber-400' : 'text-cyan-600'} />
                         <div>
-                          <div className="text-[10px] font-mono tracking-wider font-bold">{meta.label}</div>
-                          <div className="text-[11px] font-mono text-[var(--text-muted)] leading-tight">{meta.desc}</div>
+                          <div className="text-[10px] font-mono tracking-wider font-bold">{t(`presets.${key}`)}</div>
+                          <div className="text-[11px] font-mono text-[var(--text-muted)] leading-tight">{t(`presets.${key}_desc`)}</div>
                         </div>
                       </button>
                     );
@@ -366,7 +368,7 @@ export default function TimelinePanel() {
                   {formatClock(timelineStart)}
                 </span>
                 <span className={`text-[12px] font-mono tracking-wider font-bold ${isSnapshot ? 'text-amber-300' : 'text-cyan-300'}`}>
-                  {isSnapshot || isScrubbing ? formatFullTime(effectiveUnixTs) : `${totalSnapshots} snapshots ready`}
+                  {isSnapshot || isScrubbing ? formatFullTime(effectiveUnixTs) : t('snapshots_ready', { count: totalSnapshots })}
                 </span>
                 <span className="text-[11px] font-mono tracking-wider text-[var(--text-muted)]">
                   {formatClock(timelineEnd)}
@@ -396,7 +398,7 @@ export default function TimelinePanel() {
                 </div>
                 <div className="mt-1.5 flex items-center gap-2">
                   <span className="shrink-0 text-[9px] font-mono tracking-[0.24em] text-[var(--text-muted)] opacity-70">
-                    SNAPS
+                    {t('snaps')}
                   </span>
                   <div className="relative h-2 flex-1 rounded-full bg-cyan-950/25">
                     {snapshotMarks.map((mark) => (
@@ -418,7 +420,7 @@ export default function TimelinePanel() {
                   onClick={stepBackward}
                   className="p-2 rounded-sm transition-colors text-cyan-300 hover:text-cyan-100 hover:bg-cyan-950/40 disabled:opacity-30"
                   disabled={!hasPlayableRange}
-                  title="Previous snapshot"
+                  title={t('prev_snapshot')}
                 >
                   <SkipBack size={18} />
                 </button>
@@ -434,11 +436,11 @@ export default function TimelinePanel() {
                 >
                   {tm.playing ? (
                     <>
-                      <Pause size={16} /> PAUSE
+                      <Pause size={16} /> {t('pause')}
                     </>
                   ) : (
                     <>
-                      <Play size={16} /> PLAY
+                      <Play size={16} /> {t('play')}
                     </>
                   )}
                 </button>
@@ -447,7 +449,7 @@ export default function TimelinePanel() {
                   onClick={stepForward}
                   className="p-2 rounded-sm transition-colors text-cyan-300 hover:text-cyan-100 hover:bg-cyan-950/40 disabled:opacity-30"
                   disabled={!hasPlayableRange}
-                  title="Next snapshot"
+                  title={t('next_snapshot')}
                 >
                   <SkipForward size={18} />
                 </button>
@@ -456,17 +458,17 @@ export default function TimelinePanel() {
                   onClick={() => exitSnapshotMode()}
                   disabled={!isSnapshot}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-mono tracking-wider font-bold text-emerald-300 bg-emerald-950/30 hover:bg-emerald-900/40 border border-emerald-500/40 rounded-sm transition-colors disabled:opacity-40 disabled:hover:bg-emerald-950/30"
-                  title="Return to live feed"
+                  title={t('return_live')}
                 >
                   <RotateCcw size={13} />
-                  LIVE
+                  {t('live')}
                 </button>
               </div>
 
               <div className="flex items-center justify-between gap-2 mt-3">
                 <div className="flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-[var(--text-muted)]">
                   <Gauge size={12} />
-                  PLAYBACK
+                  {t('playback')}
                 </div>
                 <div className="flex gap-1">
                   {SPEED_OPTIONS.map((opt) => (
@@ -479,9 +481,9 @@ export default function TimelinePanel() {
                           ? 'text-amber-300 border-amber-600/50 bg-amber-950/30'
                           : 'text-[var(--text-secondary)] border-cyan-900/20 hover:bg-cyan-950/20'
                       }`}
-                      title={opt.desc}
+                      title={t(`speed_options.${opt.key}_desc`)}
                     >
-                      {opt.label}
+                      {t(`speed_options.${opt.key}`)}
                     </button>
                   ))}
                 </div>
@@ -490,10 +492,10 @@ export default function TimelinePanel() {
           ) : tmEnabled ? (
             <div className="w-full border border-cyan-900/30 rounded-sm py-3 px-3 bg-cyan-950/10 text-center">
               <div className="text-[12px] font-mono text-cyan-500 tracking-wider mb-1">
-                WAITING FOR FIRST SNAPSHOT
+                {t('waiting_first_snapshot')}
               </div>
               <div className="text-[11px] font-mono text-[var(--text-muted)] leading-relaxed">
-                Recording is on. Playback controls will appear after the first capture.
+                {t('waiting_desc')}
               </div>
               <button
                 type="button"
@@ -502,27 +504,27 @@ export default function TimelinePanel() {
                 className="mt-2 flex items-center gap-1.5 mx-auto px-4 py-1.5 text-[11px] font-mono tracking-wider text-cyan-400 hover:text-cyan-300 border border-cyan-800/40 hover:border-cyan-600/50 bg-cyan-950/20 hover:bg-cyan-950/40 rounded-sm transition-colors"
               >
                 <Camera size={12} />
-                {snapshotBusy ? 'SAVING...' : 'TAKE FIRST SNAPSHOT NOW'}
+                {snapshotBusy ? t('saving') : t('take_first_snapshot')}
               </button>
             </div>
           ) : (
             <div className="w-full border border-cyan-900/30 rounded-sm py-4 px-3 bg-cyan-950/10 text-center">
               <div className="text-[12px] font-mono text-[var(--text-muted)] tracking-wider leading-relaxed mb-3">
-                Enable snapshots to record map state and play it back later.
+                {t('enable_snapshots_desc')}
               </div>
               <button
                 type="button"
                 onClick={toggleTm}
                 className="px-5 py-2 text-[12px] font-mono tracking-wider font-bold text-cyan-400 hover:text-cyan-300 border border-cyan-700/50 hover:border-cyan-500/60 bg-cyan-950/30 hover:bg-cyan-950/50 rounded-sm transition-colors"
               >
-                ENABLE SNAPSHOTS
+                {t('enable_snapshots_btn')}
               </button>
             </div>
           )}
 
           {tm.loading && (
             <div className="text-[11px] font-mono text-amber-500/70 tracking-wider text-center animate-pulse">
-              LOADING RECORDED FRAME...
+              {t('loading_frame')}
             </div>
           )}
           {tm.error && (
@@ -534,18 +536,18 @@ export default function TimelinePanel() {
           {isSnapshot && (
             <div className="border border-amber-900/20 bg-amber-950/10 px-3 py-2">
               <div className="text-[11px] font-mono tracking-wider text-amber-400/70 mb-1.5">
-                RECORDED LAYERS
+                {t('recorded_layers')}
               </div>
               <div className="grid grid-cols-3 gap-x-2 gap-y-1">
-                <TelemetryDot label="FLIGHTS" dataKey="commercial_flights" />
-                <TelemetryDot label="MILITARY" dataKey="military_flights" />
-                <TelemetryDot label="SHIPS" dataKey="ships" />
-                <TelemetryDot label="SATS" dataKey="satellites" />
-                <TelemetryDot label="NEWS" dataKey="news" />
-                <TelemetryDot label="QUAKES" dataKey="earthquakes" />
-                <TelemetryDot label="GDELT" dataKey="gdelt" />
-                <TelemetryDot label="SIGINT" dataKey="sigint" />
-                <TelemetryDot label="FIRES" dataKey="firms_fires" />
+                <TelemetryDot label={t('rec_flights')} dataKey="commercial_flights" />
+                <TelemetryDot label={t('rec_military')} dataKey="military_flights" />
+                <TelemetryDot label={t('rec_ships')} dataKey="ships" />
+                <TelemetryDot label={t('rec_sats')} dataKey="satellites" />
+                <TelemetryDot label={t('rec_news')} dataKey="news" />
+                <TelemetryDot label={t('rec_quakes')} dataKey="earthquakes" />
+                <TelemetryDot label={t('rec_gdelt')} dataKey="gdelt" />
+                <TelemetryDot label={t('rec_sigint')} dataKey="sigint" />
+                <TelemetryDot label={t('rec_fires')} dataKey="firms_fires" />
               </div>
             </div>
           )}

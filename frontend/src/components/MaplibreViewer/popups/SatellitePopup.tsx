@@ -4,6 +4,7 @@ import React from 'react';
 import { Popup } from 'react-map-gl/maplibre';
 import WikiImage from '@/components/WikiImage';
 import type { Satellite, SatManeuverAlert } from '@/types/dashboard';
+import { useTranslations } from 'next-intl';
 
 export interface SatellitePopupProps {
   sat: Satellite;
@@ -27,6 +28,7 @@ const MISSION_LABELS: Record<string, string> = {
 };
 
 export function SatellitePopup({ sat, maneuverAlert, onClose }: SatellitePopupProps) {
+  const t = useTranslations('popups');
   const isISS = sat.mission === 'space_station' && sat.name?.includes('ISS');
 
   return (
@@ -46,20 +48,20 @@ export function SatellitePopup({ sat, maneuverAlert, onClose }: SatellitePopupPr
             🛰️ {sat.name}
           </div>
           {isISS && (
-            <span className="text-[11px] font-mono tracking-widest text-yellow-500/80 border border-yellow-500/30 px-1 rounded">LIVE</span>
+            <span className="text-[11px] font-mono tracking-widest text-yellow-500/80 border border-yellow-500/30 px-1 rounded">{t('live_badge')}</span>
           )}
         </div>
         <div className="map-popup-row text-[#8899aa]">
-          NORAD ID: <span className="text-white">{sat.id}</span>
+          {t('norad_id')} <span className="text-white">{sat.id}</span>
         </div>
         {sat.sat_type && (
           <div className="map-popup-row">
-            Type: <span className="text-[#ffcc00]">{sat.sat_type}</span>
+            {t('sat_type')} <span className="text-[#ffcc00]">{sat.sat_type}</span>
           </div>
         )}
         {sat.country && (
           <div className="map-popup-row">
-            Country: <span className="text-white">{sat.country}</span>
+            {t('sat_country')} <span className="text-white">{sat.country}</span>
           </div>
         )}
         {sat.mission && (
@@ -68,12 +70,12 @@ export function SatellitePopup({ sat, maneuverAlert, onClose }: SatellitePopupPr
           </div>
         )}
         <div className="map-popup-row">
-          Altitude:{' '}
-          <span className="text-[#44ff88]">{sat.alt_km?.toLocaleString()} km</span>
+          {t('altitude')}{' '}
+          <span className="text-[#44ff88]">{t('sat_km', { km: sat.alt_km?.toLocaleString() })}</span>
         </div>
         {maneuverAlert && (
           <div className="mt-1.5 p-1.5 rounded bg-red-900/30 border border-red-500/40">
-            <div className="text-[11px] font-mono tracking-widest text-red-400 mb-0.5">MANEUVER DETECTED</div>
+            <div className="text-[11px] font-mono tracking-widest text-red-400 mb-0.5">{t('maneuver_detected')}</div>
             {maneuverAlert.reasons.map((r, i) => (
               <div key={i} className="text-[9px] text-red-300/80 font-mono">{r}</div>
             ))}
