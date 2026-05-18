@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ArrowRightLeft, TrendingUp, TrendingDown, Activity, Wallet, ArrowDownToLine, ArrowUpFromLine, Copy, X } from 'lucide-react';
 import { useDataKeys } from '@/hooks/useDataStore';
+import { useTranslations } from 'next-intl';
 import type { DashboardData, StockTicker } from '@/types/dashboard';
 
 interface ExchangeViewProps {
@@ -49,13 +50,13 @@ const ORDER_BOOK_ASKS = [
 export default function ExchangeView({ onBack }: ExchangeViewProps) {
   const data = useDataKeys(DATA_KEYS) as DataSlice;
   const stocks = data?.stocks;
+  const t = useTranslations('infonet');
 
   // Build live trading pairs from real stock data
   const PAIRS = useMemo(() => {
     if (!stocks) return FALLBACK_PAIRS;
     const entries = Object.entries(stocks as Record<string, StockTicker>)
       .filter(([k]) => !['last_updated', 'source'].includes(k));
-    // Try crypto symbols first, then fill with whatever's available
     const pairs: { symbol: string; name: string; price: string; change: string; up: boolean }[] = [];
     for (const sym of CRYPTO_SYMBOLS) {
       const match = entries.find(([k]) => k.toUpperCase() === sym);
@@ -72,7 +73,6 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
         }
       }
     }
-    // If we didn't find enough crypto, add other stock tickers
     if (pairs.length < 3) {
       for (const [k, val] of entries) {
         if (pairs.some(p => p.symbol === k.toUpperCase())) continue;
@@ -133,13 +133,13 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
           className="flex items-center text-cyan-500 hover:text-cyan-400 transition-all uppercase text-xs tracking-widest border border-cyan-900/50 px-3 py-1 bg-cyan-900/10 hover:bg-cyan-900/30 hover:border-cyan-500/50 mb-4"
         >
           <ChevronLeft size={14} className="mr-1" />
-          RETURN TO MAIN
+          {t('return_to_main')}
         </button>
         <h1 className="text-2xl font-bold text-cyan-400 uppercase tracking-widest flex items-center">
           <ArrowRightLeft className="mr-2 text-cyan-400" />
-          DECENTRALIZED EXCHANGE
+          {t('decentralized_exchange')}
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Trade crypto assets against Credits. Zero KYC. Zero logs.</p>
+        <p className="text-gray-500 text-sm mt-1">{t('exchange_subtitle')}</p>
       </div>
 
       {/* Navigation Tabs */}
@@ -148,13 +148,13 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
           onClick={() => setActiveTab('trade')}
           className={`flex items-center px-4 py-2 uppercase text-xs tracking-widest transition-colors whitespace-nowrap ${activeTab === 'trade' ? 'bg-gray-800/50 text-gray-300 border-b-2 border-cyan-400' : 'text-gray-500 hover:text-gray-400'}`}
         >
-          <ArrowRightLeft size={14} className="mr-2" /> TRADE
+          <ArrowRightLeft size={14} className="mr-2" /> {t('trade')}
         </button>
         <button
           onClick={() => setActiveTab('funds')}
           className={`flex items-center px-4 py-2 uppercase text-xs tracking-widest transition-colors whitespace-nowrap ${activeTab === 'funds' ? 'bg-gray-800/50 text-gray-300 border-b-2 border-cyan-400' : 'text-gray-500 hover:text-gray-400'}`}
         >
-          <Wallet size={14} className="mr-2" /> FUNDS
+          <Wallet size={14} className="mr-2" /> {t('funds')}
         </button>
       </div>
 
@@ -163,12 +163,10 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
         {/* TRADE TAB */}
         {activeTab === 'trade' && (
           <>
-            {/* Left Column: Pairs & Chart */}
             <div className="flex-1 flex flex-col gap-4">
-              {/* Pairs List */}
               <div className="border border-gray-800 bg-gray-900/20 p-4">
                 <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-                  <Activity size={16} className="mr-2" /> TRADING PAIRS (vs CREDITS)
+                  <Activity size={16} className="mr-2" /> {t('trading_pairs')}
                 </h2>
                 <div className="space-y-2">
                   {PAIRS.map(pair => (
@@ -193,7 +191,6 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
                 </div>
               </div>
 
-              {/* Simple Chart Area */}
               <div className="border border-gray-800 bg-gray-900/20 p-4 flex-1 flex flex-col">
                 <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex justify-between items-center">
                   <span>{selectedPair.symbol}/CREDITS CHART</span>
@@ -215,28 +212,26 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
               </div>
             </div>
 
-            {/* Right Column: Order Book & Trade Form */}
             <div className="w-full md:w-80 flex flex-col gap-4 shrink-0">
-              {/* Trade Form */}
               <div className="border border-gray-800 bg-gray-900/20 p-4">
                 <div className="flex gap-2 mb-4">
                   <button
                     onClick={() => setOrderType('BUY')}
                     className={`flex-1 py-2 font-bold text-sm border transition-colors ${orderType === 'BUY' ? 'bg-green-900/50 border-green-400 text-green-400' : 'bg-black border-gray-800 text-gray-500 hover:border-gray-700'}`}
                   >
-                    BUY {selectedPair.symbol}
+                    {t('buy')} {selectedPair.symbol}
                   </button>
                   <button
                     onClick={() => setOrderType('SELL')}
                     className={`flex-1 py-2 font-bold text-sm border transition-colors ${orderType === 'SELL' ? 'bg-red-900/50 border-red-400 text-red-400' : 'bg-black border-gray-800 text-gray-500 hover:border-gray-700'}`}
                   >
-                    SELL {selectedPair.symbol}
+                    {t('sell')} {selectedPair.symbol}
                   </button>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">Price (Credits)</label>
+                    <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">{t('price_label')} (Credits)</label>
                     <input
                       type="text"
                       value={price}
@@ -245,7 +240,7 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">Amount ({selectedPair.symbol})</label>
+                    <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">{t('amount_label')} ({selectedPair.symbol})</label>
                     <input
                       type="text"
                       value={amount}
@@ -255,7 +250,7 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
                     />
                   </div>
                   <div className="pt-2 border-t border-gray-800 flex justify-between items-center">
-                    <span className="text-xs text-gray-500 uppercase tracking-widest">Total</span>
+                    <span className="text-xs text-gray-500 uppercase tracking-widest">{t('total_label')}</span>
                     <span className="font-mono text-gray-300 font-bold">
                       {amount && price && !isNaN(Number(amount)) && !isNaN(Number(price))
                         ? (Number(amount) * Number(price)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -270,11 +265,11 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
 
               {/* Order Book */}
               <div className="border border-gray-800 bg-gray-900/20 p-4 flex-1">
-                <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2">ORDER BOOK</h2>
+                <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2">{t('order_book')}</h2>
                 <div className="flex justify-between text-xs text-gray-500 uppercase tracking-widest mb-2 px-1">
-                  <span>Price(CREDITS)</span>
-                  <span>Amt({selectedPair.symbol})</span>
-                  <span>Total</span>
+                  <span>{t('price_label')}(CREDITS)</span>
+                  <span>{t('amount_label')}({selectedPair.symbol})</span>
+                  <span>{t('total_label')}</span>
                 </div>
 
                 <div className="space-y-1 mb-4">
@@ -310,7 +305,7 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
           <div className="flex-1 flex flex-col gap-4">
             <div className="border border-gray-800 bg-gray-900/20 p-4">
               <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-                <Wallet size={16} className="mr-2" /> ASSET BALANCES
+                <Wallet size={16} className="mr-2" /> {t('asset_balances')}
               </h2>
               <div className="space-y-2">
                 {MOCK_BALANCES.map(asset => (
@@ -330,10 +325,10 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                       <button onClick={() => setDepositAsset(asset)} className="flex-1 sm:flex-none flex items-center justify-center px-3 py-1.5 bg-cyan-900/20 border border-cyan-900/50 text-cyan-400 hover:bg-cyan-900/40 transition-colors text-xs uppercase tracking-widest">
-                        <ArrowDownToLine size={14} className="mr-1" /> RECEIVE
+                        <ArrowDownToLine size={14} className="mr-1" /> {t('receive')}
                       </button>
                       <button onClick={() => handleWithdrawClick(asset)} className="flex-1 sm:flex-none flex items-center justify-center px-3 py-1.5 bg-gray-800/50 border border-gray-700 text-gray-300 hover:bg-gray-700 transition-colors text-xs uppercase tracking-widest">
-                        <ArrowUpFromLine size={14} className="mr-1" /> SEND
+                        <ArrowUpFromLine size={14} className="mr-1" /> {t('send')}
                       </button>
                     </div>
                   </div>
@@ -350,7 +345,7 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
           <div className="bg-[#0a0a0a] border border-cyan-600 p-6 max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)]">
             <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
               <h2 className="text-cyan-500 text-lg font-bold flex items-center">
-                <ArrowDownToLine className="mr-2" /> RECEIVE {depositAsset.symbol}
+                <ArrowDownToLine className="mr-2" /> {t('receive')} {depositAsset.symbol}
               </h2>
               <button onClick={() => setDepositAsset(null)} className="text-gray-500 hover:text-white"><X size={20}/></button>
             </div>
@@ -362,14 +357,14 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
                   ))}
                 </div>
               </div>
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-2 text-center">Scan QR code or copy address below</p>
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-2 text-center">{t('scan_qr')}</p>
               <div className="w-full flex items-center bg-black border border-gray-800 p-2">
                 <span className="flex-1 font-mono text-xs text-gray-300 truncate select-all">
                   {generateMockAddress(depositAsset.symbol)}
                 </span>
                 <button className="ml-2 text-cyan-400 hover:text-cyan-300"><Copy size={14} /></button>
               </div>
-              <p className="text-xs text-red-400 mt-4 text-center">Send ONLY {depositAsset.name} ({depositAsset.symbol}) to this address. Sending any other asset will result in permanent loss.</p>
+              <p className="text-xs text-red-400 mt-4 text-center">{t('send_only_warning', { name: depositAsset.name, symbol: depositAsset.symbol })}</p>
             </div>
           </div>
         </div>
@@ -381,23 +376,23 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
           <div className="bg-[#0a0a0a] border border-cyan-600 p-6 max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)]">
             <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
               <h2 className="text-cyan-500 text-lg font-bold flex items-center">
-                <ArrowUpFromLine className="mr-2" /> SEND {withdrawAsset.symbol}
+                <ArrowUpFromLine className="mr-2" /> {t('send')} {withdrawAsset.symbol}
               </h2>
               <button onClick={() => setWithdrawAsset(null)} className="text-gray-500 hover:text-white"><X size={20}/></button>
             </div>
             <div className="space-y-4 py-2">
               <div>
                 <div className="flex justify-between mb-1">
-                  <label className="text-xs text-gray-500 uppercase tracking-widest">Available Balance</label>
+                  <label className="text-xs text-gray-500 uppercase tracking-widest">{t('available_balance')}</label>
                   <span className="text-xs font-mono text-cyan-400">{withdrawAsset.balance} {withdrawAsset.symbol}</span>
                 </div>
               </div>
               <div>
-                <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">Destination Address</label>
-                <input type="text" placeholder={`Enter ${withdrawAsset.symbol} address`} className="w-full bg-black border border-gray-800 p-2 text-gray-300 font-mono outline-none focus:border-cyan-400 text-sm" spellCheck={false} />
+                <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">{t('destination_address')}</label>
+                <input type="text" placeholder={t('send') + ` ${withdrawAsset.symbol} ${t('destination_address').toLowerCase()}`} className="w-full bg-black border border-gray-800 p-2 text-gray-300 font-mono outline-none focus:border-cyan-400 text-sm" spellCheck={false} />
               </div>
               <div>
-                <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">Amount</label>
+                <label className="text-xs text-gray-500 uppercase tracking-widest mb-1 block">{t('amount_label')}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -410,18 +405,18 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
                     onClick={() => setWithdrawAmount(withdrawAsset.balance)}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-cyan-400 hover:text-cyan-300 uppercase tracking-widest font-bold"
                   >
-                    MAX
+                    {t('max')}
                   </button>
                 </div>
               </div>
 
               <div className="bg-gray-900/30 border border-gray-800 p-3 mt-2">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs text-gray-500 uppercase tracking-widest">Network Fee</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-widest">{t('network_fee')}</span>
                   <span className="text-xs font-mono text-gray-400">{getNetworkFee(withdrawAsset.symbol)} {withdrawAsset.symbol}</span>
                 </div>
                 <div className="flex justify-between items-center border-t border-gray-800 pt-1 mt-1">
-                  <span className="text-xs text-gray-500 uppercase tracking-widest">Total Deduction</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-widest">{t('total_deduction')}</span>
                   <span className="text-xs font-mono text-white font-bold">
                     {withdrawAmount && !isNaN(Number(withdrawAmount))
                       ? (Number(withdrawAmount) + getNetworkFee(withdrawAsset.symbol)).toFixed(withdrawAsset.symbol === 'CREDITS' ? 2 : 6)
@@ -432,7 +427,7 @@ export default function ExchangeView({ onBack }: ExchangeViewProps) {
 
               <div className="pt-4">
                 <button className="w-full py-3 bg-cyan-900/50 border border-cyan-500 text-cyan-400 hover:bg-cyan-800 transition-colors font-bold uppercase tracking-widest">
-                  CONFIRM SEND
+                  {t('confirm_send')}
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Activity } from 'lucide-react';
 import { useDataKeys } from '@/hooks/useDataStore';
 import type { DashboardData } from '@/types/dashboard';
@@ -39,6 +40,7 @@ type DataSlice = Pick<DashboardData, 'news' | 'trending_markets' | 'commercial_f
 const DATA_KEYS = ['news', 'trending_markets', 'commercial_flights', 'military_flights', 'ships', 'correlations', 'threat_level', 'liveuamap'] as const;
 
 export default function LiveActivityLog() {
+  const t = useTranslations('infonet');
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevDataRef = useRef<DataSlice | null>(null);
@@ -196,10 +198,10 @@ export default function LiveActivityLog() {
       <div className="flex items-center justify-between mb-2 border-b border-gray-800 pb-2 shrink-0">
         <h3 className="text-cyan-400 font-bold flex items-center text-xs tracking-widest uppercase">
           <Activity size={14} className="mr-2 animate-pulse text-green-400" />
-          Live Network Telemetry
+          {t('activity_title')}
         </h3>
         <span className="text-sm text-gray-500 font-mono">
-          FEEDS: {logs.length} EVENTS
+          {t('activity_feeds', { count: logs.length })}
         </span>
       </div>
 
@@ -208,7 +210,7 @@ export default function LiveActivityLog() {
         className="flex-1 overflow-y-auto font-mono text-sm sm:text-xs space-y-1.5 pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-800"
       >
         {logs.length === 0 && (
-          <div className="text-gray-600 italic text-center py-4">Waiting for data stream...</div>
+          <div className="text-gray-600 italic text-center py-4">{t('activity_waiting')}</div>
         )}
         {logs.map(log => (
           <div key={log.id} className={`flex items-start gap-2 hover:bg-white/5 px-1 py-0.5 transition-colors ${log.color}`}>

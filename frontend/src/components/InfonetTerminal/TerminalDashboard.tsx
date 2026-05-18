@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Activity, Newspaper, TrendingUp, Vote, ChevronRight } from 'lucide-react';
 import { useDataKeys } from '@/hooks/useDataStore';
 import type { DashboardData } from '@/types/dashboard';
@@ -35,6 +36,7 @@ type DataSlice = Pick<DashboardData, 'news' | 'trending_markets' | 'threat_level
 const DATA_KEYS = ['news', 'trending_markets', 'threat_level', 'commercial_flights', 'military_flights', 'ships', 'satellites', 'correlations'] as const;
 
 export default function TerminalDashboard({ onNavigate, onComingSoon }: TerminalDashboardProps) {
+  const t = useTranslations('infonet');
   const [category, setCategory] = useState('ALL');
   const data = useDataKeys(DATA_KEYS) as DataSlice;
 
@@ -68,7 +70,7 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
       {/* Dashboard Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-800 pb-3 gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-cyan-400 uppercase tracking-widest font-bold">GLOBAL THREAT INTERCEPT</span>
+          <span className="text-xs text-cyan-400 uppercase tracking-widest font-bold">{t('dashboard_global_threat_intercept')}</span>
           {threat && (
             <span className={`text-sm px-2 py-0.5 ${threatStyle.bg} ${threatStyle.text} ${threatStyle.border} border animate-pulse font-bold`}>
               {threat.level}
@@ -81,11 +83,11 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
           onChange={(e) => setCategory(e.target.value)}
           className="bg-[#0a0a0a] border border-gray-800 text-gray-300 text-xs p-1.5 outline-none uppercase tracking-widest cursor-pointer hover:border-gray-600 transition-colors"
         >
-          <option value="ALL">ALL TOPICS</option>
-          <option value="CONFLICT">CONFLICT</option>
-          <option value="POLITICS">POLITICS</option>
-          <option value="FINANCE">FINANCE</option>
-          <option value="TECH">TECH</option>
+          <option value="ALL">{t('dashboard_category_all')}</option>
+          <option value="CONFLICT">{t('dashboard_category_conflict')}</option>
+          <option value="POLITICS">{t('dashboard_category_politics')}</option>
+          <option value="FINANCE">{t('dashboard_category_finance')}</option>
+          <option value="TECH">{t('dashboard_category_tech')}</option>
         </select>
       </div>
 
@@ -95,7 +97,7 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
         {/* Top Stories (real RSS data) */}
         <div>
           <h3 className="text-cyan-400 font-bold mb-3 flex items-center text-xs tracking-widest uppercase">
-            <Newspaper size={14} className="mr-2" /> TOP STORIES
+            <Newspaper size={14} className="mr-2" /> {t('dashboard_top_stories')}
           </h3>
           <div className="space-y-3">
             {filteredNews.length > 0 ? filteredNews.map((article, i) => (
@@ -116,7 +118,7 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
                 <p className="text-sm text-gray-300 group-hover:text-white transition-colors leading-snug">{article.title}</p>
               </div>
             )) : (
-              <p className="text-sm text-gray-600 italic">No stories in wire feed.</p>
+              <p className="text-sm text-gray-600 italic">{t('dashboard_no_stories')}</p>
             )}
           </div>
         </div>
@@ -124,7 +126,7 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
         {/* Popular Markets (real Polymarket/Kalshi data) */}
         <div>
           <h3 className="text-cyan-400 font-bold mb-3 flex items-center text-xs tracking-widest uppercase">
-            <TrendingUp size={14} className="mr-2" /> POPULAR MARKETS
+            <TrendingUp size={14} className="mr-2" /> {t('dashboard_popular_markets')}
           </h3>
           <div className="space-y-3">
             {topMarkets.length > 0 ? topMarkets.map((market, i) => {
@@ -156,21 +158,21 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
                 </div>
               );
             }) : (
-              <p className="text-sm text-gray-600 italic">No market data available.</p>
+              <p className="text-sm text-gray-600 italic">{t('dashboard_no_market_data')}</p>
             )}
           </div>
           <button
             onClick={() => onNavigate('market')}
             className="mt-3 text-xs text-cyan-400 hover:text-cyan-300 uppercase tracking-widest flex items-center transition-colors"
           >
-            View All Markets <ChevronRight size={12} className="ml-1" />
+            {t('dashboard_view_all_markets')} <ChevronRight size={12} className="ml-1" />
           </button>
         </div>
 
         {/* Open ballot placeholder */}
         <div>
           <h3 className="text-cyan-400 font-bold mb-3 flex items-center text-xs tracking-widest uppercase">
-            <Vote size={14} className="mr-2" /> OPEN BALLOT
+            <Vote size={14} className="mr-2" /> {t('dashboard_open_ballot')}
           </h3>
           <div
             className="border border-gray-800 bg-gray-900/20 p-5 cursor-pointer hover:border-gray-600 transition-colors"
@@ -178,53 +180,53 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
           >
             <div className="text-center border border-cyan-900/40 bg-cyan-950/10 px-4 py-8">
               <div className="text-2xl md:text-3xl font-bold tracking-[0.32em] text-cyan-300">
-                DEMOCRACY FOR ALL SOON
+                {t('dashboard_democracy_coming')}
               </div>
               <div className="mt-4 text-xs text-gray-400 uppercase tracking-[0.22em]">
-                No live ballot counts or policy promises are being advertised in this shell yet.
+                {t('dashboard_ballot_placeholder')}
               </div>
             </div>
             <div className="mt-3 text-[11px] text-gray-500 leading-relaxed">
-              When governance arrives, it should be real, verifiable, and community-shaped instead of placeholder politics.
+              {t('dashboard_ballot_note')}
             </div>
           </div>
           <button
             onClick={() => onComingSoon?.('BALLOT')}
             className="mt-3 text-xs text-cyan-400 hover:text-cyan-300 uppercase tracking-widest flex items-center transition-colors"
           >
-            View Governance Note <ChevronRight size={12} className="ml-1" />
+            {t('dashboard_view_governance_note')} <ChevronRight size={12} className="ml-1" />
           </button>
         </div>
 
         {/* Network Telemetry (real data) */}
         <div className="flex flex-col">
           <h3 className="text-cyan-400 font-bold mb-3 flex items-center text-xs tracking-widest uppercase">
-            <Activity size={14} className="mr-2" /> D.I.N. TELEMETRY
+            <Activity size={14} className="mr-2" /> {t('dashboard_din_telemetry')}
           </h3>
           <div className="flex-1 border border-gray-800 bg-gray-900/20 p-3 flex flex-col justify-between">
             <div className="space-y-2">
               <div className="flex justify-between items-center border-b border-gray-800/50 pb-1">
-                <span className="text-sm text-gray-500 uppercase tracking-widest">Tracked Flights</span>
+                <span className="text-sm text-gray-500 uppercase tracking-widest">{t('dashboard_tracked_flights')}</span>
                 <span className="text-xs text-green-400 font-mono">{flightCount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-800/50 pb-1">
-                <span className="text-sm text-gray-500 uppercase tracking-widest">Tracked Vessels</span>
+                <span className="text-sm text-gray-500 uppercase tracking-widest">{t('dashboard_tracked_vessels')}</span>
                 <span className="text-xs text-cyan-400 font-mono">{shipCount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-800/50 pb-1">
-                <span className="text-sm text-gray-500 uppercase tracking-widest">Satellites</span>
+                <span className="text-sm text-gray-500 uppercase tracking-widest">{t('dashboard_satellites')}</span>
                 <span className="text-xs text-gray-300 font-mono">{satCount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-800/50 pb-1">
-                <span className="text-sm text-gray-500 uppercase tracking-widest">Active Markets</span>
+                <span className="text-sm text-gray-500 uppercase tracking-widest">{t('dashboard_active_markets')}</span>
                 <span className="text-xs text-gray-300 font-mono">{markets.length}</span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-800/50 pb-1">
-                <span className="text-sm text-gray-500 uppercase tracking-widest">Correlations</span>
+                <span className="text-sm text-gray-500 uppercase tracking-widest">{t('dashboard_correlations')}</span>
                 <span className="text-xs text-amber-400 font-mono">{correlationCount}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500 uppercase tracking-widest">Threat Level</span>
+                <span className="text-sm text-gray-500 uppercase tracking-widest">{t('dashboard_threat_level')}</span>
                 <span className={`text-sm px-2 py-0.5 ${threatStyle.bg} ${threatStyle.text} ${threatStyle.border} border ${threat?.level === 'SEVERE' || threat?.level === 'HIGH' ? 'animate-pulse' : ''}`}>
                   {threat?.level || 'UNKNOWN'} {threat?.score != null ? `(${threat.score})` : ''}
                 </span>
@@ -234,7 +236,7 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
             {/* Threat drivers */}
             {threat?.drivers && threat.drivers.length > 0 && (
               <div className="mt-3 pt-2 border-t border-gray-800">
-                <span className="text-[12px] text-gray-500 uppercase tracking-widest block mb-1">THREAT DRIVERS</span>
+                <span className="text-[12px] text-gray-500 uppercase tracking-widest block mb-1">{t('dashboard_threat_drivers')}</span>
                 {threat.drivers.slice(0, 3).map((driver, i) => (
                   <p key={i} className="text-[13px] text-gray-400 leading-tight">• {driver}</p>
                 ))}
@@ -247,7 +249,7 @@ export default function TerminalDashboard({ onNavigate, onComingSoon }: Terminal
                 <div className="bg-green-500 flex-1"></div>
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-[12px] text-gray-500 uppercase">Threat Score</span>
+                <span className="text-[12px] text-gray-500 uppercase">{t('dashboard_threat_score')}</span>
                 <span className="text-[12px] text-gray-500 uppercase">{threat?.score ?? '—'}/100</span>
               </div>
             </div>

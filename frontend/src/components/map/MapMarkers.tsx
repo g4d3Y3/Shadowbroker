@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Marker } from 'react-map-gl/maplibre';
 import type { Earthquake, SelectedEntity, Ship, TrackedFlight, UAV } from '@/types/dashboard';
 import type { SpreadAlertItem } from '@/utils/alertSpread';
@@ -128,6 +129,7 @@ interface CarrierLabelsProps {
 }
 
 export function CarrierLabels({ ships, inView, interpShip }: CarrierLabelsProps) {
+  const t = useTranslations('common');
   return (
     <>
       {ships.map((s, i) => {
@@ -156,7 +158,7 @@ export function CarrierLabels({ ships, inView, interpShip }: CarrierLabelsProps)
               </div>
               {s.estimated && (
                 <div style={{ color: '#ff6644', fontSize: '8px', letterSpacing: '1.5px' }}>
-                  EST. POSITION — OSINT
+                  {t('est_position_osint')}
                 </div>
               )}
             </div>
@@ -175,6 +177,7 @@ interface TrackedYachtLabelsProps {
 }
 
 export function TrackedYachtLabels({ ships, inView, interpShip }: TrackedYachtLabelsProps) {
+  const t = useTranslations('common');
   return (
     <>
       {ships.map((s, i) => {
@@ -199,7 +202,7 @@ export function TrackedYachtLabels({ ships, inView, interpShip }: TrackedYachtLa
                 whiteSpace: 'nowrap',
               }}
             >
-              {s.yacht_owner || s.name || 'TRACKED YACHT'}
+              {s.yacht_owner || s.name || t('tracked_yacht')}
             </div>
           </Marker>
         );
@@ -313,6 +316,7 @@ export function ThreatMarkers({
   onEntityClick,
   onDismiss,
 }: ThreatMarkerProps) {
+  const t = useTranslations('common');
   return (
     <>
       {spreadAlerts.map((n) => {
@@ -445,7 +449,7 @@ export function ThreatMarkers({
                   </button>
                 )}
                 <div style={{ fontSize: '14px', letterSpacing: '1.5px', textTransform: 'uppercase' as const }}>
-                  !! ALERT LVL {score} !!
+                  {t('alert_lvl_exclaim', { score })}
                 </div>
                 <div
                   style={{
@@ -462,7 +466,7 @@ export function ThreatMarkers({
                   <div
                     style={{ color: riskColor, opacity: 0.9, fontSize: '10px', marginTop: '4px', letterSpacing: '0.5px' }}
                   >
-                    [+{count - 1} ACTIVE THREATS IN AREA]
+                    {t('active_threats_area', { count: count - 1 })}
                   </div>
                 )}
               </div>

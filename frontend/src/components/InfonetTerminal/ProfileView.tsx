@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronLeft, User, Eye, EyeOff, Wallet, Activity, ShieldCheck, AlertCircle } from 'lucide-react';
 import QRCode from 'qrcode';
 
@@ -46,6 +47,7 @@ const EMPTY_ORACLE_PROFILE: OracleProfileSummary = {
 };
 
 export default function ProfileView({ onBack, persona, isCitizen, nodeId, publicKey }: ProfileViewProps) {
+  const t = useTranslations('infonet');
   const [showWallet, setShowWallet] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [showTransactions, setShowTransactions] = useState(false);
@@ -159,9 +161,9 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
     };
   }, [dmInviteBlob]);
 
-  const displayNodeId = nodeId?.trim() || 'NOT PROVISIONED';
-  const displayPersona = persona?.trim() || 'unassigned';
-  const creditsReference = publicKey?.trim() || 'Not provisioned';
+  const displayNodeId = nodeId?.trim() || t('profile_not_provisioned');
+  const displayPersona = persona?.trim() || t('profile_unassigned');
+  const creditsReference = publicKey?.trim() || t('profile_not_provisioned');
   const creditsBalance = 0;
   const transactions: Array<{
     id: string;
@@ -229,49 +231,49 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
           className="flex items-center text-cyan-500 hover:text-cyan-400 transition-all uppercase text-xs tracking-widest border border-cyan-900/50 px-3 py-1 bg-cyan-900/10 hover:bg-cyan-900/30 hover:border-cyan-500/50 mb-4"
         >
           <ChevronLeft size={14} className="mr-1" />
-          RETURN TO MAIN
+          {t('profile_return_to_main')}
         </button>
         <h1 className="text-2xl font-bold text-cyan-400 uppercase tracking-widest flex items-center">
           <User className="mr-2 text-cyan-400" />
-          {isCitizen ? 'CITIZEN' : 'SOVEREIGN'} PROFILE
+          {t('profile_title', { type: isCitizen ? 'CITIZEN' : 'SOVEREIGN' })}
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Identity, reputation, and credits ledger.</p>
+        <p className="text-gray-500 text-sm mt-1">{t('profile_description')}</p>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 space-y-6 pb-4">
         <div className="border border-gray-800 bg-gray-900/20 p-4">
           <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-            <User size={16} className="mr-2" /> IDENTITY
+            <User size={16} className="mr-2" /> {t('profile_identity')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-widest">Agent ID</p>
+              <p className="text-gray-500 text-xs uppercase tracking-widest">{t('profile_agent_id')}</p>
               <p className="text-sm text-cyan-400 font-mono">{displayNodeId}</p>
-              <p className="text-gray-500 text-xs uppercase tracking-widest mt-3">Current Persona</p>
+              <p className="text-gray-500 text-xs uppercase tracking-widest mt-3">{t('profile_current_persona')}</p>
               <p className="text-xl text-gray-300 font-bold">{displayPersona}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-widest">Citizenship Status</p>
+              <p className="text-gray-500 text-xs uppercase tracking-widest">{t('profile_citizenship_status')}</p>
               <p className={`text-xl font-bold ${isCitizen ? 'text-green-400' : 'text-amber-500'}`}>
-                {isCitizen ? 'ACTIVE CITIZEN' : 'SOVEREIGN'}
+                {isCitizen ? t('profile_active_citizen') : t('profile_sovereign')}
               </p>
             </div>
 
             <div className="md:col-span-2 border-t border-gray-800 pt-4 mt-2">
               <div className="flex justify-between items-end mb-2">
                 <div>
-                  <p className="text-gray-500 text-xs uppercase tracking-widest">Common Rep (Public Reputation)</p>
+                  <p className="text-gray-500 text-xs uppercase tracking-widest">{t('profile_common_rep')}</p>
                   <p className="text-2xl text-cyan-400 font-bold">
-                    {overallRep} <span className="text-sm text-gray-600">net</span>
+                    {overallRep} <span className="text-sm text-gray-600">{t('profile_net')}</span>
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-right">
                   <div>
-                    <p className="text-sm text-gray-500 uppercase tracking-widest">Lit</p>
+                    <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_upvotes')}</p>
                     <p className="text-lg font-bold text-green-400">{upvotes}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 uppercase tracking-widest">Dislikes</p>
+                    <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_downvotes')}</p>
                     <p className="text-lg font-bold text-red-400">{downvotes}</p>
                   </div>
                 </div>
@@ -283,32 +285,32 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                 />
               </div>
               <p className="mt-2 text-sm text-gray-500 uppercase tracking-tighter">
-                Reputation is derived from live lit/dislike activity. Net rep can drop below zero even when the bar is clamped at zero.
+                {t('profile_rep_info')}
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 md:col-span-2 mt-2">
               <div className="p-3 bg-gray-900/40 border border-gray-800">
-                <p className="text-sm text-gray-500 uppercase tracking-widest">Active Months</p>
-                <p className="text-xl text-white font-bold">0 MONTHS</p>
-                <p className="text-[13px] text-gray-600 mt-1 uppercase">No live citizenship accounting yet</p>
+                <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_active_months')}</p>
+                <p className="text-xl text-white font-bold">0 {t('profile_months')}</p>
+                <p className="text-[13px] text-gray-600 mt-1 uppercase">{t('profile_no_citizenship_accounting')}</p>
               </div>
               <div className="p-3 bg-gray-900/40 border border-gray-800">
-                <p className="text-sm text-gray-500 uppercase tracking-widest">Citizenship History</p>
-                <p className="text-xl text-gray-400 font-bold">0 MONTHS</p>
-                <p className="text-[13px] text-gray-600 mt-1 uppercase">Placeholder totals removed</p>
+                <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_citizenship_history')}</p>
+                <p className="text-xl text-gray-400 font-bold">0 {t('profile_months')}</p>
+                <p className="text-[13px] text-gray-600 mt-1 uppercase">{t('profile_placeholder_months')}</p>
               </div>
             </div>
 
             <div className="md:col-span-2">
-              <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Oracle Rep (Truth)</p>
+              <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">{t('profile_oracle_rep')}</p>
               <div className="flex flex-col">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-xl text-cyan-400 font-bold">
-                    {oracleRep.toFixed(1)} <span className="text-xs text-gray-500 font-normal">AVAILABLE</span>
+                    {oracleRep.toFixed(1)} <span className="text-xs text-gray-500 font-normal">{t('profile_available')}</span>
                   </p>
                   <p className="text-sm text-gray-500 uppercase">
-                    Win Rate {oracleProfile.win_rate}% • W {oracleProfile.predictions_won} / L {oracleProfile.predictions_lost}
+                    {t('profile_win_rate', { rate: oracleProfile.win_rate, won: oracleProfile.predictions_won, lost: oracleProfile.predictions_lost })}
                   </p>
                 </div>
                 <div className="h-1.5 w-full bg-gray-900 border border-gray-800 overflow-hidden mb-1">
@@ -318,7 +320,7 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                   />
                 </div>
                 <p className="text-sm text-gray-500 uppercase tracking-tighter">
-                  Available: {oracleRep.toFixed(1)} | Locked: {oracleRepLocked.toFixed(1)} | Total: {oracleRepTotal.toFixed(1)}
+                  {t('profile_oracle_breakdown', { available: oracleRep.toFixed(1), locked: oracleRepLocked.toFixed(1), total: oracleRepTotal.toFixed(1) })}
                 </p>
               </div>
             </div>
@@ -327,11 +329,11 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
 
         <div className="border border-gray-800 bg-gray-900/20 p-4">
           <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-            <ShieldCheck size={16} className="mr-2" /> NETWORK HEALTH (VCS ANALYSIS)
+            <ShieldCheck size={16} className="mr-2" /> {t('profile_network_health')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex flex-col items-center justify-center p-4 border border-gray-800 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest mb-2">Vote Correlation</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest mb-2">{t('profile_vote_correlation')}</p>
               <div className="relative h-20 w-20">
                 <svg className="h-full w-full" viewBox="0 0 36 36">
                   <path className="stroke-gray-800 stroke-[3]" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -341,13 +343,13 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                   <span className="text-sm font-bold text-gray-400">0.00</span>
                 </div>
               </div>
-              <p className="text-[12px] text-gray-500 mt-2 uppercase">NOT CALIBRATED</p>
+              <p className="text-[12px] text-gray-500 mt-2 uppercase">{t('profile_not_calibrated')}</p>
             </div>
 
             <div className="md:col-span-2 space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <p className="text-sm text-gray-500 uppercase tracking-widest">Clustering Coefficient</p>
+                  <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_clustering_coefficient')}</p>
                   <p className="text-sm text-gray-400 font-bold">0.00</p>
                 </div>
                 <div className="h-1 w-full bg-gray-900 overflow-hidden">
@@ -356,7 +358,7 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
               </div>
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <p className="text-sm text-gray-500 uppercase tracking-widest">Temporal Burst Detection</p>
+                  <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_temporal_burst')}</p>
                   <p className="text-sm text-gray-400 font-bold">0.00</p>
                 </div>
                 <div className="h-1 w-full bg-gray-900 overflow-hidden">
@@ -366,7 +368,7 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
               <div className="p-2 border border-gray-800 bg-gray-900/20 flex items-start gap-2">
                 <AlertCircle size={14} className="text-gray-500 shrink-0 mt-0.5" />
                 <p className="text-[13px] text-gray-500 uppercase leading-tight">
-                  Advanced network-health analytics are not calibrated for this profile yet. Live reputation above is authoritative; unresolved analytics stay zeroed.
+                  {t('profile_analytics_note')}
                 </p>
               </div>
             </div>
@@ -375,45 +377,43 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
 
         <div className="border border-gray-800 bg-gray-900/20 p-4">
           <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-            <User size={16} className="mr-2" /> IDENTITY DOMAINS (HARD SEPARATION)
+            <User size={16} className="mr-2" /> {t('profile_identity_domains')}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="border border-gray-800 p-2 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest">Root</p>
-              <p className="text-xs text-red-400 font-bold">NEVER PUBLIC</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_root')}</p>
+              <p className="text-xs text-red-400 font-bold">{t('profile_never_public')}</p>
             </div>
             <div className="border border-gray-800 p-2 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest">Transport</p>
-              <p className="text-xs text-green-400 font-bold">PUBLIC MESH</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_transport')}</p>
+              <p className="text-xs text-green-400 font-bold">{t('profile_public_mesh')}</p>
             </div>
             <div className="border border-gray-800 p-2 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest">DM Alias</p>
-              <p className="text-xs text-cyan-400 font-bold">SEMI-OBFUSCATED</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_dm_alias')}</p>
+              <p className="text-xs text-cyan-400 font-bold">{t('profile_semi_obfuscated')}</p>
             </div>
             <div className="border border-gray-800 p-2 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest">Gate Session</p>
-              <p className="text-xs text-cyan-400 font-bold">ANONYMOUS</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_gate_session')}</p>
+              <p className="text-xs text-cyan-400 font-bold">{t('profile_anonymous')}</p>
             </div>
             <div className="border border-gray-800 p-2 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest">Gate Persona</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_gate_persona')}</p>
               <p className="text-xs text-cyan-400 font-bold">{displayPersona}</p>
             </div>
             <div className="border border-gray-800 p-2 bg-[#0a0a0a]">
-              <p className="text-sm text-gray-500 uppercase tracking-widest">Credits</p>
-              <p className="text-xs text-gray-300 font-bold">0.00 AVAILABLE</p>
+              <p className="text-sm text-gray-500 uppercase tracking-widest">{t('profile_credits')}</p>
+              <p className="text-xs text-gray-300 font-bold">{t('profile_credits_available', { balance: '0.00' })}</p>
             </div>
           </div>
         </div>
 
         <div className="border border-gray-800 bg-gray-900/20 p-4">
           <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-            <ShieldCheck size={16} className="mr-2" /> FIRST-CONTACT BOOTSTRAP
+            <ShieldCheck size={16} className="mr-2" /> {t('profile_first_contact')}
           </h2>
           <div className="space-y-4">
             <p className="text-sm text-gray-400 leading-[1.7]">
-              Export a signed DM invite for trusted out-of-band exchange. This pins first contact to
-              your messaging identity instead of plain first-sight TOFU. It does not link wallet,
-              reputation, or other personas.
+              {t('profile_first_contact_desc')}
             </p>
             <div className="flex flex-wrap gap-3">
               <button
@@ -421,19 +421,19 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                 disabled={dmInviteBusy}
                 className="px-4 py-2 border border-cyan-500/40 bg-cyan-950/20 text-cyan-300 text-xs tracking-[0.18em] uppercase disabled:opacity-50"
               >
-                {dmInviteBusy ? 'Generating...' : 'Generate Signed DM Invite'}
+                {dmInviteBusy ? t('profile_generating') : t('profile_generate_invite')}
               </button>
               <button
                 onClick={() => void handleCopyDmInvite()}
                 disabled={!dmInviteBlob}
                 className="px-4 py-2 border border-emerald-500/40 bg-emerald-950/20 text-emerald-300 text-xs tracking-[0.18em] uppercase disabled:opacity-50"
               >
-                Copy Invite
+                {t('profile_copy_invite')}
               </button>
             </div>
             {dmInviteFingerprint && (
               <div className="text-sm text-emerald-300 font-mono">
-                Trust fingerprint: {dmInviteFingerprint}
+                {t('profile_trust_fingerprint', { fingerprint: dmInviteFingerprint })}
               </div>
             )}
             {dmInviteStatus && (
@@ -451,23 +451,22 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
               value={dmInviteBlob}
               readOnly
               className="w-full min-h-[220px] bg-[#0a0a0a] border border-gray-800 px-4 py-3 text-sm text-gray-300 font-mono outline-none"
-              placeholder="Generate a signed DM invite to display the export blob here."
+              placeholder={t('profile_invite_textarea_placeholder')}
               spellCheck={false}
             />
             {dmInviteQrSrc && (
               <div className="border border-emerald-500/20 bg-[#0a0a0a] p-4">
                 <div className="text-xs text-emerald-300 uppercase tracking-[0.18em] mb-3">
-                  QR Invite
+                  {t('profile_qr_invite')}
                 </div>
                 <div className="flex flex-col items-center gap-3">
                   <img
                     src={dmInviteQrSrc}
-                    alt="Signed DM invite QR"
+                    alt={t('profile_qr_invite')}
                     className="w-[320px] max-w-full border border-gray-800 bg-black p-3"
                   />
                   <div className="text-xs text-gray-500 text-center leading-[1.65] max-w-[32rem]">
-                    Scan this over a trusted out-of-band channel. The QR carries the same signed DM
-                    invite shown above, including the trust fingerprint and signature envelope.
+                    {t('profile_qr_invite_desc')}
                   </div>
                 </div>
               </div>
@@ -477,13 +476,13 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
 
         <div className="border border-gray-800 bg-gray-900/20 p-4">
           <h2 className="text-cyan-400 font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-            <Wallet size={16} className="mr-2" /> CREDITS LEDGER
+            <Wallet size={16} className="mr-2" /> {t('profile_credits_ledger')}
           </h2>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-[#0a0a0a] border border-gray-800">
               <div>
-                <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Credits Account Reference</p>
+                <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">{t('profile_credits_account_ref')}</p>
                 <p className="text-sm md:text-base text-gray-300 font-mono tracking-wider">
                   {showWallet ? creditsReference : '****************************************'}
                 </p>
@@ -498,9 +497,9 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
 
             <div className="flex items-center justify-between p-3 bg-[#0a0a0a] border border-gray-800">
               <div>
-                <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Available Credits</p>
+                <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">{t('profile_available_credits')}</p>
                 <p className="text-2xl text-green-400 font-mono font-bold">
-                  {showBalance ? `${creditsBalance.toFixed(2)} Credits` : '****.** Credits'}
+                  {showBalance ? t('profile_credits_balance', { balance: creditsBalance.toFixed(2) }) : t('profile_credits_balance', { balance: '****.**' })}
                 </p>
               </div>
               <button
@@ -517,7 +516,7 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                 className="flex items-center text-xs text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest"
               >
                 <Activity size={14} className="mr-1" />
-                {showTransactions ? 'HIDE CREDITS HISTORY' : 'VIEW CREDITS HISTORY'}
+                {showTransactions ? t('profile_hide_credits_history') : t('profile_view_credits_history')}
               </button>
 
               {showTransactions && (
@@ -529,12 +528,12 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                           <span className="text-gray-500 mr-4">{tx.date}</span>
                           <span className="text-cyan-400 font-bold mr-2">{tx.type}</span>
                           <span className="text-gray-500 text-xs">
-                            {tx.type === 'RECEIVED' ? `FROM: ${tx.from}` : `TO: ${tx.to}`}
+                            {tx.type === 'RECEIVED' ? `${t('profile_from')} ${tx.from}` : `${t('profile_to')} ${tx.to}`}
                           </span>
                         </div>
                         <div className="text-right">
                           <span className={`font-mono font-bold ${tx.amount.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
-                            {tx.amount} Credits
+                            {t('profile_credits_balance', { balance: tx.amount })}
                           </span>
                           <div className="text-gray-500 text-xs">{tx.status}</div>
                         </div>
@@ -542,7 +541,7 @@ export default function ProfileView({ onBack, persona, isCitizen, nodeId, public
                     ))
                   ) : (
                     <div className="border border-gray-800 bg-gray-900/10 p-3 text-sm text-gray-500 uppercase tracking-widest">
-                      No credits activity recorded yet.
+                      {t('profile_no_credits_activity')}
                     </div>
                   )}
                 </div>

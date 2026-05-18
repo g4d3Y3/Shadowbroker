@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ArrowLeft, Send, MapPin, Loader2, Brain, Trash2, Sparkles, Link2, Copy, Check, X } from 'lucide-react';
 import { getBackendEndpoint } from '@/lib/backendEndpoint';
+import { useTranslations } from 'next-intl';
 
 interface AIMessage {
   role: 'user' | 'ai' | 'system';
@@ -50,6 +51,7 @@ Use "help" to see capabilities.`,
   const [copied, setCopied] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('infonet');
 
   const apiEndpoint = getBackendEndpoint();
 
@@ -387,7 +389,7 @@ Make sure the ShadowBroker backend is running on localhost:8000.`,
           </button>
           <Brain size={18} className="text-purple-400" />
           <span className="text-sm tracking-[0.2em] text-purple-400 uppercase font-bold">
-            AI Co-Pilot
+            {t('ai_copilot')}
           </span>
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_6px_rgba(34,197,94,0.6)]" />
         </div>
@@ -402,7 +404,7 @@ Make sure the ShadowBroker backend is running on localhost:8000.`,
             title="Connect your OpenClaw agent"
           >
             <Link2 size={13} />
-            Connect OpenClaw
+            {t('connect_openclaw')}
           </button>
           <button
             onClick={() => setMessages([{
@@ -411,7 +413,7 @@ Make sure the ShadowBroker backend is running on localhost:8000.`,
               timestamp: Date.now(),
             }])}
             className="text-gray-600 hover:text-red-400 transition-colors"
-            title="Clear chat"
+            title={t('clear_chat')}
           >
             <Trash2 size={14} />
           </button>
@@ -424,7 +426,7 @@ Make sure the ShadowBroker backend is running on localhost:8000.`,
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Link2 size={14} className="text-purple-400" />
-              <span className="text-sm font-bold tracking-wider text-purple-400 uppercase">Connect Your OpenClaw Agent</span>
+              <span className="text-sm font-bold tracking-wider text-purple-400 uppercase">{t('connect_your_agent')}</span>
             </div>
             <button onClick={() => setShowConnect(false)} className="text-gray-600 hover:text-gray-300 transition-colors">
               <X size={14} />
@@ -434,7 +436,7 @@ Make sure the ShadowBroker backend is running on localhost:8000.`,
           <div className="space-y-3 text-sm font-mono">
             {/* API Endpoint */}
             <div>
-              <div className="text-[11px] text-gray-500 uppercase tracking-widest mb-1">Your ShadowBroker API Endpoint</div>
+              <div className="text-[11px] text-gray-500 uppercase tracking-widest mb-1">{t('your_endpoint')}</div>
               <div className="flex items-center gap-2">
                 <code className="flex-1 bg-black/60 border border-purple-800/40 px-3 py-2 text-purple-300 text-sm rounded-sm select-all">
                   {apiEndpoint}
@@ -451,7 +453,7 @@ Make sure the ShadowBroker backend is running on localhost:8000.`,
 
             {/* Setup Instructions */}
             <div>
-              <div className="text-[11px] text-gray-500 uppercase tracking-widest mb-1">Setup Instructions</div>
+              <div className="text-[11px] text-gray-500 uppercase tracking-widest mb-1">{t('setup_instructions')}</div>
               <div className="bg-black/60 border border-gray-800/40 rounded-sm p-3 space-y-2 text-[13px] leading-relaxed">
                 <p className="text-cyan-400 font-bold">Step 1: Install the ShadowBroker Skill</p>
                 <p className="text-gray-400">Copy the <code className="text-purple-300 bg-purple-900/30 px-1">openclaw-skills/shadowbroker/</code> folder into your OpenClaw&apos;s skills directory.</p>
@@ -489,7 +491,7 @@ Skill docs: openclaw-skills/shadowbroker/SKILL.md`}</pre>
 
             {/* Available Capabilities */}
             <div>
-              <div className="text-[11px] text-gray-500 uppercase tracking-widest mb-1">Available Capabilities</div>
+              <div className="text-[11px] text-gray-500 uppercase tracking-widest mb-1">{t('available_capabilities')}</div>
               <div className="grid grid-cols-2 gap-1">
                 {[
                   ['📡', 'Telemetry Queries'],
@@ -534,7 +536,7 @@ Skill docs: openclaw-skills/shadowbroker/SKILL.md`}</pre>
               {msg.pins && msg.pins.length > 0 && (
                 <div className="mt-2 pt-2 border-t border-gray-700/30 flex items-center gap-1.5 text-green-400 text-sm">
                   <MapPin size={12} />
-                  <span>{msg.pins.length} pin(s) placed on map</span>
+                  <span>{t('pins_placed', { count: msg.pins.length })}</span>
                 </div>
               )}
             </div>
@@ -544,7 +546,7 @@ Skill docs: openclaw-skills/shadowbroker/SKILL.md`}</pre>
           <div className="flex justify-start">
             <div className="bg-gray-900/40 border border-gray-800/40 px-3 py-2.5 flex items-center gap-2 text-sm text-gray-500">
               <Loader2 size={14} className="animate-spin" />
-              <span>Processing query...</span>
+              <span>{t('processing_query')}</span>
             </div>
           </div>
         )}
@@ -578,7 +580,7 @@ Skill docs: openclaw-skills/shadowbroker/SKILL.md`}</pre>
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything... (type 'help' for commands)"
+              placeholder={t('ask_anything')}
               className="flex-1 bg-transparent border-none outline-none text-white text-sm py-2.5 pr-2 placeholder-gray-600 focus:ring-0"
               disabled={isLoading}
               spellCheck={false}

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, Search, Activity, Shield, Crosshair, DollarSign, Newspaper, ExternalLink, Loader } from 'lucide-react';
 import { useDataKeys } from '@/hooks/useDataStore';
 import { API_BASE } from '@/lib/api';
+import { useTranslations } from 'next-intl';
 import type { DashboardData, StockTicker } from '@/types/dashboard';
 
 function formatVolume(vol: number | null | undefined): string {
@@ -89,6 +90,7 @@ export default function MarketView({ onBack }: MarketViewProps) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [allBrowseOffset, setAllBrowseOffset] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const t = useTranslations('infonet');
 
   const data = useDataKeys(DATA_KEYS) as DataSlice;
   const stocks = data?.stocks;
@@ -234,14 +236,14 @@ export default function MarketView({ onBack }: MarketViewProps) {
           className="flex items-center text-cyan-500 hover:text-cyan-400 transition-all uppercase text-xs tracking-widest border border-cyan-900/50 px-3 py-1 bg-cyan-900/10 hover:bg-cyan-900/30 hover:border-cyan-500/50 mb-4"
         >
           <ChevronLeft size={14} className="mr-1" />
-          RETURN TO MAIN
+          {t('return_to_main')}
         </button>
         <h1 className="text-2xl font-bold text-cyan-400 uppercase tracking-widest flex items-center">
           <Activity className="mr-2 text-cyan-400 animate-pulse" />
-          PREDICTION MARKETS
+          {t('prediction_markets')}
         </h1>
         <p className="text-gray-500 text-sm mt-1">
-          Live Polymarket + Kalshi feeds. Search anything — all markets from both platforms.
+          {t('market_subtitle')}
           {' '}{allMarkets.length > 0 && `${allMarkets.length} cached markets.`}
         </p>
       </div>
@@ -264,7 +266,7 @@ export default function MarketView({ onBack }: MarketViewProps) {
           ))}
         </div>
         <span className="text-sm text-gray-500 font-mono">
-          {filteredMarkets.length}{currentTotal != null && currentTotal > filteredMarkets.length ? ` / ${currentTotal}` : ''} RESULTS
+          {filteredMarkets.length}{currentTotal != null && currentTotal > filteredMarkets.length ? ` / ${currentTotal}` : ''} {t('results')}
         </span>
       </div>
 
@@ -280,7 +282,7 @@ export default function MarketView({ onBack }: MarketViewProps) {
             type="text"
             value={searchInput}
             onChange={(e) => handleSearchInput(e.target.value)}
-            placeholder="Search ALL Polymarket + Kalshi markets (e.g. avalanche, bitcoin, trump, war)..."
+            placeholder={t('search_placeholder')}
             className="bg-transparent border-none outline-none text-white w-full text-sm placeholder-gray-700"
             spellCheck={false}
           />
@@ -288,8 +290,8 @@ export default function MarketView({ onBack }: MarketViewProps) {
         {searchInput.length >= 2 && (
           <div className="text-xs font-mono text-gray-600 mt-1 px-1">
             {isSearching
-              ? 'SEARCHING POLYMARKET + KALSHI APIs...'
-              : `${searchResults.length} RESULTS FROM POLYMARKET + KALSHI`}
+              ? t('searching_api')
+              : t('search_results_count', { count: searchResults.length })}
           </div>
         )}
       </div>
@@ -298,7 +300,7 @@ export default function MarketView({ onBack }: MarketViewProps) {
       <div className="flex-1 overflow-y-auto pr-2 space-y-3 pb-4">
         {filteredMarkets.length > 0 ? filteredMarkets.map((market, i) => {
           const pct = market.consensus_pct ?? market.polymarket_pct ?? market.kalshi_pct ?? 0;
-          const categoryLabel = market.category ?? 'UNCATEGORIZED';
+          const categoryLabel = market.category ?? t('uncategorized');
           const catConfig = CATEGORY_CONFIG[categoryLabel] || { color: 'text-gray-400' };
           const vol = formatVolume(market.volume);
           const vol24 = formatVolume(market.volume_24h);
@@ -329,7 +331,7 @@ export default function MarketView({ onBack }: MarketViewProps) {
                   ) : (
                     <>
                       <div className="text-2xl font-bold text-emerald-400 font-mono">{pct}%</div>
-                      <div className="text-[13px] text-gray-500 uppercase">CONSENSUS</div>
+                      <div className="text-[13px] text-gray-500 uppercase">{t('consensus')}</div>
                     </>
                   )}
                 </div>
@@ -420,9 +422,9 @@ export default function MarketView({ onBack }: MarketViewProps) {
         }) : (
           <div className="text-center text-gray-600 py-8">
             {isSearching ? (
-              <p className="text-sm">Searching Polymarket + Kalshi...</p>
+              <p className="text-sm">{t('searching_ellipsis')}</p>
             ) : (
-              <p className="text-sm italic">No markets found{searchInput ? ` for "${searchInput}"` : ''}.</p>
+              <p className="text-sm italic">{t('no_markets_found')}{searchInput ? ` for "${searchInput}"` : ''}.</p>
             )}
           </div>
         )}
@@ -436,10 +438,10 @@ export default function MarketView({ onBack }: MarketViewProps) {
             className="px-4 py-2 text-xs uppercase tracking-widest border border-cyan-900/50 bg-cyan-900/10 text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-900/30 disabled:opacity-50"
           >
             {loadingMore || isSearching
-              ? 'LOADING MORE...'
+              ? t('loading_more')
               : searchInput.length >= 2
-                ? 'MORE SEARCH RESULTS'
-                : `MORE ${category} MARKETS`}
+                ? t('more_search_results')
+                : t('more_markets', { category })}
           </button>
         </div>
       )}

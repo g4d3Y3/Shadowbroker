@@ -15,6 +15,7 @@ import {
   type PetitionState,
 } from '@/mesh/infonetEconomyClient';
 import { useSignAndAppend } from '@/hooks/useSignAndAppend';
+import { useTranslations } from 'next-intl';
 
 interface PetitionsViewProps {
   onBack: () => void;
@@ -480,6 +481,7 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
   const [now, setNow] = useState(Date.now() / 1000);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations('infonet');
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -527,18 +529,18 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
           className="flex items-center text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
         >
           <ChevronLeft size={14} className="mr-1" />
-          BACK TO TERMINAL
+          {t('back_to_terminal')}
         </button>
         <div className="text-sm text-cyan-400 font-bold uppercase tracking-widest flex items-center gap-2">
           <Vote size={16} />
-          BALLOT — Governance Petitions
+          {t('ballot_governance')}
         </div>
         <button
           onClick={() => void reload()}
           disabled={loading}
           className="text-xs text-gray-500 hover:text-cyan-400 disabled:opacity-30"
         >
-          {loading ? <Loader size={12} className="animate-spin" /> : 'REFRESH'}
+          {loading ? <Loader size={12} className="animate-spin" /> : t('refresh')}
         </button>
       </div>
 
@@ -559,7 +561,7 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
           <div className="border border-red-900/50 bg-red-900/10 p-3 text-xs text-red-400">
             <div className="flex items-center gap-2">
               <AlertCircle size={12} />
-              <span className="font-bold">Failed to load petitions</span>
+              <span className="font-bold">{t('failed_load')}</span>
             </div>
             <div className="text-gray-400 mt-1 font-mono">{error}</div>
           </div>
@@ -568,7 +570,7 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
         {grouped && grouped.active.length > 0 && (
           <div>
             <div className="text-xs uppercase tracking-wider text-cyan-400 mb-2">
-              Active Petitions ({grouped.active.length})
+              {t('active_petitions', { count: grouped.active.length })}
             </div>
             <div className="space-y-2">
               {grouped.active.map((p) => (
@@ -581,7 +583,7 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
         {grouped && grouped.passed.length > 0 && (
           <div>
             <div className="text-xs uppercase tracking-wider text-green-400 mb-2">
-              Passed Petitions ({grouped.passed.length})
+              {t('passed_petitions', { count: grouped.passed.length })}
             </div>
             <div className="space-y-2">
               {grouped.passed.map((p) => (
@@ -594,7 +596,7 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
         {grouped && grouped.closed.length > 0 && (
           <div>
             <div className="text-xs uppercase tracking-wider text-gray-500 mb-2">
-              Closed (Failed / Voided) ({grouped.closed.length})
+              {t('closed_petitions', { count: grouped.closed.length })}
             </div>
             <div className="space-y-2">
               {grouped.closed.map((p) => (
@@ -606,7 +608,7 @@ export default function PetitionsView({ onBack }: PetitionsViewProps) {
 
         {grouped && petitions && petitions.length === 0 && !loading && (
           <div className="border border-gray-800 bg-black/40 p-6 text-center">
-            <div className="text-gray-500 text-sm mb-1">No petitions on the chain yet.</div>
+            <div className="text-gray-500 text-sm mb-1">{t('no_petitions')}</div>
             <div className="text-gray-600 text-xs">
               File one with the Preview tool above to see the lifecycle in action.
             </div>

@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function WeatherWidget() {
   const [time, setTime] = useState(new Date());
+  const t = useTranslations('infonet');
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);

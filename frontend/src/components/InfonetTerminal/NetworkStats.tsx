@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { API_BASE } from '@/lib/api';
 import { fetchInfonetNodeStatusSnapshot } from '@/mesh/controlPlaneStatusClient';
 
@@ -20,6 +21,7 @@ const EMPTY: Stats = {
 };
 
 export default function NetworkStats() {
+  const t = useTranslations('infonet');
   const [stats, setStats] = useState<Stats>(EMPTY);
 
   useEffect(() => {
@@ -61,24 +63,24 @@ export default function NetworkStats() {
   const nodeColor = stats.syncOutcome === 'ok' ? 'text-green-400'
     : stats.syncOutcome === 'running' ? 'text-amber-400'
     : stats.nodeEnabled ? 'text-amber-400' : 'text-gray-600';
-  const nodeLabel = stats.syncOutcome === 'ok' ? 'SEED SYNCED'
-    : stats.syncOutcome === 'running' ? 'SYNCING'
-    : stats.syncOutcome === 'error' || stats.syncOutcome === 'fork' ? 'RETRYING'
-    : stats.nodeEnabled ? 'WAITING' : 'OFFLINE';
+  const nodeLabel = t(stats.syncOutcome === 'ok' ? 'stats_seed_synced'
+    : stats.syncOutcome === 'running' ? 'stats_syncing'
+    : stats.syncOutcome === 'error' || stats.syncOutcome === 'fork' ? 'stats_retrying'
+    : stats.nodeEnabled ? 'stats_waiting' : 'stats_offline');
 
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 mt-5 text-sm font-mono text-gray-500">
-      <span>NODE <span className={nodeColor}>{nodeLabel}</span></span>
+      <span>{t('stats_node')} <span className={nodeColor}>{nodeLabel}</span></span>
       <span className="text-gray-700">|</span>
-      <span>MESH <span className={stats.meshtastic > 0 ? 'text-green-400' : 'text-gray-600'}>{stats.meshtastic.toLocaleString()}</span></span>
+      <span>{t('stats_mesh')} <span className={stats.meshtastic > 0 ? 'text-green-400' : 'text-gray-600'}>{stats.meshtastic.toLocaleString()}</span></span>
       <span className="text-gray-700">|</span>
-      <span>APRS <span className={stats.aprs > 0 ? 'text-green-400' : 'text-gray-600'}>{stats.aprs.toLocaleString()}</span></span>
+      <span>{t('stats_aprs')} <span className={stats.aprs > 0 ? 'text-green-400' : 'text-gray-600'}>{stats.aprs.toLocaleString()}</span></span>
       <span className="text-gray-700">|</span>
-      <span>INFONET NODES <span className="text-white">{stats.infonetNodes}</span></span>
+      <span>{t('stats_infonet_nodes')} <span className="text-white">{stats.infonetNodes}</span></span>
       <span className="text-gray-700">|</span>
-      <span>EVENTS <span className="text-white">{stats.infonetEvents}</span></span>
+      <span>{t('stats_events')} <span className="text-white">{stats.infonetEvents}</span></span>
       <span className="text-gray-700">|</span>
-      <span>PEERS <span className="text-white">{stats.syncPeers}</span></span>
+      <span>{t('stats_peers')} <span className="text-white">{stats.syncPeers}</span></span>
     </div>
   );
 }

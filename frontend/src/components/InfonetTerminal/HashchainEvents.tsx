@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Calendar } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const ROADMAP_ITEMS = [
   {
@@ -25,10 +26,11 @@ const ROADMAP_ITEMS = [
 ];
 
 export default function HashchainEvents() {
+  const t = useTranslations('infonet');
   return (
     <div className="border border-gray-800 bg-gray-900/10 p-3 w-64 hidden lg:block shrink-0 h-fit">
       <h3 className="text-cyan-400 font-bold mb-3 flex items-center text-xs tracking-widest uppercase border-b border-gray-800 pb-2">
-        <Calendar size={14} className="mr-2" /> Privacy Roadmap
+        <Calendar size={14} className="mr-2" /> {t('privacy_roadmap')}
       </h3>
       <div className="space-y-3">
         {ROADMAP_ITEMS.map((item, i) => (

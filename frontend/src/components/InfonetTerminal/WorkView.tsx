@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, Briefcase, CheckCircle, Clock } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Job {
   id: string;
@@ -49,9 +50,18 @@ const MOCK_JOBS: Job[] = [
 
 export default function WorkView({ onBack }: { onBack: () => void }) {
   const [jobs, setJobs] = useState<Job[]>(MOCK_JOBS);
+  const t = useTranslations('infonet');
 
   const handleAccept = (id: string) => {
     setJobs(jobs.map(job => job.id === id ? { ...job, status: 'In Progress' } : job));
+  };
+
+  const statusLabel = (status: string) => {
+    switch(status) {
+      case 'Open': return t('open_status');
+      case 'In Progress': return t('in_progress_status');
+      default: return status;
+    }
   };
 
   return (
@@ -63,13 +73,13 @@ export default function WorkView({ onBack }: { onBack: () => void }) {
           className="flex items-center text-cyan-500 hover:text-cyan-400 transition-all uppercase text-xs tracking-widest border border-cyan-900/50 px-3 py-1 bg-cyan-900/10 hover:bg-cyan-900/30 hover:border-cyan-500/50 mb-4"
         >
           <ChevronLeft size={14} className="mr-1" />
-          RETURN TO MAIN
+          {t('return_to_main')}
         </button>
         <h1 className="text-2xl font-bold text-cyan-400 uppercase tracking-widest flex items-center">
           <Briefcase className="mr-2 text-cyan-400" />
-          NETWORK WORK & BOUNTIES
+          {t('network_work')}
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Earn Credits and Common Rep by fulfilling network contracts.</p>
+        <p className="text-gray-500 text-sm mt-1">{t('work_description')}</p>
       </div>
 
       {/* Jobs List */}
@@ -77,13 +87,13 @@ export default function WorkView({ onBack }: { onBack: () => void }) {
         {jobs.map(job => (
           <div key={job.id} className="border border-gray-800 bg-gray-900/20 p-4 hover:border-gray-700 transition-colors">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs text-gray-500 uppercase tracking-widest">CONTRACT ID: {job.id}</span>
+              <span className="text-xs text-gray-500 uppercase tracking-widest">{t('contract_id')} {job.id}</span>
               <span className={`text-xs font-bold px-2 py-1 border ${
                 job.status === 'Open' ? 'text-green-400 border-green-900/50 bg-green-900/20' :
                 job.status === 'In Progress' ? 'text-cyan-400 border-cyan-900/50 bg-cyan-900/20' :
                 'text-cyan-400 border-cyan-900/50 bg-cyan-900/20'
               }`}>
-                {job.status}
+                {statusLabel(job.status)}
               </span>
             </div>
 
@@ -93,7 +103,7 @@ export default function WorkView({ onBack }: { onBack: () => void }) {
             <div className="flex items-center justify-between border-t border-gray-800 pt-3 mt-2">
               <div className="flex gap-4 text-sm">
                 <span className="text-gray-300 font-bold flex items-center">
-                  REWARD: <span className="text-green-400 ml-2">{job.reward} CREDITS</span>
+                  {t('reward')} <span className="text-green-400 ml-2">{job.reward} {t('credits')}</span>
                 </span>
                 <span className="text-gray-500 flex items-center">
                   <Clock size={14} className="mr-1" /> {job.timeLimit}

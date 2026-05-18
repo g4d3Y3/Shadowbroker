@@ -16,6 +16,7 @@ import {
   type ResolutionPreview,
 } from '@/mesh/infonetEconomyClient';
 import { useSignAndAppend } from '@/hooks/useSignAndAppend';
+import { useTranslations } from 'next-intl';
 
 interface ResolutionViewProps {
   marketId: string;
@@ -139,6 +140,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
   const [preview, setPreview] = useState<ResolutionPreview['preview'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('infonet');
 
   // Resolution-stake form state.
   const [stakeSide, setStakeSide] = useState<'yes' | 'no' | 'data_unavailable'>('yes');
@@ -259,13 +261,13 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between border-b border-gray-800/50 pb-3 mb-4 shrink-0">
         <button onClick={onBack} className="flex items-center text-cyan-400 hover:text-cyan-300 text-sm">
-          <ChevronLeft size={14} className="mr-1" /> BACK
+          <ChevronLeft size={14} className="mr-1" /> {t('back')}
         </button>
         <div className="text-sm text-cyan-400 font-bold uppercase tracking-widest flex items-center gap-2">
-          <Scale size={16} /> RESOLUTION — {marketId}
+          <Scale size={16} /> {t('resolution')} — {marketId}
         </div>
         <button onClick={() => void reload()} disabled={loading} className="text-xs text-gray-500 hover:text-cyan-400 disabled:opacity-30">
-          {loading ? <Loader size={12} className="animate-spin" /> : 'REFRESH'}
+          {loading ? <Loader size={12} className="animate-spin" /> : t('refresh')}
         </button>
       </div>
 
@@ -279,7 +281,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
         {state && phase && (
           <div className="border border-gray-800 bg-black/40 p-3">
             <div className={`text-xs font-bold uppercase tracking-wider ${phase.color} mb-2`}>
-              PHASE: {phase.label}
+              {t('phase')} {phase.label}
               {state.was_reversed && (
                 <span className="ml-2 text-red-400">⚠ REVERSED BY DISPUTE</span>
               )}
@@ -287,15 +289,15 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
             {state.snapshot && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
                 <div>
-                  <div className="text-gray-500">Frozen Predictors</div>
+                  <div className="text-gray-500">{t('frozen_predictors')}</div>
                   <div className="text-white">{(state.snapshot.frozen_participant_count as number) ?? 0}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500">Frozen Total Stake</div>
+                  <div className="text-gray-500">{t('frozen_total_stake')}</div>
                   <div className="text-white">{(state.snapshot.frozen_total_stake as number)?.toFixed?.(2) ?? '0.00'}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500">Excluded Predictors</div>
+                  <div className="text-gray-500">{t('excluded_predictors')}</div>
                   <div className="text-white">{state.excluded_predictor_ids.length}</div>
                 </div>
               </div>
@@ -306,7 +308,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
         {state && state.evidence_bundles.length > 0 && (
           <div>
             <div className="text-xs uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-1">
-              <FileText size={12} /> Evidence Bundles ({state.evidence_bundles.length})
+              <FileText size={12} /> {t('evidence_bundles')} ({state.evidence_bundles.length})
             </div>
             <div className="space-y-2">
               {state.evidence_bundles.map((b) => (
@@ -335,7 +337,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
         {state && state.disputes.length > 0 && (
           <div>
             <div className="text-xs uppercase tracking-wider text-red-400 mb-2 flex items-center gap-1">
-              <ShieldOff size={12} /> Disputes ({state.disputes.length})
+              <ShieldOff size={12} /> {t('disputes')} ({state.disputes.length})
             </div>
             <div className="space-y-2">
               {state.disputes.map((d) => (
@@ -352,7 +354,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
         {inEvidence && (
           <div className="border border-amber-900/50 bg-amber-900/5 p-3">
             <div className="text-xs uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-1">
-              <FileText size={12} /> Submit Evidence
+              <FileText size={12} /> {t('submit_evidence')}
             </div>
             <div className="text-xs text-gray-500 mb-2">
               Pay an evidence bond (≥
@@ -432,7 +434,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
         {inResolving && (
           <div className="border border-blue-900/50 bg-blue-900/5 p-3">
             <div className="text-xs uppercase tracking-wider text-blue-400 mb-2 flex items-center gap-1">
-              <Scale size={12} /> Stake on Resolution
+              <Scale size={12} /> {t('stake_on_resolution')}
             </div>
             <div className="text-xs text-gray-500 mb-2">
               Pick a side and stake oracle (or common) rep. ≥75% of oracle stake on
@@ -491,7 +493,7 @@ export default function ResolutionView({ marketId, onBack }: ResolutionViewProps
         {isFinal && (
           <div className="border border-red-900/50 bg-red-900/5 p-3">
             <div className="text-xs uppercase tracking-wider text-red-400 mb-2 flex items-center gap-1">
-              <ShieldOff size={12} /> Open a Dispute
+              <ShieldOff size={12} /> {t('open_a_dispute')}
             </div>
             <div className="text-xs text-gray-500 mb-2">
               Bounded reversal: a successful dispute flips the effective outcome of

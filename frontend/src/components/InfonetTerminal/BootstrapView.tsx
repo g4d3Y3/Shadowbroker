@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronLeft, Cpu, Loader, AlertCircle, CheckCircle2, XCircle, Server } from 'lucide-react';
 import {
   buildBootstrapResolutionVotePayload,
@@ -23,6 +24,7 @@ interface BootstrapViewProps {
 }
 
 export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) {
+  const t = useTranslations('infonet');
   const [status, setStatus] = useState<InfonetStatus | null>(null);
   const [market, setMarket] = useState<BootstrapMarketState | null>(null);
   const [nodeStatus, setNodeStatus] = useState<InfonetNodeStatusSnapshot | null>(null);
@@ -104,26 +106,25 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between border-b border-gray-800/50 pb-3 mb-4 shrink-0">
         <button onClick={onBack} className="flex items-center text-cyan-400 hover:text-cyan-300 text-sm">
-          <ChevronLeft size={14} className="mr-1" /> BACK
+          <ChevronLeft size={14} className="mr-1" /> {t('bootstrap_back')}
         </button>
         <div className="text-sm text-cyan-400 font-bold uppercase tracking-widest flex items-center gap-2">
-          <Cpu size={16} /> BOOTSTRAP MODE
+          <Cpu size={16} /> {t('bootstrap_title')}
         </div>
         <button onClick={() => void reload()} disabled={loading} className="text-xs text-gray-500 hover:text-cyan-400 disabled:opacity-30">
-          {loading ? <Loader size={12} className="animate-spin" /> : 'REFRESH'}
+          {loading ? <Loader size={12} className="animate-spin" /> : t('bootstrap_refresh')}
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-3 space-y-4">
         <div className="text-xs text-gray-500 leading-relaxed">
-          The first <span className="text-cyan-400">bootstrap_market_count</span> (default 100) markets
-          resolve via <span className="text-cyan-400">eligible-node-one-vote</span> instead of oracle-rep-weighted
-          staking. Eligibility: identity age ≥ 3 days vs market.snapshot.frozen_at,
-          NOT in the predictor exclusion set, and a valid Argon2id PoW
-          (Heavy-Node-only — requires ≥64MB RAM per computation).
-          Once node count crosses <span className="text-cyan-400">bootstrap_threshold</span> (default 1000),
-          new markets default to staked resolution. Existing bootstrap-indexed markets continue under
-          bootstrap rules until they resolve.
+          {t('bootstrap_desc_intro')}{' '}
+          <span className="text-cyan-400">{t('bootstrap_market_count')}</span>{' '}
+          {t('bootstrap_markets_resolve')}{' '}
+          <span className="text-cyan-400">{t('bootstrap_eligible_vote')}</span>{' '}
+          {t('bootstrap_instead_of')}{' '}
+          <span className="text-cyan-400">{t('bootstrap_threshold')}</span>{' '}
+          {t('bootstrap_threshold_desc')}
         </div>
 
         {error && (
@@ -135,7 +136,7 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
         <div className="border border-cyan-900/50 bg-cyan-950/10 p-3">
           <div className="flex items-center justify-between gap-3 mb-3">
             <div className="text-xs uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-              <Server size={14} /> Network Seed
+              <Server size={14} /> {t('bootstrap_network_seed')}
             </div>
             <button
               type="button"
@@ -143,34 +144,34 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
               disabled={loading}
               className="text-[10px] text-gray-500 hover:text-cyan-400 disabled:opacity-30 uppercase tracking-widest"
             >
-              Refresh
+              {t('bootstrap_refresh_btn')}
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
             <div>
-              <div className="text-gray-500">Transport</div>
+              <div className="text-gray-500">{t('bootstrap_transport')}</div>
               <div className="text-cyan-300 font-mono break-all">
-                {privateTransportRequired ? 'ONION / RNS ONLY' : 'CLEARNET DEV OVERRIDE'}
+                {privateTransportRequired ? t('bootstrap_onion_rns') : t('bootstrap_clearnet_dev')}
               </div>
             </div>
             <div>
-              <div className="text-gray-500">Local Node</div>
+              <div className="text-gray-500">{t('bootstrap_local_node')}</div>
               <div className={nodeEnabled ? 'text-green-400' : 'text-gray-500'}>
-                {nodeEnabled ? `${nodeMode} ONLINE` : `${nodeMode} OFF`}
+                {nodeEnabled ? t('bootstrap_node_online', { mode: nodeMode }) : t('bootstrap_node_offline', { mode: nodeMode })}
               </div>
             </div>
             <div>
-              <div className="text-gray-500">Sync Path</div>
+              <div className="text-gray-500">{t('bootstrap_sync_path')}</div>
               <div className="text-white font-mono">
-                {syncPeerCount} peers / {seedPeerCount} seeds
+                {t('bootstrap_peers_seeds', { peers: syncPeerCount, seeds: seedPeerCount })}
               </div>
             </div>
           </div>
           <div className="mt-3 flex flex-col md:flex-row md:items-center gap-3">
             <div className="flex-1 text-[11px] text-gray-500 leading-relaxed">
               {nodeEnabled
-                ? `Infonet sync is ${syncOutcome || 'active'}${lastPeerUrl ? ` via ${lastPeerUrl}` : ''}.`
-                : 'Start a local participant node to sync through available Wormhole onion/RNS peers while this backend is running.'}
+                ? t('bootstrap_sync_active', { outcome: syncOutcome || 'active', url: lastPeerUrl ? ` via ${lastPeerUrl}` : '' })
+                : t('bootstrap_node_off')}
             </div>
             <button
               type="button"
@@ -182,7 +183,7 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
                   : 'px-3 py-2 border border-cyan-700/50 bg-cyan-900/20 text-cyan-300 hover:bg-cyan-900/40 disabled:opacity-40 text-[10px] uppercase tracking-wider'
               }
             >
-              {nodeToggleBusy ? 'Updating...' : nodeEnabled ? 'Turn Off Node' : 'Start Node'}
+              {nodeToggleBusy ? t('bootstrap_updating') : nodeEnabled ? t('bootstrap_turn_off_node') : t('bootstrap_start_node')}
             </button>
           </div>
           {nodeToggleError && (
@@ -194,40 +195,40 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
 
         {status && (
           <div className="border border-gray-800 bg-black/40 p-3">
-            <div className="text-xs uppercase tracking-wider text-cyan-400 mb-2">Network Ramp</div>
+            <div className="text-xs uppercase tracking-wider text-cyan-400 mb-2">{t('bootstrap_network_ramp')}</div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
               <div>
-                <div className="text-gray-500">Distinct Nodes</div>
+                <div className="text-gray-500">{t('bootstrap_distinct_nodes')}</div>
                 <div className="text-white font-mono text-lg">{status.ramp.node_count}</div>
               </div>
               <div>
-                <div className="text-gray-500">Bootstrap Resolution</div>
+                <div className="text-gray-500">{t('bootstrap_bootstrap_resolution')}</div>
                 <div className={status.ramp.bootstrap_resolution_active ? 'text-green-400' : 'text-gray-500'}>
-                  {status.ramp.bootstrap_resolution_active ? 'ACTIVE' : 'TRANSITIONED'}
+                  {status.ramp.bootstrap_resolution_active ? t('bootstrap_active') : t('bootstrap_transitioned')}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">Staked Resolution</div>
+                <div className="text-gray-500">{t('bootstrap_staked_resolution')}</div>
                 <div className={status.ramp.staked_resolution_active ? 'text-green-400' : 'text-gray-500'}>
-                  {status.ramp.staked_resolution_active ? 'ACTIVE' : 'LOCKED'}
+                  {status.ramp.staked_resolution_active ? t('bootstrap_active') : t('bootstrap_locked')}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">Petitions</div>
+                <div className="text-gray-500">{t('bootstrap_petitions')}</div>
                 <div className={status.ramp.governance_petitions_active ? 'text-green-400' : 'text-gray-500'}>
-                  {status.ramp.governance_petitions_active ? 'ACTIVE' : 'LOCKED'}
+                  {status.ramp.governance_petitions_active ? t('bootstrap_active') : t('bootstrap_locked')}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">Upgrade Governance</div>
+                <div className="text-gray-500">{t('bootstrap_upgrade_governance')}</div>
                 <div className={status.ramp.upgrade_governance_active ? 'text-green-400' : 'text-gray-500'}>
-                  {status.ramp.upgrade_governance_active ? 'ACTIVE' : 'LOCKED'}
+                  {status.ramp.upgrade_governance_active ? t('bootstrap_active') : t('bootstrap_locked')}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">CommonCoin</div>
+                <div className="text-gray-500">{t('bootstrap_commoncoin')}</div>
                 <div className={status.ramp.commoncoin_active ? 'text-green-400' : 'text-gray-500'}>
-                  {status.ramp.commoncoin_active ? 'ACTIVE' : 'LOCKED'}
+                  {status.ramp.commoncoin_active ? t('bootstrap_active') : t('bootstrap_locked')}
                 </div>
               </div>
             </div>
@@ -237,49 +238,44 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
         {market && (
           <div className="border border-gray-800 bg-black/40 p-3">
             <div className="text-xs uppercase tracking-wider text-cyan-400 mb-2">
-              Market: <span className="font-mono text-white">{market.market_id}</span>
+              {t('bootstrap_market_label', { id: market.market_id })}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs mb-3">
               <div>
-                <div className="text-gray-500">YES votes</div>
+                <div className="text-gray-500">{t('bootstrap_yes_votes')}</div>
                 <div className="text-green-400 font-mono text-lg">{market.tally.yes}</div>
               </div>
               <div>
-                <div className="text-gray-500">NO votes</div>
+                <div className="text-gray-500">{t('bootstrap_no_votes')}</div>
                 <div className="text-red-400 font-mono text-lg">{market.tally.no}</div>
               </div>
               <div>
-                <div className="text-gray-500">Total Eligible</div>
+                <div className="text-gray-500">{t('bootstrap_total_eligible')}</div>
                 <div className="text-white font-mono text-lg">{market.tally.total_eligible}</div>
               </div>
               <div>
-                <div className="text-gray-500">Min Required</div>
+                <div className="text-gray-500">{t('bootstrap_min_required')}</div>
                 <div className="text-gray-300 font-mono text-lg">{market.tally.min_market_participants}</div>
               </div>
             </div>
 
             <div className="border border-cyan-900/50 bg-cyan-900/10 p-2 mb-3 text-xs">
               <div className="text-cyan-400 font-bold uppercase tracking-wider mb-2">
-                Cast Bootstrap Vote
+                {t('bootstrap_cast_vote')}
               </div>
               <div className="text-gray-500 mb-2">
-                Eligibility: identity age ≥{' '}
-                {status ? '3 days' : 'configured threshold'}{' '}
-                vs market.snapshot.frozen_at, NOT in predictor exclusion set,
-                and a valid Argon2id PoW (Heavy-Node-only). The PoW nonce
-                input is for testnet — production wires the Argon2id solver
-                via privacy-core when the Rust binding lands.
+                {t('bootstrap_eligibility_info')}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <select
                   value={voteSide}
                   onChange={(e) => setVoteSide(e.target.value as 'yes' | 'no')}
-                  title="Bootstrap vote side"
-                  aria-label="Bootstrap vote side"
+                  title={t('bootstrap_vote_side')}
+                  aria-label={t('bootstrap_vote_side')}
                   className="bg-black/60 border border-gray-700 px-2 py-1 text-white font-mono"
                 >
-                  <option value="yes">YES</option>
-                  <option value="no">NO</option>
+                  <option value="yes">{t('bootstrap_vote_yes')}</option>
+                  <option value="no">{t('bootstrap_vote_no')}</option>
                 </select>
                 <input
                   type="number"
@@ -287,7 +283,7 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
                   step="1"
                   value={powNonce}
                   onChange={(e) => setPowNonce(e.target.value)}
-                  placeholder="pow_nonce"
+                  placeholder={t('bootstrap_pow_nonce_placeholder')}
                   className="bg-black/60 border border-gray-700 px-2 py-1 text-white font-mono w-32"
                 />
                 <button
@@ -296,7 +292,7 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
                   disabled={voteAction.state === 'submitting' || !marketId}
                   className="px-3 py-1 uppercase tracking-wider border border-cyan-700/50 bg-cyan-900/20 text-cyan-400 hover:bg-cyan-900/40 disabled:opacity-30"
                 >
-                  {voteAction.state === 'submitting' ? 'Submitting…' : 'Cast Vote'}
+                  {voteAction.state === 'submitting' ? t('bootstrap_submitting') : t('bootstrap_cast_vote_button')}
                 </button>
               </div>
               {voteAction.result && !voteAction.result.ok && (
@@ -307,7 +303,7 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
               )}
             </div>
 
-            <div className="text-xs uppercase tracking-wider text-gray-500 mb-2">All Submitted Votes</div>
+            <div className="text-xs uppercase tracking-wider text-gray-500 mb-2">{t('bootstrap_all_submitted_votes')}</div>
             <div className="space-y-1 max-h-64 overflow-y-auto">
               {market.votes.map((v) => (
                 <div key={v.node_id} className="flex items-center justify-between gap-2 text-xs border-b border-gray-800/30 py-1">
@@ -331,8 +327,7 @@ export default function BootstrapView({ marketId, onBack }: BootstrapViewProps) 
 
         {!marketId && (
           <div className="border border-gray-800 bg-black/40 p-6 text-center text-xs text-gray-500">
-            Open a bootstrap-indexed market from the Markets view to see its
-            eligible-node-one-vote tally here.
+            {t('bootstrap_select_market_hint')}
           </div>
         )}
       </div>

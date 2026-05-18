@@ -12,6 +12,7 @@ import {
   type UpgradeProposalSummary,
 } from '@/mesh/infonetEconomyClient';
 import { useSignAndAppend } from '@/hooks/useSignAndAppend';
+import { useTranslations } from 'next-intl';
 
 interface UpgradeViewProps {
   onBack: () => void;
@@ -285,6 +286,7 @@ export default function UpgradeView({ onBack }: UpgradeViewProps) {
   const [upgrades, setUpgrades] = useState<UpgradeProposalSummary[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('infonet');
 
   const reload = useCallback(async () => {
     setLoading(true);
@@ -318,18 +320,18 @@ export default function UpgradeView({ onBack }: UpgradeViewProps) {
           className="flex items-center text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
         >
           <ChevronLeft size={14} className="mr-1" />
-          BACK
+          {t('back')}
         </button>
         <div className="text-sm text-purple-400 font-bold uppercase tracking-widest flex items-center gap-2">
           <GitBranch size={16} />
-          UPGRADE-HASH GOVERNANCE
+          {t('upgrade_hash_governance')}
         </div>
         <button
           onClick={() => void reload()}
           disabled={loading}
           className="text-xs text-gray-500 hover:text-purple-400 disabled:opacity-30"
         >
-          {loading ? <Loader size={12} className="animate-spin" /> : 'REFRESH'}
+          {loading ? <Loader size={12} className="animate-spin" /> : t('refresh')}
         </button>
       </div>
 
@@ -358,7 +360,7 @@ export default function UpgradeView({ onBack }: UpgradeViewProps) {
 
         {upgrades && upgrades.length === 0 && !loading && (
           <div className="border border-gray-800 bg-black/40 p-6 text-center">
-            <div className="text-gray-500 text-sm">No upgrade proposals on chain.</div>
+            <div className="text-gray-500 text-sm">{t('no_upgrades')}</div>
             <div className="text-gray-600 text-xs mt-1">
               Filing requires <span className="text-purple-400">upgrade_filing_cost</span> common rep
               and a SHA-256 release hash.

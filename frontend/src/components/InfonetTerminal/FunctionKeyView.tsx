@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronLeft, KeyRound, ShieldCheck, AlertTriangle, FileKey } from 'lucide-react';
 import { fetchInfonetStatus, type InfonetStatus } from '@/mesh/infonetEconomyClient';
+import { useTranslations } from 'next-intl';
 
 interface FunctionKeyViewProps {
   onBack: () => void;
@@ -17,6 +18,7 @@ const PIECE_STATUS: Record<string, { color: string; label: string }> = {
 
 export default function FunctionKeyView({ onBack }: FunctionKeyViewProps) {
   const [status, setStatus] = useState<InfonetStatus | null>(null);
+  const t = useTranslations('infonet');
 
   useEffect(() => {
     let cancelled = false;
@@ -35,10 +37,10 @@ export default function FunctionKeyView({ onBack }: FunctionKeyViewProps) {
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between border-b border-gray-800/50 pb-3 mb-4 shrink-0">
         <button onClick={onBack} className="flex items-center text-cyan-400 hover:text-cyan-300 text-sm">
-          <ChevronLeft size={14} className="mr-1" /> BACK
+          <ChevronLeft size={14} className="mr-1" /> {t('back')}
         </button>
         <div className="text-sm text-purple-400 font-bold uppercase tracking-widest flex items-center gap-2">
-          <KeyRound size={16} /> FUNCTION KEYS — Anonymous Citizenship Proof
+          <KeyRound size={16} /> {t('function_keys')}
         </div>
         <div />
       </div>
@@ -56,7 +58,7 @@ export default function FunctionKeyView({ onBack }: FunctionKeyViewProps) {
         {status && (
           <div className="border border-gray-800 bg-black/40 p-3">
             <div className="text-xs uppercase tracking-wider text-purple-400 mb-2 flex items-center gap-1">
-              <ShieldCheck size={12} /> Privacy Primitive Status
+              <ShieldCheck size={12} /> {t('privacy_primitive_status')}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
               {Object.entries(status.privacy_primitive_status).map(([k, v]) => {
@@ -80,7 +82,7 @@ export default function FunctionKeyView({ onBack }: FunctionKeyViewProps) {
 
         <div className="border border-gray-800 bg-black/40 p-3">
           <div className="text-xs uppercase tracking-wider text-purple-400 mb-2">
-            The Six Pieces
+            {t('the_six_pieces')}
           </div>
           <ol className="text-xs space-y-2 text-gray-300">
             <li>
@@ -143,7 +145,7 @@ export default function FunctionKeyView({ onBack }: FunctionKeyViewProps) {
 
         <div className="border border-amber-900/50 bg-amber-900/10 p-3">
           <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
-            <AlertTriangle size={12} /> Production Readiness
+            <AlertTriangle size={12} /> {t('production_readiness')}
           </div>
           <div className="text-xs text-gray-400 space-y-1">
             <div>

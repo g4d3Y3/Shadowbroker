@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ArrowDown, ArrowUp, ChevronLeft, RefreshCw, Reply, Search, Send } from 'lucide-react';
 import { API_BASE } from '@/lib/api';
 import {
@@ -286,6 +287,7 @@ export default function GateView({
   availableGates,
   onOpenShutdownPetition,
 }: GateViewProps) {
+  const t = useTranslations('infonet');
   const [searchInput, setSearchInput] = useState('');
   const [messages, setMessages] = useState<GateMessage[]>([]);
   // Self-authored plaintext, keyed by real event_id returned from the POST.
@@ -907,7 +909,7 @@ export default function GateView({
               className="flex items-center text-cyan-500 hover:text-cyan-400 transition-all uppercase text-xs tracking-widest border border-cyan-900/50 px-3 py-1 bg-cyan-900/10 hover:bg-cyan-900/30 hover:border-cyan-500/50"
             >
               <ChevronLeft size={14} className="mr-1" />
-              RETURN TO MAIN
+              {t('gate_return_to_main')}
             </button>
             {onOpenShutdownPetition && (
               <button
@@ -915,12 +917,12 @@ export default function GateView({
                 title="Open gate shutdown lifecycle (suspend / shutdown / appeal)"
                 className="flex items-center text-amber-500 hover:text-amber-400 transition-all uppercase text-xs tracking-widest border border-amber-900/50 px-3 py-1 bg-amber-900/10 hover:bg-amber-900/30 hover:border-amber-500/50"
               >
-                SHUTDOWN STATUS
+                {t('gate_shutdown_status')}
               </button>
             )}
           </div>
           <div className="text-gray-500 text-xs">
-            LOGGED IN AS:{' '}
+            {t('gate_logged_in_as')}{' '}
             <span
               className={
                 persona === 'shadowbroker' ? 'text-red-500 animate-pulse font-bold' : 'text-green-400'
@@ -941,35 +943,35 @@ export default function GateView({
                 </span>
               ) : null}
             </div>
-            <p className="text-gray-500 text-sm mt-1">Fixed obfuscated gate. Creation is disabled for this testnet.</p>
+            <p className="text-gray-500 text-sm mt-1">{t('gate_obfuscated_notice')}</p>
           </div>
           <button
             onClick={() => void refreshGate({ force: true })}
             className="inline-flex items-center gap-2 px-3 py-2 border border-cyan-500/30 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-900/30 transition-colors text-sm uppercase tracking-[0.22em]"
           >
             <RefreshCw size={13} />
-            Refresh
+            {t('gate_refresh')}
           </button>
         </div>
 
         <div className="mt-4 p-3 border border-gray-800 bg-gray-900/20 text-xs text-gray-400">
-          <p className="font-bold text-cyan-400 mb-1">=== GATE RULES ===</p>
-          <p>1. FIXED LAUNCH CATALOG: no new gates can be created in this build.</p>
-          <p>2. POSTS + REPLIES PERSIST ON THE OBFUSCATED GATE STORE FOR NODES THAT CARRY THIS GATE.</p>
-          <p>3. GATE VOTES USE THE EXISTING PUBLIC LEDGER VOTE CONTRACT FOR RECORDKEEPING.</p>
+          <p className="font-bold text-cyan-400 mb-1">{t('gate_gate_rules')}</p>
+          <p>{t('gate_rule_1')}</p>
+          <p>{t('gate_rule_2')}</p>
+          <p>{t('gate_rule_3')}</p>
         </div>
 
         <div className="mt-4 p-3 border border-amber-900/30 bg-amber-950/10 text-[11px] text-amber-200/80 leading-relaxed">
           {entryMode === 'anonymous'
-            ? 'Anonymous session is active for this gate. The backend rotates a fresh gate-scoped public key here. You can read, post, reply, and cast the current gate-scoped votes from this room.'
-            : 'Saved gate face is active for this room. Posts stay scoped to this gate while the room history persists on the obfuscated gate lane.'}
+            ? t('gate_anon_session_info')
+            : t('gate_saved_face_info')}
         </div>
 
         <div className="mt-3 text-sm font-mono text-cyan-400/85">
           {status?.has_local_access
-            ? `LIVE ROOM READY • ${status.identity_scope || entryMode || 'gate'} access`
+            ? t('gate_live_room_ready', { scope: status.identity_scope || entryMode || 'gate' })
             : loading
-              ? 'CONNECTING TO OBFUSCATED GATE LANE...'
+              ? t('gate_connecting')
               : String(status?.detail || 'Gate access still syncing')}
         </div>
       </div>
@@ -982,14 +984,14 @@ export default function GateView({
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleSearchKeyDown}
-            placeholder="Search posts or type g/[gate] to jump..."
+            placeholder={t('gate_search_placeholder')}
             className="bg-transparent border-none outline-none text-white w-full text-sm placeholder-gray-700"
             spellCheck={false}
           />
         </div>
         {searchMatch && searchInput.length > 2 && (
           <div className="absolute top-full left-0 mt-1 bg-[#0a0a0a] border border-gray-800 p-2 text-xs text-gray-400 z-20">
-            Jump to:{' '}
+            {t('gate_jump_to')}{' '}
             <span
               className="text-white font-bold cursor-pointer"
               onClick={() => {
@@ -1010,7 +1012,7 @@ export default function GateView({
       ) : null}
       {compatConsentPrompt ? (
         <div className="mb-3 shrink-0 border border-amber-500/30 bg-amber-950/15 px-3 py-2 text-[11px] text-amber-100/90">
-          <div className="text-[12px] font-mono tracking-[0.2em] text-amber-300">COMPAT MODE</div>
+          <div className="text-[12px] font-mono tracking-[0.2em] text-amber-300">{t('gate_compat_mode')}</div>
           <div className="mt-1 leading-[1.7]">
             {describeGateCompatConsentPrompt(compatConsentPrompt.action)}
           </div>
@@ -1022,9 +1024,9 @@ export default function GateView({
               onClick={approveCompatFallback}
               className="px-3 py-1.5 border border-amber-500/40 bg-amber-950/20 text-[11px] font-mono tracking-[0.18em] text-amber-100 hover:bg-amber-900/30 transition-colors"
             >
-              ENABLE FOR ROOM
+              {t('gate_enable_for_room')}
             </button>
-            <span className="text-[11px] text-amber-200/70">Weaker privacy on this device.</span>
+            <span className="text-[11px] text-amber-200/70">{t('gate_weaker_privacy')}</span>
           </div>
         </div>
       ) : null}
@@ -1038,15 +1040,15 @@ export default function GateView({
         {!messages.length && (
           <div className="border border-gray-800 bg-gray-900/10 p-3">
             <div className="text-xs mb-1 text-gray-500">
-              Posted by:{' '}
+              {t('gate_posted_by')}{' '}
               <span className="text-red-500 font-bold animate-pulse drop-shadow-[0_0_5px_rgba(239,68,68,0.8)]">
                 shadowbroker
               </span>
-              <span className="text-gray-600 ml-2">PINNED</span>
+              <span className="text-gray-600 ml-2">{t('gate_pinned')}</span>
             </div>
             <h2 className="text-sm md:text-base text-gray-300 leading-relaxed">{introMessage}</h2>
             <div className="mt-3 pt-2 border-t border-gray-800/50 text-sm text-amber-400/70 tracking-wider uppercase">
-              Fixed launch gate for the testnet catalog. Dynamic gate creation is disabled.
+              {t('gate_fixed_launch_notice')}
             </div>
           </div>
         )}
@@ -1055,7 +1057,7 @@ export default function GateView({
           message.system_seed ? (
             <div key={message.event_id} className="border border-cyan-900/30 bg-cyan-950/10 px-3 py-3 max-w-3xl">
               <div className="text-[12px] font-mono tracking-[0.28em] text-cyan-300/85">
-                {message.fixed_gate ? 'FIXED GATE NOTICE' : 'GATE NOTICE'}
+                {message.fixed_gate ? t('gate_notice_fixed') : t('gate_notice')}
               </div>
               <div className="mt-2 text-sm font-mono text-cyan-100/80 leading-[1.7]">
                 {message.message}
@@ -1091,7 +1093,7 @@ export default function GateView({
                               : 'text-amber-300 border-amber-700/60'
                           }`}
                         >
-                          {gateEnvelopeState(message) === 'decrypted' ? 'DECRYPTED' : 'SEALED'}
+                          {gateEnvelopeState(message) === 'decrypted' ? t('gate_decrypted') : t('gate_sealed')}
                         </span>
                       ) : null}
                       <span className="text-[var(--text-muted)] text-[13px]">{timeAgo(message.timestamp)}</span>
@@ -1116,7 +1118,7 @@ export default function GateView({
                         className="inline-flex items-center gap-1 px-2 py-1 text-[13px] uppercase tracking-[0.18em] border border-cyan-900/40 text-cyan-400 hover:bg-cyan-950/20"
                       >
                         <Reply size={11} />
-                        Reply
+                        {t('gate_reply')}
                       </button>
                       {message.event_id ? (
                         <>
@@ -1129,7 +1131,7 @@ export default function GateView({
                             }`}
                           >
                             <ArrowUp size={11} />
-                            Up
+                            {t('gate_up')}
                           </button>
                           <button
                             onClick={() => void handleVote(String(message.event_id || ''), -1)}
@@ -1140,10 +1142,10 @@ export default function GateView({
                             }`}
                           >
                             <ArrowDown size={11} />
-                            Down
+                            {t('gate_down')}
                           </button>
                           <span className="text-sm font-mono text-cyan-400/70">
-                            SCORE {(() => { const s = reps[String(message.event_id || '')] ?? 0; return s % 1 === 0 ? s : s.toFixed(1); })()}
+                            {t('gate_score')} {(() => { const s = reps[String(message.event_id || '')] ?? 0; return s % 1 === 0 ? s : s.toFixed(1); })()}
                           </span>
                         </>
                       ) : null}
@@ -1161,13 +1163,13 @@ export default function GateView({
         {replyContext ? (
           <div className="mb-2 flex items-center justify-between gap-2 border border-amber-900/30 bg-amber-950/10 px-3 py-2 text-sm text-amber-200/80">
             <span>
-              Replying to @{replyContext.eventId.slice(0, 8)}
+              {t('gate_replying_to', { id: replyContext.eventId.slice(0, 8) })}
             </span>
             <button
               onClick={() => setReplyContext(null)}
               className="text-amber-300 hover:text-amber-100 uppercase tracking-[0.18em]"
             >
-              Clear
+              {t('gate_clear')}
             </button>
           </div>
         ) : null}
@@ -1188,7 +1190,7 @@ export default function GateView({
                 void handleSend();
               }
             }}
-            placeholder="Post into this gate..."
+            placeholder={t('gate_post_placeholder')}
             className="flex-1 min-h-[72px] max-h-[140px] bg-black/40 border border-cyan-900/40 text-gray-100 px-3 py-2 outline-none resize-y placeholder:text-gray-700"
             spellCheck={false}
           />
@@ -1198,7 +1200,7 @@ export default function GateView({
             className="inline-flex items-center gap-2 px-4 py-3 border border-cyan-500/40 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-900/30 transition-colors text-sm uppercase tracking-[0.22em] disabled:opacity-40"
           >
             <Send size={13} />
-            Post
+            {t('gate_post_button')}
           </button>
         </div>
       </div>

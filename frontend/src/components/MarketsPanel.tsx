@@ -17,13 +17,14 @@ import {
 import type { DashboardData, StockTicker } from '@/types/dashboard';
 import type { CongressTrade, InsiderTransaction } from '@/types/unusualWhales';
 import { fetchUWStatus, fetchCongressTrades, fetchInsiderTransactions } from '@/lib/uwClient';
+import { useTranslations } from 'next-intl';
 
 type Tab = 'tickers' | 'congress' | 'insider';
 
-const TAB_CONFIG: { key: Tab; label: string; icon: React.ReactNode }[] = [
-  { key: 'tickers', label: 'TICKERS', icon: <TrendingUp size={10} /> },
-  { key: 'congress', label: 'CONGRESS', icon: <Landmark size={10} /> },
-  { key: 'insider', label: 'INSIDER', icon: <UserCheck size={10} /> },
+const TAB_CONFIG: { key: Tab; labelKey: string; icon: React.ReactNode }[] = [
+  { key: 'tickers', labelKey: 'tab_tickers', icon: <TrendingUp size={10} /> },
+  { key: 'congress', labelKey: 'tab_congress', icon: <Landmark size={10} /> },
+  { key: 'insider', labelKey: 'tab_insider', icon: <UserCheck size={10} /> },
 ];
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -72,18 +73,19 @@ function TickerRow({ ticker, info }: { ticker: string; info: StockTicker }) {
 }
 
 function TickersTab({ stocks, oil }: { stocks: Record<string, StockTicker>; oil: Record<string, StockTicker> }) {
+  const t = useTranslations('markets');
   const defenseEntries = Object.entries(stocks).filter(([k]) => !CRYPTO_LABELS.has(k));
   const cryptoEntries = Object.entries(stocks).filter(([k]) => CRYPTO_LABELS.has(k));
   const hasDefense = defenseEntries.length > 0;
   const hasCrypto = cryptoEntries.length > 0;
   const hasOil = Object.keys(oil).length > 0;
   if (!hasDefense && !hasCrypto && !hasOil)
-    return <div className="text-[var(--text-muted)] text-[10px] py-4 text-center">Waiting for market data...</div>;
+    return <div className="text-[var(--text-muted)] text-[10px] py-4 text-center">{t('waiting_for_data')}</div>;
   return (
     <div className="flex flex-col gap-3">
       {hasCrypto && (
         <div>
-          <h3 className="text-[9px] font-bold tracking-widest text-orange-400 mb-1.5">CRYPTO</h3>
+          <h3 className="text-[9px] font-bold tracking-widest text-orange-400 mb-1.5">{t('crypto')}</h3>
           <div className="flex flex-col gap-1">
             {cryptoEntries.map(([ticker, info]) => (
               <TickerRow key={ticker} ticker={ticker} info={info} />
@@ -93,7 +95,7 @@ function TickersTab({ stocks, oil }: { stocks: Record<string, StockTicker>; oil:
       )}
       {hasDefense && (
         <div>
-          <h3 className="text-[9px] font-bold tracking-widest text-cyan-400 mb-1.5">DEFENSE SECTOR</h3>
+          <h3 className="text-[9px] font-bold tracking-widest text-cyan-400 mb-1.5">{t('defense_sector')}</h3>
           <div className="flex flex-col gap-1">
             {defenseEntries.map(([ticker, info]) => (
               <TickerRow key={ticker} ticker={ticker} info={info} />
@@ -103,7 +105,7 @@ function TickersTab({ stocks, oil }: { stocks: Record<string, StockTicker>; oil:
       )}
       {hasOil && (
         <div>
-          <h3 className="text-[9px] font-bold tracking-widest text-cyan-400 mb-1.5">COMMODITIES</h3>
+          <h3 className="text-[9px] font-bold tracking-widest text-cyan-400 mb-1.5">{t('commodities')}</h3>
           <div className="flex flex-col gap-1">
             {Object.entries(oil).map(([name, info]) => (
               <div key={name} className="flex flex-col border border-cyan-500/10 bg-cyan-950/10 p-1.5 rounded-sm">
@@ -127,8 +129,9 @@ function TickersTab({ stocks, oil }: { stocks: Record<string, StockTicker>; oil:
 // ── Tab: Congress ───────────────────────────────────────────────────────────
 
 function CongressTab({ trades }: { trades: CongressTrade[] }) {
+  const tm = useTranslations('markets');
   if (!trades.length)
-    return <div className="text-[var(--text-muted)] text-[10px] py-4 text-center">No recent congress trades</div>;
+    return <div className="text-[var(--text-muted)] text-[10px] py-4 text-center">{tm('no_congress_trades')}</div>;
   return (
     <div className="flex flex-col gap-1.5">
       {trades.slice(0, 20).map((t, i) => (
@@ -171,8 +174,9 @@ function CongressTab({ trades }: { trades: CongressTrade[] }) {
 // ── Tab: Insider ────────────────────────────────────────────────────────────
 
 function InsiderTab({ transactions }: { transactions: InsiderTransaction[] }) {
+  const tm = useTranslations('markets');
   if (!transactions.length)
-    return <div className="text-[var(--text-muted)] text-[10px] py-4 text-center">No recent insider transactions</div>;
+    return <div className="text-[var(--text-muted)] text-[10px] py-4 text-center">{tm('no_insider_transactions')}</div>;
   return (
     <div className="flex flex-col gap-1.5">
       {transactions.slice(0, 20).map((t, i) => {
@@ -218,6 +222,7 @@ interface MarketsPanelProps {
 }
 
 const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusChange }: MarketsPanelProps) {
+  const t = useTranslations('markets');
   const [isMinimized, setIsMinimized] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('tickers');
   const [finnhubConfigured, setFinnhubConfigured] = useState<boolean | null>(null);
@@ -278,10 +283,10 @@ const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusCh
         <div className="flex items-center gap-2">
           <TrendingUp size={12} className="text-cyan-500" />
           <span className="text-[12px] text-[var(--text-muted)] font-mono tracking-widest">
-            GLOBAL MARKETS
+            {t('title')}
           </span>
           {hasFinnhub && (
-            <span className="text-[11px] text-green-500 bg-green-900/30 px-1 rounded">FINNHUB</span>
+            <span className="text-[11px] text-green-500 bg-green-900/30 px-1 rounded">{t('finnhub')}</span>
           )}
         </div>
         <button className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
@@ -312,7 +317,7 @@ const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusCh
                       }`}
                     >
                       {tab.icon}
-                      {tab.label}
+                      {t(tab.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -326,7 +331,7 @@ const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusCh
                       className="flex items-center gap-1 text-[9px] text-[var(--text-muted)] hover:text-cyan-400 transition-colors disabled:opacity-40"
                     >
                       <RefreshCw size={10} className={refreshing ? 'animate-spin' : ''} />
-                      {refreshing ? 'FETCHING...' : 'REFRESH'}
+                      {refreshing ? t('fetching') : t('refresh')}
                     </button>
                   </div>
                 )}
@@ -341,7 +346,7 @@ const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusCh
                 {/* Attribution */}
                 <div className="px-3 pb-2">
                   <p className="text-[11px] text-[var(--text-muted)]/60 text-center">
-                    Data from Finnhub
+                    {t('data_from')}
                   </p>
                 </div>
               </>
@@ -356,7 +361,7 @@ const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusCh
                     <div className="flex items-center gap-1.5">
                       <Settings size={10} className="text-[var(--text-muted)]" />
                       <p className="text-[9px] text-[var(--text-muted)]">
-                        Add <span className="text-cyan-400">FINNHUB_API_KEY</span> for congress trades &amp; insider data
+                        {t.rich('add_finnhub_key', { key: () => <span className="text-cyan-400">FINNHUB_API_KEY</span> })}
                       </p>
                     </div>
                     <a
@@ -365,7 +370,7 @@ const MarketsPanel = React.memo(function MarketsPanel({ data, focused, onFocusCh
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-[11px] text-cyan-400 hover:text-cyan-300 transition-colors"
                     >
-                      Free API Key <ExternalLink size={8} />
+                      {t('free_api_key')} <ExternalLink size={8} />
                     </a>
                   </div>
                 )}

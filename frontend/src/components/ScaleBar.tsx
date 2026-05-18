@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { Ruler, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 /**
  * Dynamic Scale Bar with:
@@ -49,6 +50,7 @@ function ScaleBar({
   onToggleMeasure,
   onClearMeasure,
 }: ScaleBarProps) {
+  const t = useTranslations('common');
   const [unit, setUnit] = useState<'mi' | 'km'>('mi');
   const [barWidth, setBarWidth] = useState(120); // current bar width in px
   const dragging = useRef(false);
@@ -136,7 +138,7 @@ function ScaleBar({
           <div
             className="w-2 h-3 bg-cyan-400/80 rounded-r cursor-ew-resize flex-shrink-0 hover:bg-cyan-300 transition-colors"
             onPointerDown={onPointerDown}
-            title="Drag to resize scale"
+            title={t('drag_resize_scale')}
             style={{ touchAction: 'none' }}
           />
         </div>
@@ -149,9 +151,9 @@ function ScaleBar({
       <button
         onClick={() => setUnit((u) => (u === 'mi' ? 'km' : 'mi'))}
         className="text-[11px] font-mono tracking-widest px-1.5 py-0.5 rounded border border-[var(--border-primary)] hover:border-cyan-500/50 text-[var(--text-muted)] hover:text-cyan-400 transition-all hover:bg-cyan-950/20 uppercase"
-        title={`Switch to ${unit === 'mi' ? 'Metric (km)' : 'Imperial (mi)'}`}
+        title={unit === 'mi' ? t('switch_to_metric') : t('switch_to_imperial')}
       >
-        {unit === 'mi' ? 'MI' : 'KM'}
+        {unit === 'mi' ? t('unit_mi') : t('unit_km')}
       </button>
 
       {/* Measure mode toggle */}
@@ -162,10 +164,10 @@ function ScaleBar({
             ? 'border-cyan-500/60 text-cyan-400 bg-cyan-950/30 shadow-[0_0_8px_rgba(0,255,255,0.2)]'
             : 'border-[var(--border-primary)] text-[var(--text-muted)] hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-950/20'
         }`}
-        title={measureMode ? 'Exit measurement mode' : 'Measure distance (click up to 3 points)'}
+        title={measureMode ? t('exit_measurement') : t('measure_distance')}
       >
         <Ruler size={10} />
-        {measureMode ? 'MEASURING' : 'MEASURE'}
+        {measureMode ? t('measuring') : t('measure')}
       </button>
 
       {/* Clear measurements */}
@@ -173,7 +175,7 @@ function ScaleBar({
         <button
           onClick={onClearMeasure}
           className="flex items-center gap-1 text-[11px] font-mono tracking-widest px-1.5 py-0.5 rounded border border-[var(--border-primary)] text-[var(--text-muted)] hover:text-red-400 hover:border-red-500/50 hover:bg-red-950/20 transition-all"
-          title="Clear all waypoints"
+          title={t('clear_waypoints')}
         >
           <Trash2 size={10} />
         </button>

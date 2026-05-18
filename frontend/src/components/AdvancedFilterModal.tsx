@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, X, Check, GripHorizontal } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface FilterField {
   key: string;
@@ -32,6 +33,7 @@ export default function AdvancedFilterModal({
   onApply,
   onClose,
 }: AdvancedFilterModalProps) {
+  const t = useTranslations('filter');
   // Local draft state — only committed on Apply
   const [draft, setDraft] = useState<Record<string, Set<string>>>(() => {
     const init: Record<string, Set<string>> = {};
@@ -239,7 +241,7 @@ export default function AdvancedFilterModal({
               </span>
               {totalSelected > 0 && (
                 <span className={`text-[9px] ${c.bg} ${c.text} px-1.5 py-0.5 rounded-sm`}>
-                  {totalSelected} SELECTED
+                  {t('selected_count', { count: totalSelected })}
                 </span>
               )}
             </div>
@@ -303,7 +305,7 @@ export default function AdvancedFilterModal({
                 onClick={() => clearField(activeTab)}
                 className="text-[11px] text-red-400/70 hover:text-red-300 tracking-widest ml-1"
               >
-                CLEAR
+                {t('clear')}
               </button>
             </div>
           )}
@@ -321,7 +323,7 @@ export default function AdvancedFilterModal({
                 onChange={(e) =>
                   setSearchTerms((prev) => ({ ...prev, [activeTab]: e.target.value }))
                 }
-                placeholder={`Search ${activeField?.label.toLowerCase() || ''}...`}
+                placeholder={t('search_placeholder', { name: activeField?.label.toLowerCase() || '' })}
                 className={`w-full bg-[var(--bg-primary)]/50 border border-[var(--border-primary)]/70 text-[11px] text-[var(--text-secondary)] pl-8 pr-8 py-2 font-mono tracking-wide focus:outline-none focus:${c.border} focus:ring-1 ${c.ring} placeholder-[var(--text-muted)] transition-all`}
                 autoFocus
               />
@@ -336,10 +338,10 @@ export default function AdvancedFilterModal({
             </div>
             <div className="flex justify-between mt-1.5">
               <span className="text-[11px] text-[var(--text-muted)] tracking-widest">
-                {filteredOptions.length} AVAILABLE
+                {t('available_count', { count: filteredOptions.length })}
               </span>
               <span className="text-[11px] text-[var(--text-muted)] tracking-widest">
-                {draft[activeTab]?.size || 0} SELECTED
+                {t('selected_count', { count: draft[activeTab]?.size || 0 })}
               </span>
             </div>
           </div>
@@ -351,7 +353,7 @@ export default function AdvancedFilterModal({
           >
             {filteredOptions.length === 0 ? (
               <div className="text-center py-8 text-[var(--text-muted)] text-[10px] tracking-widest">
-                NO MATCHING RESULTS
+                {t('no_matching')}
               </div>
             ) : (
               <div className="flex flex-col gap-px">
@@ -393,20 +395,20 @@ export default function AdvancedFilterModal({
               onClick={clearAll}
               className="text-[9px] text-red-400/70 hover:text-red-300 tracking-widest transition-colors"
             >
-              CLEAR ALL
+              {t('clear_all')}
             </button>
             <div className="flex gap-2">
               <button
                 onClick={onClose}
                 className="text-[9px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] tracking-widest border border-[var(--border-primary)] px-4 py-1.5 hover:bg-[var(--bg-tertiary)]/50 transition-all"
               >
-                CANCEL
+                {t('cancel')}
               </button>
               <button
                 onClick={handleApply}
                 className={`text-[9px] ${c.text} tracking-widest border ${c.border} px-4 py-1.5 ${c.bg} ${c.bgHover} transition-all font-semibold`}
               >
-                APPLY{totalSelected > 0 ? ` (${totalSelected})` : ''}
+                {totalSelected > 0 ? t('apply_count', { count: totalSelected }) : t('apply')}
               </button>
             </div>
           </div>

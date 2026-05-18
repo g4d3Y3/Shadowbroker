@@ -25,6 +25,7 @@ import { getNodeIdentity, nextSequence } from '@/mesh/meshIdentity';
 import { validateEventPayload } from '@/mesh/meshSchema';
 import { getActiveSigningContext, signMeshEvent } from '@/mesh/wormholeIdentityClient';
 import { useDataKeys } from '@/hooks/useDataStore';
+import { useTranslations } from 'next-intl';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -471,6 +472,7 @@ function MarketModal({
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 const PredictionsPanel = React.memo(function PredictionsPanel() {
+  const tp = useTranslations('left_panel');
   const { trending_markets, news: _newsData } = useDataKeys(['trending_markets', 'news'] as const);
   const [isMinimized, setIsMinimized] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('markets');
@@ -743,11 +745,11 @@ const PredictionsPanel = React.memo(function PredictionsPanel() {
   const headerCount = totalCount || Object.values(categories).reduce((a, c) => a + c.length, 0);
   const availableRep = profile?.oracle_rep ?? 0;
 
-  const tabs: { id: Tab; label: string; icon: typeof TrendingUp }[] = [
-    { id: 'markets', label: 'MARKETS', icon: TrendingUp },
-    { id: 'trending', label: 'TRENDING', icon: Zap },
-    { id: 'active', label: 'ACTIVE', icon: AlertTriangle },
-    { id: 'profile', label: 'PROFILE', icon: User },
+  const tabs: { id: Tab; labelKey: string; icon: typeof TrendingUp }[] = [
+    { id: 'markets', labelKey: 'tab_markets', icon: TrendingUp },
+    { id: 'trending', labelKey: 'tab_trending', icon: Zap },
+    { id: 'active', labelKey: 'tab_active', icon: AlertTriangle },
+    { id: 'profile', labelKey: 'tab_profile', icon: User },
   ];
 
   return (
@@ -779,7 +781,7 @@ const PredictionsPanel = React.memo(function PredictionsPanel() {
           <div className="flex items-center gap-2">
             <Trophy size={16} className="text-emerald-400" />
             <span className="text-[12px] text-emerald-400 font-mono tracking-widest font-bold">
-              ORACLE PREDICTIONS
+              {tp('predictions_title')}
             </span>
             {headerCount > 0 && (
               <span className="text-[11px] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 font-mono">
@@ -814,7 +816,7 @@ const PredictionsPanel = React.memo(function PredictionsPanel() {
                         : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                     }`}
                   >
-                    <t.icon size={10} /> {t.label}
+                    <t.icon size={10} /> {tp(t.labelKey)}
                   </button>
                 ))}
               </div>
@@ -842,7 +844,7 @@ const PredictionsPanel = React.memo(function PredictionsPanel() {
                           type="text"
                           value={searchQuery}
                           onChange={(e) => handleSearchInput(e.target.value)}
-                          placeholder="SEARCH ALL POLYMARKET + KALSHI MARKETS..."
+                          placeholder={tp('search_placeholder')}
                           className="w-full pl-6 pr-6 py-1.5 text-[12px] font-mono tracking-wider bg-[var(--bg-primary)]/60 border border-[var(--border-primary)]/50 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-emerald-500/50"
                         />
                         {searchQuery && (
@@ -864,12 +866,12 @@ const PredictionsPanel = React.memo(function PredictionsPanel() {
                       <div className="px-3 pb-2 flex flex-col gap-1">
                         <div className="text-[11px] font-mono tracking-widest text-[var(--text-muted)] mb-1">
                           {isSearching
-                            ? 'SEARCHING ALL MARKETS...'
-                            : `${searchResults.length} RESULTS FROM POLYMARKET + KALSHI`}
+                            ? tp('searching_all')
+                            : tp('results_from', { count: searchResults.length })}
                         </div>
                         {!isSearching && searchResults.length === 0 && (
                           <div className="text-[12px] text-[var(--text-muted)] font-mono text-center py-3">
-                            NO RESULTS FOR &quot;{searchQuery.toUpperCase()}&quot;
+                            {tp('no_results_for', { query: searchQuery.toUpperCase() })}
                           </div>
                         )}
                         {searchResults.map((m, i) => (
@@ -919,7 +921,7 @@ const PredictionsPanel = React.memo(function PredictionsPanel() {
                                     <div className="flex flex-col gap-1 px-3 pb-2">
                                       {catMarkets.length === 0 && (
                                         <div className="text-[11px] text-[var(--text-muted)] text-center py-2 font-mono">
-                                          NO MARKETS
+                                          {tp('no_markets')}
                                         </div>
                                       )}
                                       {catMarkets.map((m, i) => (

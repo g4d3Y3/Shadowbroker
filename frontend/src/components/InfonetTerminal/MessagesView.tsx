@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   AlertCircle,
   Ban,
@@ -689,6 +690,9 @@ export default function MessagesView({ onBack, onOpenDeadDrop }: MessagesViewPro
   const [dmAddresses, setDmAddresses] = useState<LocalDmAddress[]>([]);
   const [remoteDmHandles, setRemoteDmHandles] = useState<Record<string, WormholeDmAddressRecord>>({});
   const [dmAddressEditLabels, setDmAddressEditLabels] = useState<Record<string, string>>({});
+  const [dmAddressEditing, setDmAddressEditing] = useState<string | null>(null);
+  const [dmAddressRevoking, setDmAddressRevoking] = useState<string | null>(null);
+  const t = useTranslations('infonet');
   const [dmAddressBusy, setDmAddressBusy] = useState('');
   const [dmAddressCopyStatus, setDmAddressCopyStatus] = useState('');
   const [, setDmLaneWarmStatus] = useState('');
@@ -2392,9 +2396,9 @@ export default function MessagesView({ onBack, onOpenDeadDrop }: MessagesViewPro
 
       <div className="flex items-center border-b border-gray-800/80 shrink-0">
         {[
-          { key: 'mailbox' as const, label: 'MAILBOX', icon: <Inbox size={14} className="mr-2" /> },
-          { key: 'compose' as const, label: 'COMPOSE', icon: <PencilLine size={14} className="mr-2" /> },
-          { key: 'contacts' as const, label: 'CONTACTS', icon: <Users size={14} className="mr-2" /> },
+          { key: 'mailbox' as const, label: t('mailbox').toUpperCase(), icon: <Inbox size={14} className="mr-2" /> },
+          { key: 'compose' as const, label: t('compose').toUpperCase(), icon: <PencilLine size={14} className="mr-2" /> },
+          { key: 'contacts' as const, label: t('contacts').toUpperCase(), icon: <Users size={14} className="mr-2" /> },
           { key: 'restricted' as const, label: 'RESTRICTED', icon: <ShieldOff size={14} className="mr-2" /> },
         ].map((tab) => (
           <button

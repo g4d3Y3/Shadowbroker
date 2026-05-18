@@ -1,20 +1,8 @@
 'use client';
 
-/**
- * AIIntelPinDetail — floating popup shown when the user clicks an AI Intel pin
- * on the map.
- *
- * Features:
- *   - Shows label, category, coordinates, reverse-geocoded place
- *   - Shows entity attachment info (if pin is tracking a moving object)
- *   - Editable label / description
- *   - Threaded comment system with reply support (user + agent)
- *   - Follows the Threat-alert marker pattern: offset from target with a
- *     dashed connecting line + arrow pointing at the pin.
- */
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Marker } from 'react-map-gl/maplibre';
+import { useTranslations } from 'next-intl';
 import { API_BASE } from '@/lib/api';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import {
@@ -48,6 +36,7 @@ interface ReverseGeocode {
 const POPUP_OFFSET = 160;
 
 export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, onUpdated }) => {
+  const t = useTranslations('ai_intel');
   const [pin, setPin] = useState<AIIntelPin | null>(null);
   const [geo, setGeo] = useState<ReverseGeocode | null>(null);
   const [editing, setEditing] = useState(false);
@@ -280,7 +269,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                   onClick={() => setEditing(true)}
                   className="text-[10px] px-2 py-0.5 text-violet-300 hover:text-white border border-violet-500/30 hover:border-violet-500/60"
                 >
-                  EDIT
+                  {t('edit_btn')}
                 </button>
               )}
               <button
@@ -288,7 +277,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                 onClick={() => setShowDeleteConfirm(true)}
                 className="text-[10px] px-2 py-0.5 text-red-400 hover:text-red-200 border border-red-500/30 hover:border-red-500/60"
               >
-                DEL
+                {t('delete_btn')}
               </button>
               <button
                 type="button"
@@ -309,7 +298,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                   type="text"
                   value={editLabel}
                   onChange={(e) => setEditLabel(e.target.value)}
-                  placeholder="Label"
+                  placeholder={t('label_placeholder')}
                   onMouseDown={(e) => {
                     e.stopPropagation();
                     (e.currentTarget as HTMLInputElement).focus();
@@ -318,7 +307,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                   className="w-full px-2 py-1 text-[12px] font-mono bg-black/60 border border-violet-500/40 outline-none focus:border-violet-500"
                 />
                 <select
-                  aria-label="Category"
+                  aria-label={t('category_aria')}
                   value={editCategory}
                   onChange={(e) => setEditCategory(e.target.value as PinCategory)}
                   className="w-full px-2 py-1 text-[11px] font-mono bg-black/60 border border-violet-500/40 outline-none focus:border-violet-500 border-l-4"
@@ -333,7 +322,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                 <textarea
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
-                  placeholder="Notes"
+                  placeholder={t('notes_placeholder')}
                   rows={3}
                   onMouseDown={(e) => {
                     e.stopPropagation();
@@ -349,7 +338,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                     onClick={handleSaveEdit}
                     className="flex-1 py-1 text-[11px] bg-violet-600/40 border border-violet-500/60 hover:bg-violet-600/60 disabled:opacity-40"
                   >
-                    {saving ? '...' : 'SAVE'}
+                    {saving ? t('saving_ellipsis') : t('save_btn')}
                   </button>
                   <button
                     type="button"
@@ -361,7 +350,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                     }}
                     className="px-3 py-1 text-[11px] border border-gray-600/40 text-gray-400 hover:text-white"
                   >
-                    CANCEL
+                    {t('cancel_btn')}
                   </button>
                 </div>
               </>
@@ -380,24 +369,24 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
             <div className="text-[10px] text-gray-400 space-y-0.5 pt-1 border-t border-white/5">
               {pin.entity_attachment ? (
                 <div className="text-cyan-400">
-                  <span className="text-gray-500">TRACKING: </span>
+                  <span className="text-gray-500">{t('tracking_label')}</span>
                   {pin.entity_attachment.entity_label || pin.entity_attachment.entity_id}
                   <span className="text-cyan-600 ml-1">({pin.entity_attachment.entity_type})</span>
                 </div>
               ) : null}
               <div>
-                <span className="text-gray-500">COORDS: </span>
+                <span className="text-gray-500">{t('coords_label')}</span>
                 {pin.lat.toFixed(5)}, {pin.lng.toFixed(5)}
               </div>
               {locationLine && (
                 <div>
-                  <span className="text-gray-500">PLACE: </span>
+                  <span className="text-gray-500">{t('place_label')}</span>
                   {locationLine}
                 </div>
               )}
               {pin.source && (
                 <div>
-                  <span className="text-gray-500">SOURCE: </span>
+                  <span className="text-gray-500">{t('source_label')}</span>
                   {pin.source}
                 </div>
               )}
@@ -407,11 +396,11 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
           {/* Comments thread */}
           <div className="border-t border-white/10 px-3 py-2">
             <div className="text-[10px] uppercase tracking-widest text-violet-400 mb-1.5">
-              Comments ({comments.length})
+              {t('comments_header', { count: comments.length })}
             </div>
 
             {topLevel.length === 0 && (
-              <div className="text-[10px] text-gray-600 italic mb-1.5">No comments yet.</div>
+              <div className="text-[10px] text-gray-600 italic mb-1.5">{t('no_comments')}</div>
             )}
 
             <div className="space-y-1.5 max-h-40 overflow-y-auto">
@@ -433,13 +422,13 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
             <div className="mt-2 pt-2 border-t border-white/5 space-y-1.5">
               {replyTo && (
                 <div className="text-[9px] text-violet-400 flex items-center justify-between">
-                  <span>Replying to comment…</span>
+                  <span>{t('replying_to')}</span>
                   <button
                     type="button"
                     onClick={() => setReplyTo('')}
                     className="text-gray-500 hover:text-white"
                   >
-                    cancel
+                    {t('cancel_reply')}
                   </button>
                 </div>
               )}
@@ -447,7 +436,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                 ref={commentInputRef}
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder={replyTo ? 'Reply…' : 'Add a comment…'}
+                placeholder={replyTo ? t('reply_placeholder') : t('comment_placeholder')}
                 rows={2}
                 onMouseDown={(e) => {
                   e.stopPropagation();
@@ -464,13 +453,13 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
               />
               <div className="flex items-center justify-between gap-1.5">
                 <select
-                  aria-label="Comment as"
+                  aria-label={t('comment_as_label')}
                   value={commentAuthor}
                   onChange={(e) => setCommentAuthor(e.target.value as 'user' | 'agent')}
                   className="text-[10px] font-mono bg-black/60 border border-violet-500/30 px-1 py-0.5 outline-none"
                 >
-                  <option value="user">as USER</option>
-                  <option value="agent">as AGENT</option>
+                  <option value="user">{t('as_user')}</option>
+                  <option value="agent">{t('as_agent')}</option>
                 </select>
                 <button
                   type="button"
@@ -478,7 +467,7 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
                   onClick={handlePostComment}
                   className="flex-1 py-1 text-[11px] bg-violet-600/40 border border-violet-500/60 hover:bg-violet-600/60 disabled:opacity-40"
                 >
-                  {posting ? '...' : replyTo ? 'REPLY' : 'POST'}
+                  {posting ? '...' : replyTo ? t('reply_btn') : t('post_btn')}
                 </button>
               </div>
             </div>
@@ -489,9 +478,9 @@ export const AIIntelPinDetail: React.FC<Props> = ({ pinId, onClose, onDeleted, o
     {showDeleteConfirm && (
       <ConfirmDialog
         open
-        title="DELETE PIN"
-        message={`Delete pin "${pin.label}"?\n\nThis cannot be undone.`}
-        confirmLabel="DELETE"
+        title={t('delete_pin_title')}
+        message={t('delete_pin_message', { label: pin.label })}
+        confirmLabel={t('confirm_delete')}
         danger
         onConfirm={executeDeletePin}
         onCancel={() => setShowDeleteConfirm(false)}

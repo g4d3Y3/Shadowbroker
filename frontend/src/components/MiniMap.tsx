@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Minimize2 } from 'lucide-react';
 import { useDataKey } from '@/hooks/useDataStore';
+import { useTranslations } from 'next-intl';
 import type { NewsArticle } from '@/types/dashboard';
 
 /**
@@ -45,6 +46,7 @@ function getRiskColor(score: number): string {
 }
 
 export default function MiniMap() {
+  const t = useTranslations('common');
   const [collapsed, setCollapsed] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const news = useDataKey('news') as NewsArticle[] | undefined;
@@ -143,7 +145,7 @@ export default function MiniMap() {
         onClick={() => setCollapsed(false)}
         className="absolute bottom-[6.5rem] right-[28rem] z-[200] pointer-events-auto px-2 py-1 bg-[var(--bg-panel)] border border-[var(--border-primary)] rounded-sm text-[9px] font-mono tracking-[0.15em] text-cyan-400 hover:border-cyan-600/40 transition-colors"
       >
-        MAP
+        {t('map_btn')}
       </button>
     );
   }
@@ -166,14 +168,14 @@ export default function MiniMap() {
       <button
         onClick={() => setCollapsed(true)}
         className="absolute top-1 right-1 p-0.5 text-[var(--text-muted)] hover:text-cyan-400 transition-colors"
-        title="Collapse mini-map"
+        title={t('collapse_minimap')}
       >
         <Minimize2 size={10} />
       </button>
 
       {/* Label */}
       <div className="absolute bottom-0.5 left-1 text-[10px] font-mono tracking-[0.2em] text-cyan-700/60 uppercase">
-        OVERVIEW
+        {t('overview')}
       </div>
     </div>
   );

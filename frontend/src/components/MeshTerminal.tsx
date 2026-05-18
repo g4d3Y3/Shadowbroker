@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Terminal, X, GripHorizontal, Minus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -632,6 +633,7 @@ function formatLatLng(record: SearchRecord): string {
 }
 
 export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCount, onSettingsClick }: Props) {
+  const t = useTranslations('infonet');
   useEffect(() => {
     void migrateLegacyNodeIds().catch((err) => {
       console.warn('[mesh] legacy node-id migration failed in MeshTerminal', err);
@@ -5597,10 +5599,10 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
   const dismissPrivateLanePrompt = useCallback(() => {
     setPrivateLanePromptOpen(false);
     setPrivateLanePromptStatus(null);
-    addSystem('  Staying on the public lane for now.');
+    addSystem(`  ${t('staying_public_msg')}`);
     addLines([
       {
-        text: "  Mesh stays public. Type 'gates' or tap ENTER WORMHOLE later when you want the obfuscated commons.",
+        text: `  ${t('mesh_stays_public_msg')}`,
         type: 'dim',
       },
     ]);
@@ -5617,7 +5619,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
         /* ignore */
       }
     }
-    addSystem('  Gate access denied. Infonet Commons gates remain restricted.');
+    addSystem(`  ${t('gate_denied_msg')}`);
   }, [addSystem]);
 
   // Position + size style
@@ -5643,19 +5645,19 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
                 <div className="pointer-events-auto w-full max-w-lg border border-cyan-500/25 bg-black/95 p-5 font-mono shadow-[0_0_42px_rgba(34,211,238,0.12)]">
                   <div className="text-sm tracking-[0.28em] text-cyan-300">
-                    {privateLanePromptMode === 'enter' ? 'ENTER WORMHOLE' : 'ACTIVATE WORMHOLE'}
+                    {privateLanePromptMode === 'enter' ? t('enter_wormhole') : t('activate_wormhole')}
                   </div>
                   <div className="mt-3 text-[13px] leading-7 text-slate-200">
                     {privateLanePromptMode === 'enter'
-                      ? 'Obfuscated lane detected. Enter Wormhole now to sync into the Infonet Commons and communicate through gates.'
-                      : 'No obfuscated lane is active yet. Activate Wormhole now and enter the Infonet Commons?'}
+                      ? t('private_lane_prompt_enter')
+                      : t('private_lane_prompt_activate')}
                   </div>
                   <div className="mt-4 border border-cyan-500/14 bg-cyan-950/10 px-4 py-3 text-sm leading-6 text-slate-300">
-                    <div className="text-cyan-300">What this does</div>
-                    <div className="mt-2">Wormhole turns on the obfuscated lane for gates and the obfuscated commons.</div>
-                    <div>If a Wormhole identity already exists, it is reused. If one does not exist yet, it is bootstrapped once.</div>
-                    <div>Participant-node sync and public chain hosting stay on the backend node lane.</div>
-                    <div>Public mesh stays public and separate.</div>
+                    <div className="text-cyan-300">{t('what_this_does')}</div>
+                    <div className="mt-2">{t('wormhole_desc_1')}</div>
+                    <div>{t('wormhole_desc_2')}</div>
+                    <div>{t('wormhole_desc_3')}</div>
+                    <div>{t('wormhole_desc_4')}</div>
                   </div>
                   {privateLanePromptStatus && (
                     <div
@@ -5678,10 +5680,10 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                       className="border border-cyan-500/25 bg-cyan-500/10 px-4 py-2 text-sm tracking-[0.22em] text-cyan-100 transition-colors hover:bg-cyan-500/16 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {privateLanePromptBusy
-                        ? 'ENTERING...'
+                        ? t('entering_dots')
                         : privateLanePromptMode === 'enter'
-                          ? 'YES, ENTER'
-                          : 'YES, GENERATE'}
+                          ? t('yes_enter')
+                          : t('yes_generate')}
                     </button>
                     <button
                       type="button"
@@ -5689,7 +5691,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                       disabled={privateLanePromptBusy}
                       className="border border-slate-500/20 bg-white/5 px-4 py-2 text-sm tracking-[0.22em] text-slate-300 transition-colors hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      STAY PUBLIC
+                      {t('stay_public')}
                     </button>
                     {onSettingsClick && (
                       <button
@@ -5708,7 +5710,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                         disabled={privateLanePromptBusy}
                         className="border border-slate-500/20 bg-white/5 px-4 py-2 text-sm tracking-[0.22em] text-slate-400 transition-colors hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        ADVANCED
+                        {t('advanced')}
                       </button>
                     )}
                   </div>
@@ -5721,17 +5723,17 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
                 <div className="pointer-events-auto w-full max-w-md border border-fuchsia-500/25 bg-black/95 p-5 font-mono shadow-[0_0_40px_rgba(217,70,239,0.12)]">
                   <div className="text-sm tracking-[0.28em] text-fuchsia-300">
-                    ENTER INFONET COMMONS
+                    {t('gate_prompt_title')}
                   </div>
                   <div className="mt-3 text-[12px] leading-6 text-slate-300">
-                    Gates live behind Wormhole in this build. Enter now?
+                    {t('gate_prompt_body')}
                   </div>
                   <div className="mt-3 text-sm leading-5 text-slate-500">
                     {wormholeSecureRequired
                       ? wormholeReadyState
-                        ? 'Yes takes you straight into the gates.'
-                        : 'Yes turns on Wormhole and provisions an obfuscated lane identity, then sends you into gates.'
-                      : 'Yes turns on Wormhole and provisions an obfuscated lane identity, then sends you into gates.'}
+                        ? t('gate_prompt_ready')
+                        : t('gate_prompt_not_ready')
+                      : t('gate_prompt_not_ready')}
                   </div>
                   <div className="mt-4 flex items-center gap-2">
                     <button
@@ -5739,14 +5741,14 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                       onClick={confirmGateAccess}
                       className="border border-fuchsia-500/25 bg-fuchsia-500/10 px-4 py-2 text-sm tracking-[0.22em] text-fuchsia-200 transition-colors hover:bg-fuchsia-500/16"
                     >
-                      YES
+                      {t('yes_btn')}
                     </button>
                     <button
                       type="button"
                       onClick={denyGateAccess}
                       className="border border-slate-500/20 bg-white/5 px-4 py-2 text-sm tracking-[0.22em] text-slate-300 transition-colors hover:bg-white/8"
                     >
-                      NO
+                      {t('no_btn')}
                     </button>
                   </div>
                 </div>
@@ -5768,7 +5770,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
             >
               <Terminal size={11} className="text-cyan-400" />
               <span className="text-[11px] font-mono font-bold tracking-[0.22em]">
-                TERMINAL
+                {t('title')}
               </span>
             </motion.button>
           )}
@@ -5853,7 +5855,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
 
                   <div className="text-center">
                     <div className="text-[12px] tracking-[0.32em] text-slate-500">
-                      type clear to wipe output · gates require wormhole · mesh stays public
+                    {t('type_clear_info')}
                     </div>
                   </div>
 
@@ -5866,7 +5868,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                       }}
                       className="border border-cyan-500/18 bg-cyan-500/8 px-2.5 py-1 text-[12px] tracking-[0.18em] text-cyan-300 transition-colors hover:bg-cyan-500/14"
                     >
-                      PRIVATE DM INBOX
+                      {t('private_dm_inbox_btn')}
                     </button>
                     {nodeIdentity && hasSovereignty() && (
                       <span className="border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 text-[12px] tracking-[0.18em] text-cyan-300">
@@ -5875,19 +5877,19 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                     )}
                     {terminalWriteLockReason && (
                       <span className="border border-amber-400/25 bg-amber-400/10 px-2 py-1 text-[12px] tracking-[0.18em] text-amber-200">
-                        READ ONLY
+                        {t('read_only_label')}
                       </span>
                     )}
                     {busy && (
                       <span className="border border-fuchsia-500/25 bg-fuchsia-500/10 px-2 py-1 text-[12px] tracking-[0.18em] text-fuchsia-200">
-                        RUNNING
+                        {t('running_label')}
                       </span>
                     )}
                     <button
                       type="button"
                       onClick={() => setMinimized(true)}
                       className="p-1.5 text-slate-500 transition-colors hover:bg-white/5 hover:text-amber-200"
-                      title="Minimize terminal"
+                      title={t('minimize_title')}
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
@@ -5918,30 +5920,30 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                           <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-cyan-400/20" />
                           <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-cyan-400/20" />
                         </div>
-                        <div className="text-sm tracking-[0.38em] text-cyan-300">INFONET</div>
+                        <div className="text-sm tracking-[0.38em] text-cyan-300">{t('title')}</div>
                         <div className="mt-2 text-[30px] font-semibold leading-none tracking-[0.32em] text-cyan-100">
-                          THE INFONET COMMONS
+                          {t('the_infonet_commons')}
                         </div>
                         <div className="mt-2 text-sm tracking-[0.28em] text-fuchsia-300">
-                          OPSINT DECK · COMMONS NODE
+                          {t('opsint_deck')}
                         </div>
                         <div className="mt-4 max-w-[760px] text-[11px] leading-6 text-slate-400">
-                          Experimental operator deck for encrypted gates, mesh comms, dossiers, prediction markets, and live intel routing.
+                          {t('terminal_description')}
                         </div>
                       </div>
 
                       <div className="mt-5 grid w-full gap-2 text-[13px] font-mono md:grid-cols-4">
                         <div className="border border-cyan-500/20 bg-cyan-500/8 px-3 py-2 text-cyan-300">
-                          INFONET · experimental encryption
+                          {t('infonet_exp_encryption')}
                         </div>
                         <div className="border border-emerald-500/20 bg-emerald-500/8 px-3 py-2 text-emerald-300">
-                          MESH · public / observable
+                          {t('mesh_public_observable')}
                         </div>
                         <div className="border border-fuchsia-500/20 bg-fuchsia-500/8 px-3 py-2 text-fuchsia-300">
-                          GATES · experimental encryption
+                          {t('gates_exp_encryption')}
                         </div>
                         <div className="border border-amber-400/20 bg-amber-400/8 px-3 py-2 text-amber-200">
-                          COMMANDS · type or click to launch
+                          {t('commands_type_or_click')}
                         </div>
                       </div>
 
@@ -5950,10 +5952,10 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                           <div className="flex items-center justify-between gap-3">
                             <div>
                               <div className="text-[13px] tracking-[0.24em] text-cyan-300">
-                                PARTICIPANT NODE
+                                {t('participant_node')}
                               </div>
                               <div className="mt-1 text-sm leading-5 text-slate-400">
-                                Backend bootstrap is configured; the participant node syncs the testnet seed over the private seed lane.
+                                {t('participant_node_desc')}
                               </div>
                             </div>
                             <div className="border border-cyan-500/20 bg-cyan-500/8 px-3 py-1.5 text-[13px] tracking-[0.22em] text-cyan-200">
@@ -5963,7 +5965,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
 
                           <div className="mt-3 grid gap-2 md:grid-cols-3 text-[13px] font-mono">
                             <div className="border border-emerald-500/20 bg-emerald-500/8 px-3 py-2 text-emerald-200">
-                              <div className="text-[12px] tracking-[0.2em] text-emerald-300">CHAIN</div>
+                              <div className="text-[12px] tracking-[0.2em] text-emerald-300">{t('chain_label')}</div>
                               <div className="mt-1 text-[13px] text-emerald-100">
                                 {shortNodeHash(infonetNodeStatus?.head_hash, 18)}
                               </div>
@@ -5972,7 +5974,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                               </div>
                             </div>
                             <div className="border border-cyan-500/20 bg-cyan-500/8 px-3 py-2 text-cyan-200">
-                              <div className="text-[12px] tracking-[0.2em] text-cyan-300">PEERS</div>
+                              <div className="text-[12px] tracking-[0.2em] text-cyan-300">{t('peers_label')}</div>
                               <div className="mt-1 text-[13px] text-cyan-100">
                                 {Number(infonetNodeStatus?.bootstrap?.sync_peer_count || 0)} sync
                               </div>
@@ -5981,7 +5983,7 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                               </div>
                             </div>
                             <div className="border border-fuchsia-500/20 bg-fuchsia-500/8 px-3 py-2 text-fuchsia-200">
-                              <div className="text-[12px] tracking-[0.2em] text-fuchsia-300">SYNC LOOP</div>
+                              <div className="text-[12px] tracking-[0.2em] text-fuchsia-300">{t('sync_loop_label')}</div>
                               <div className="mt-1 text-[13px] text-fuchsia-100">{nodeSyncLabel}</div>
                               <div className="mt-1 text-[12px] text-fuchsia-200/70">
                                 next {formatNodeTime(infonetNodeStatus?.sync_runtime?.next_sync_due_at)}
@@ -5991,11 +5993,11 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
 
                           <div className="mt-3 border border-cyan-500/12 bg-cyan-950/8 px-3 py-2 text-[13px] font-mono leading-[1.65] text-slate-300">
                             <div className="flex items-center justify-between gap-3">
-                              <span className="text-cyan-300">Bootstrap</span>
+                              <span className="text-cyan-300">{t('bootstrap_label')}</span>
                               <span className="text-right text-slate-400">{nodeBootstrapLabel}</span>
                             </div>
                             <div className="mt-1 flex items-center justify-between gap-3">
-                              <span className="text-cyan-300">Last peer</span>
+                              <span className="text-cyan-300">{t('last_peer_label')}</span>
                               <span className="text-right text-slate-400">
                                 {summarizeNodePeer(infonetNodeStatus?.sync_runtime?.last_peer_url)}
                               </span>
@@ -6008,16 +6010,16 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
 
                         <div className="border border-amber-400/16 bg-amber-400/6 px-4 py-3 text-sm leading-6 text-amber-100/85">
                           <div className="text-[13px] font-mono tracking-[0.24em] text-amber-300">
-                            PRIVATE SEED LANE
+                            {t('private_seed_lane')}
                           </div>
                         <div className="mt-2">
-                          Participant-node bootstrap, sync, and public chain hosting use the backend private seed lane.
+                          {t('private_seed_lane_desc')}
                         </div>
                         <div className="mt-2 text-amber-200/75">
-                          Turn Wormhole on for gates, obfuscated inbox, and the stronger obfuscated lane only.
+                          {t('private_seed_lane_desc2')}
                         </div>
                         <div className="mt-3 border border-amber-400/16 bg-black/20 px-3 py-2 text-[13px] font-mono leading-[1.65] text-amber-100/80">
-                          obfuscated lane now: {privateLaneLabel}
+                          {t('obfuscated_lane_now', { label: privateLaneLabel })}
                         </div>
                         <button
                           type="button"
@@ -6026,8 +6028,8 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                           className="mt-3 inline-flex items-center border border-amber-300/20 bg-amber-400/10 px-3 py-2 text-[13px] font-mono tracking-[0.22em] text-amber-100 transition-colors hover:bg-amber-400/16 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {wormholeSecureRequired && wormholeReadyState
-                            ? 'ENTER WORMHOLE'
-                            : 'GENERATE PRIVATE KEY'}
+                            ? t('enter_wormhole')
+                            : t('generate_private_key')}
                         </button>
                       </div>
                       </div>
@@ -6060,25 +6062,25 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                 <div className="border-t border-cyan-500/15 bg-[linear-gradient(180deg,rgba(7,11,15,0.98),rgba(5,8,12,0.98))] px-4 py-3">
                   <div className="mb-2 flex items-center justify-between text-[13px] font-mono tracking-[0.22em]">
                     <div className="flex items-center gap-3">
-                      <span className="text-cyan-300">COMMAND LINE</span>
-                      <span className="text-emerald-300">MESH / RADIO</span>
-                      <span className="text-fuchsia-300">GATES / COMMONS</span>
-                      <span className="text-amber-200">OPS / DOSSIER</span>
+                      <span className="text-cyan-300">{t('command_line')}</span>
+                      <span className="text-emerald-300">{t('mesh_radio')}</span>
+                      <span className="text-fuchsia-300">{t('gates_commons')}</span>
+                      <span className="text-amber-200">{t('ops_dossier')}</span>
                       {activeGateComposeId && (
                         <span className="border border-fuchsia-500/20 bg-fuchsia-500/8 px-2 py-1 text-[12px] tracking-[0.16em] text-fuchsia-200">
-                          POSTING TO g/{activeGateComposeId}
+                          {t('posting_to_gate', { gateId: activeGateComposeId })}
                         </span>
                       )}
                       {gateReplyTarget && (
                         <span className="border border-amber-400/20 bg-amber-400/8 px-2 py-1 text-[12px] tracking-[0.16em] text-amber-200">
-                          REPLY @{gateReplyTarget}
+                          {t('reply_to_str', { target: gateReplyTarget })}
                         </span>
                       )}
                     </div>
                     <span className="text-slate-500">
                       {activeGateComposeId
-                        ? 'TYPE TO POST · / FOR COMMANDS · CLEAR KEEPS YOUR GATE OPEN'
-                        : 'ENTER TO EXECUTE · TYPE CLEAR TO WIPE OUTPUT'}
+                        ? t('type_to_post')
+                        : t('enter_to_execute')}
                     </span>
                   </div>
 
@@ -6099,20 +6101,23 @@ export default function MeshTerminal({ isOpen, launchToken = 0, onClose, onDmCou
                           busy
                             ? ''
                             : sovereigntyPending
-                              ? 'accept or decline...'
+                              ? t('accept_or_decline_ph')
                               : sendStep === 'dest'
-                                ? "callsign or 'broadcast'..."
+                                ? t('callsign_or_broadcast_ph')
                                 : sendStep === 'msg'
-                                  ? 'type your message...'
+                                  ? t('type_your_message_ph')
                                 : dmStep === 'dest'
-                                    ? 'agent ID (e.g. !sb_a3f2c891)...'
+                                    ? t('agent_id_ph')
                                 : dmStep === 'msg'
-                                      ? 'type your private message...'
+                                      ? t('type_private_message_ph')
                                       : terminalWriteLockReason
-                                        ? 'read-only under Wormhole security policy...'
+                                        ? t('read_only_ph')
                                         : activeGateComposeId
-                                          ? `post to g/${activeGateComposeId}${gateReplyTarget ? ` reply @${gateReplyTarget}` : ''}...`
-                                          : 'enter command...'
+                                          ? t('post_to_gate_ph', {
+                                              gateId: activeGateComposeId,
+                                              reply: gateReplyTarget ? ` reply @${gateReplyTarget}` : '',
+                                            })
+                                          : t('enter_command_ph')
                         }
                         spellCheck={false}
                         autoComplete="off"

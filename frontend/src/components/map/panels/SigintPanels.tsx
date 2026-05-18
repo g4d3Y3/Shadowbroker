@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Send } from 'lucide-react';
 import { API_BASE } from '@/lib/api';
 import {
@@ -46,6 +47,7 @@ export function SigintSendForm({
   region?: string;
   channel?: string;
 }) {
+  const t = useTranslations('radio');
   const [msg, setMsg] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [detail, setDetail] = useState('');
@@ -67,7 +69,7 @@ export function SigintSendForm({
     if (!msg.trim()) return;
     if (isMesh && !warningAck) {
       setStatus('error');
-      setDetail('acknowledge public-mesh notice first');
+      setDetail(t('ack_mesh_notice'));
       return;
     }
     setStatus('sending');
@@ -76,7 +78,7 @@ export function SigintSendForm({
         const meshSender = normalizePublicMeshAddress(publicMeshAddress || readStoredPublicMeshAddress());
         if (!meshSender) {
           setStatus('error');
-          setDetail('public mesh key required');
+          setDetail(t('mesh_key_required'));
           return;
         }
         const payload = {
@@ -182,14 +184,14 @@ export function SigintSendForm({
 
   const label = isMesh
     ? isDirectMesh
-      ? `PUBLIC DIRECT TO ${destination.toUpperCase()}`
-      : `PUBLIC BROADCAST TO ${(channel || 'LongFast').toUpperCase()} (${(region || '?').toUpperCase()})`
-    : 'SEND MESSAGE via MESH ROUTER';
+      ? t('send_label_direct', { dest: destination.toUpperCase() })
+      : t('send_label_broadcast', { ch: (channel || 'LongFast').toUpperCase(), region: (region || '?').toUpperCase() })
+    : t('send_label_router');
   const placeholder = isMesh
     ? isDirectMesh
-      ? `Public direct message to ${destination}...`
-      : `Broadcast to ${channel || 'LongFast'}...`
-    : `Message ${destination}...`;
+      ? t('placeholder_direct', { dest: destination })
+      : t('placeholder_broadcast', { ch: channel || 'LongFast' })
+    : t('placeholder_router', { dest: destination });
 
   return (
     <div className="mt-2 pt-1.5 border-t border-[var(--border-primary)]/30">
@@ -197,15 +199,14 @@ export function SigintSendForm({
       {isMesh && (
         <div className="mb-1.5 rounded border border-amber-500/30 bg-amber-950/20 px-2 py-1.5">
           <div className="text-[11px] text-amber-300 tracking-widest">
-            PUBLIC MESH NOTICE
+            {t('mesh_notice_title')}
           </div>
           <div className="text-[11px] text-amber-200/80 mt-0.5 leading-relaxed">
-            These Meshtastic messages are public/degraded, not private. They may be intercepted,
-            relayed, logged, or fail to deliver.
+            {t('mesh_notice_desc')}
           </div>
           {publicMeshAddress && (
             <div className="text-[11px] text-amber-100/70 mt-1 font-mono">
-              YOUR PUBLIC MESH ADDRESS: {publicMeshAddress.toUpperCase()}
+              {t('your_mesh_address', { addr: publicMeshAddress.toUpperCase() })}
             </div>
           )}
           <label className="mt-1 flex items-start gap-1.5 text-[11px] text-amber-100/80 cursor-pointer">
@@ -215,7 +216,7 @@ export function SigintSendForm({
               onChange={(e) => setWarningAck(e.target.checked)}
               className="mt-[1px]"
             />
-            <span>I understand this message is public and not private.</span>
+            <span>{t('ack_label')}</span>
           </label>
         </div>
       )}
@@ -242,20 +243,20 @@ export function SigintSendForm({
           title={
             isMesh
               ? isDirectMesh
-                ? `Send public direct message to ${destination}`
-                : `Broadcast to ${channel} channel`
-              : 'Send via auto-routed mesh'
+                ? t('send_title_direct', { dest: destination })
+                : t('send_title_broadcast', { ch: channel })
+              : t('send_title_router')
           }
         >
           <Send size={10} />
         </button>
       </div>
       {status === 'sent' && (
-        <div className="text-[11px] text-green-400 mt-0.5">Routed via {detail}</div>
+        <div className="text-[11px] text-green-400 mt-0.5">{t('routed_via', { detail })}</div>
       )}
       {status === 'error' && <div className="text-[11px] text-red-400 mt-0.5">{detail}</div>}
       {status === 'sending' && (
-        <div className="text-[11px] text-cyan-400 mt-0.5 animate-pulse">Routing...</div>
+        <div className="text-[11px] text-cyan-400 mt-0.5 animate-pulse">{t('routing')}</div>
       )}
     </div>
   );
@@ -263,6 +264,7 @@ export function SigintSendForm({
 
 /** Mini feed showing recent Meshtastic text messages + channel population stats */
 export function MeshtasticChannelFeed({ region, channel }: { region: string; channel: string }) {
+  const t = useTranslations('radio');
   interface MeshtasticMessage {
     from?: string;
     to?: string;
