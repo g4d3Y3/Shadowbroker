@@ -6,6 +6,8 @@
   </p>
 </p>
 
+🌐 **中文版文档**：[README.zh-CN.md](README.zh-CN.md)
+
 ---
 
 
